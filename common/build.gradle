@@ -1,0 +1,11 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral() // Maven Central을 사용해 외부 의존성 다운로드
+}
+
+dependencies {
+//    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
+}

@@ -1,0 +1,4 @@
+rootProject.name = 'Roomie'
+include 'producer'
+include 'consumer'
+include 'common'

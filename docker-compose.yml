@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  producer:
+    build:
+      context: ./producer
+    container_name: producer
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+
+  consumer:
+    build:
+      context: ./consumer
+    container_name: consumer
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
