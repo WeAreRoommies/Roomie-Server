@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import server.producer.domain.RoomStatistics;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
-import server.producer.domain.repository.HouseRepository;
-import server.producer.domain.repository.RoomRepository;
 import server.producer.domain.repository.UserRepository;
 import server.producer.entity.House;
 import server.producer.entity.RecentlyViewedHouse;
@@ -21,7 +19,6 @@ import java.util.stream.Collectors;
 public class UserService {
 
 	private final UserRepository userRepository;
-	private final HouseRepository houseRepository;
 
 	public HomeInfoResponseDto getUserInfoAndRecentlyViewedHouse(Long userId) {
 		// 사용자 정보 조회
