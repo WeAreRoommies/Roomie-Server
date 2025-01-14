@@ -52,20 +52,30 @@ jobs:
           port: ${{ secrets.EC2_PORT }}
           script: |
             echo "Uploading docker-compose.yml and other files to EC2"
-            scp -i ${{ secrets.EC2_KEY }} docker-compose.yml ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ec2-user/
-            
-            echo "Navigating to target directory"
-            cd /home/ec2-user
-            
-            echo "Writing environment variables to .env"
-            echo "SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" > .env
-            echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
-            echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
-            echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
-            echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> .env
-            echo "NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }}" >> .env
 
-            sudo docker-compose down
-            sudo docker-compose pull
-            sudo docker-compose up -d
-            sudo docker image prune -f
+            # .pem 키를 파일로 저장
+            echo "${{ secrets.EC2_KEY }}" > /tmp/Roomie.pem
+            chmod 600 /tmp/Roomie.pem
+
+            # 파일 전송
+            scp -i /tmp/Roomie.pem docker-compose.yml ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/deployment/
+
+            # EC2에 접속하여 작업 수행
+            ssh -i /tmp/Roomie.pem ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
+              mkdir -p /home/ubuntu/deployment
+              cd /home/ubuntu/deployment
+
+              echo "Writing environment variables to .env"
+              echo "SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" > .env
+              echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
+              echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
+              echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
+              echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> .env
+              echo "NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }}" >> .env
+
+              echo "Bringing up Docker Compose services"
+              docker compose down || true
+              docker compose pull
+              docker compose up -d
+              docker image prune -f
+            EOF
