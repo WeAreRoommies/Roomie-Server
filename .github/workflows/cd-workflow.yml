@@ -57,11 +57,11 @@ jobs:
             echo "${{ secrets.EC2_KEY }}" > /tmp/Roomie.pem
             chmod 600 /tmp/Roomie.pem
 
-            # 파일 전송
-            scp -i /tmp/Roomie.pem docker-compose.yml ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/deployment/
+            # Host Key 검증 비활성화 및 파일 전송
+            scp -o StrictHostKeyChecking=no -i /tmp/Roomie.pem docker-compose.yml ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/deployment/
 
             # EC2에 접속하여 작업 수행
-            ssh -i /tmp/Roomie.pem ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
+            ssh -o StrictHostKeyChecking=no -i /tmp/Roomie.pem ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
               mkdir -p /home/ubuntu/deployment
               cd /home/ubuntu/deployment
 
