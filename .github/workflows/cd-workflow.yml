@@ -63,18 +63,18 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            echo "✋ Stopping existing containers"
+            echo "✋ Stopping and removing existing containers"
             sudo docker stop producer || true
             sudo docker stop consumer || true
             sudo docker rm producer || true
             sudo docker rm consumer || true
 
-            echo "🥳 Pulling new Docker images"
+            echo "🚀 Pulling latest Docker images"
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
 
-            echo "🌱 Running Producer container"
-            sudo docker run -d -p 8080:8080 --name producer \
+            echo "🌱 Starting Producer container"
+            sudo docker run -d --name producer -p 8080:8080 \
               -e SPRING_DATASOURCE_DRIVER_CLASS_NAME="${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" \
               -e SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
               -e SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
@@ -83,8 +83,8 @@ jobs:
               -e NAVER_LOCATION_SEARCH_URL="${{ secrets.NAVER_LOCATION_SEARCH_URL }}" \
               ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
 
-            echo "🌱 Running Consumer container"
-            sudo docker run -d -p 8081:8080 --name consumer \
+            echo "🌱 Starting Consumer container"
+            sudo docker run -d --name consumer -p 8081:8080 \
               -e SPRING_DATASOURCE_DRIVER_CLASS_NAME="${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" \
               -e SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
               -e SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
@@ -92,6 +92,10 @@ jobs:
               -e NAVER_CLIENT_SECRET="${{ secrets.NAVER_CLIENT_SECRET }}" \
               -e NAVER_LOCATION_SEARCH_URL="${{ secrets.NAVER_LOCATION_SEARCH_URL }}" \
               ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
+
+            echo "📜 Showing logs of the running containers"
+            sudo docker logs producer
+            sudo docker logs consumer
 
             echo "🚽 Cleaning up unused Docker images"
             sudo docker image prune -f
