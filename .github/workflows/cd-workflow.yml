@@ -28,19 +28,17 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # Gradlew 실행 권한 부여
+      - name: Grant execute permission for Gradlew
+        run: chmod +x ./gradlew
+
       # Producer 빌드
       - name: 🐘 Build Producer with Gradle
-        working-directory: ./producer
-        run: |
-          chmod +x gradlew
-          ./gradlew clean build -x test
+        run: ./gradlew :producer:clean :producer:build -x test --stacktrace
 
       # Consumer 빌드
       - name: 🐘 Build Consumer with Gradle
-        working-directory: ./consumer
-        run: |
-          chmod +x gradlew
-          ./gradlew clean build -x test
+        run: ./gradlew :consumer:clean :consumer:build -x test --stacktrace
 
       # Docker 빌드 및 푸시 - Producer
       - name: 💣 Build and Push Producer Docker Image

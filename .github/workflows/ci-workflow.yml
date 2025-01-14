@@ -31,10 +31,9 @@ jobs:
 
       # Producer 빌드
       - name: 🐘 Build Producer with Gradle
-        working-directory: ./producer
         run: |
-          chmod +x gradlew
-          ./gradlew clean build -x test --stacktrace
+          chmod +x ./gradlew
+          ./gradlew :producer:clean :producer:build -x test --stacktrace
 
   build-consumer:
     name: Build Consumer
@@ -53,7 +52,6 @@ jobs:
 
       # Consumer 빌드
       - name: 🐘 Build Consumer with Gradle
-        working-directory: ./consumer
         run: |
-          chmod +x gradlew
-          ./gradlew clean build -x test --stacktrace
+          chmod +x ./gradlew
+          ./gradlew :consumer:clean :consumer:build -x test --stacktrace
