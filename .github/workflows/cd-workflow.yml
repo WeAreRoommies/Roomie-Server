@@ -51,7 +51,12 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            cd /path/to/docker-compose
+            echo "Uploading docker-compose.yml and other files to EC2"
+            scp -i ${{ secrets.EC2_KEY }} docker-compose.yml ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ec2-user/
+            
+            echo "Navigating to target directory"
+            cd /home/ec2-user
+            
             echo "Writing environment variables to .env"
             echo "SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" > .env
             echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
