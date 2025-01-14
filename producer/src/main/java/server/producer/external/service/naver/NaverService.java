@@ -31,7 +31,7 @@ public class NaverService {
     @Value(value = "${naver.client-secret}")
     private String naverClientSecret;
 
-    @Value(value = "${naver.location-search-url}")
+    @Value(value = "${naver.location-search-url:https://openapi.naver.com/v1/search/local.json}")
     private String naverLocationSearchUrl;
 
     @Transactional(readOnly = true)

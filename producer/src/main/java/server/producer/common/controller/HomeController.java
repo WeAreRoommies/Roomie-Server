@@ -1,4 +1,4 @@
-package org.sopt.roomie.common.controller;
+package server.producer.common.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

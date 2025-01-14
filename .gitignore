@@ -5,8 +5,12 @@ build/
 !**/src/test/**/build/
 
 
-**.yml
-**.yaml
+**.env
+**.pem
+**.cert
+**.p12
+set_env.sh
+
 
 
 ### IntelliJ IDEA ###

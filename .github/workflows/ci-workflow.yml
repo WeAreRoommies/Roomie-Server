@@ -1,0 +1,57 @@
+name: CI for Producer and Consumer
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'dev'
+  pull_request:
+    branches:
+      - 'main'
+      - 'dev'
+
+permissions:
+  contents: read
+
+jobs:
+  build-producer:
+    name: Build Producer
+    runs-on: ubuntu-latest
+
+    steps:
+      # 코드 체크아웃
+      - uses: actions/checkout@v4
+
+      # JDK 설정
+      - name: ☕️ Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Producer 빌드
+      - name: 🐘 Build Producer with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :producer:clean :producer:build -x test --stacktrace
+
+  build-consumer:
+    name: Build Consumer
+    runs-on: ubuntu-latest
+
+    steps:
+      # 코드 체크아웃
+      - uses: actions/checkout@v4
+
+      # JDK 설정
+      - name: ☕️ Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Consumer 빌드
+      - name: 🐘 Build Consumer with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :consumer:clean :consumer:build -x test --stacktrace
