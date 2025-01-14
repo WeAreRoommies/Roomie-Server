@@ -34,14 +34,14 @@ public class UserService {
 
 		for (House house : Houses) {
 			List<Room> rooms = house.getRooms();
-			final String montlyRent = RoomStatistics.calculateMonthlyRent(rooms);
+			final String monthlyRent = RoomStatistics.calculateMonthlyRent(rooms);
 			final String deposit = RoomStatistics.calculateDeposit(rooms);
 			final String occupancyType = RoomStatistics.calculateOccupancyType(rooms);
 			final boolean isPinned = house.getPins().stream()
 					.anyMatch(pin -> pin.getUser().getId().equals(userId));
 			HomeInfoResponseDto.RecentlyViewedHouseDto dto = HomeInfoResponseDto.RecentlyViewedHouseDto.builder()
 					.houseId(house.getId())
-					.monthlyRent(montlyRent)
+					.monthlyRent(monthlyRent)
 					.deposit(deposit)
 					.occupancyTypes(occupancyType)
 					.genderPolicy(house.getGenderPolicyType().toString())
