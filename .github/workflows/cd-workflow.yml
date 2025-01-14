@@ -57,8 +57,14 @@ jobs:
             echo "${{ secrets.EC2_KEY }}" > /tmp/Roomie.pem
             chmod 600 /tmp/Roomie.pem
 
+            # docker-compose.yml을 업로드하기 전에 존재 여부를 확인
+            if [ ! -f "docker-compose.yml" ]; then
+              echo "Error: docker-compose.yml not found in current directory"
+              exit 1
+            fi
+
             # Host Key 검증 비활성화 및 파일 전송
-            scp -o StrictHostKeyChecking=no -i /tmp/Roomie.pem docker-compose.yml ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/deployment/
+            scp -o StrictHostKeyChecking=no -i /tmp/Roomie.pem ./docker-compose.yml ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/deployment/
 
             # EC2에 접속하여 작업 수행
             ssh -o StrictHostKeyChecking=no -i /tmp/Roomie.pem ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
