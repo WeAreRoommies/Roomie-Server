@@ -1,9 +1,11 @@
 package server.producer.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name="pin")
+@Data
 public class Pin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
