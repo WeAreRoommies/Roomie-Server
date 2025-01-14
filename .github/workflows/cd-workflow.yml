@@ -18,44 +18,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 코드 체크아웃
       - uses: actions/checkout@v4
 
-      # JDK 설정
       - name: ☕️ Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # Gradlew 실행 권한 부여
       - name: Grant execute permission for Gradlew
         run: chmod +x ./gradlew
 
-      # Producer 빌드
       - name: 🐘 Build Producer with Gradle
         run: ./gradlew :producer:clean :producer:build -x test --stacktrace
 
-      # Consumer 빌드
       - name: 🐘 Build Consumer with Gradle
         run: ./gradlew :consumer:clean :consumer:build -x test --stacktrace
 
-      # Docker 빌드 및 푸시 - Producer
-      - name: 💣 Build and Push Producer Docker Image
+      - name: 💣 Build and Push Docker Images
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -f ./producer/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest ./producer
-          docker push ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
-
-      # Docker 빌드 및 푸시 - Consumer
-      - name: 💣 Build and Push Consumer Docker Image
-        run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -f ./consumer/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest ./consumer
+          docker push ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
 
-      # EC2로 배포
-      - name: 🚀 Deploy Producer and Consumer to EC2
+      - name: 🚀 Deploy with Docker Compose
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -63,39 +51,15 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            echo "✋ Stopping and removing existing containers"
-            sudo docker stop producer || true
-            sudo docker stop consumer || true
-            sudo docker rm producer || true
-            sudo docker rm consumer || true
+            echo "Writing environment variables to .env"
+            echo "SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" > .env
+            echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
+            echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
+            echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
+            echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> .env
+            echo "NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }}" >> .env
 
-            echo "🚀 Pulling latest Docker images"
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
-
-            echo "🌱 Starting Producer container"
-            sudo docker run -d --name producer -p 8080:8080 \
-              -e SPRING_DATASOURCE_DRIVER_CLASS_NAME="${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" \
-              -e SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
-              -e SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
-              -e NAVER_CLIENT_ID="${{ secrets.NAVER_CLIENT_ID }}" \
-              -e NAVER_CLIENT_SECRET="${{ secrets.NAVER_CLIENT_SECRET }}" \
-              -e NAVER_LOCATION_SEARCH_URL="${{ secrets.NAVER_LOCATION_SEARCH_URL }}" \
-              ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
-
-            echo "🌱 Starting Consumer container"
-            sudo docker run -d --name consumer -p 8081:8080 \
-              -e SPRING_DATASOURCE_DRIVER_CLASS_NAME="${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" \
-              -e SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
-              -e SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
-              -e NAVER_CLIENT_ID="${{ secrets.NAVER_CLIENT_ID }}" \
-              -e NAVER_CLIENT_SECRET="${{ secrets.NAVER_CLIENT_SECRET }}" \
-              -e NAVER_LOCATION_SEARCH_URL="${{ secrets.NAVER_LOCATION_SEARCH_URL }}" \
-              ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
-
-            echo "📜 Showing logs of the running containers"
-            sudo docker logs producer
-            sudo docker logs consumer
-
-            echo "🚽 Cleaning up unused Docker images"
+            sudo docker-compose down
+            sudo docker-compose pull
+            sudo docker-compose up -d
             sudo docker image prune -f
