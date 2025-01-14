@@ -2,7 +2,6 @@ package server.producer.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import server.producer.domain.RoomStatistics;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
 import server.producer.domain.repository.UserRepository;
 import server.producer.entity.House;
@@ -12,7 +11,6 @@ import server.producer.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,22 +26,19 @@ public class UserService {
 		final String location = user.getLocation().split(" ")[user.getLocation().split(" ").length-1];
 		final List<HomeInfoResponseDto.RecentlyViewedHouseDto> recentlyViewedHouseDtos = new ArrayList<>();
 
-		List<House> Houses = user.getRecentlyViewedHouses().stream()
+		List<House> houses = user.getRecentlyViewedHouses().stream()
 				.map(RecentlyViewedHouse::getHouse)
 				.toList();
 
-		for (House house : Houses) {
+		for (House house : houses) {
 			List<Room> rooms = house.getRooms();
-			final String montlyRent = RoomStatistics.calculateMonthlyRent(rooms);
-			final String deposit = RoomStatistics.calculateDeposit(rooms);
-			final String occupancyType = RoomStatistics.calculateOccupancyType(rooms);
 			final boolean isPinned = house.getPins().stream()
 					.anyMatch(pin -> pin.getUser().getId().equals(userId));
 			HomeInfoResponseDto.RecentlyViewedHouseDto dto = HomeInfoResponseDto.RecentlyViewedHouseDto.builder()
 					.houseId(house.getId())
-					.monthlyRent(montlyRent)
-					.deposit(deposit)
-					.occupancyTypes(occupancyType)
+					.monthlyRent(house.calculateMonthlyRent())
+					.deposit(house.calculateDeposit())
+					.occupancyTypes(house.calculateOccupancyType())
 					.genderPolicy(house.getGenderPolicyType().toString())
 					.locationDescription(house.getLocationDescription())
 					.isPinned(isPinned)
