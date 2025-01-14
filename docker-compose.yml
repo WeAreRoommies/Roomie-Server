@@ -15,6 +15,12 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.h2.Driver}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
+      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
+      - NAVER_LOCATION_SEARCH_URL=${NAVER_LOCATION_SEARCH_URL:https://openapi.naver.com/v1/search/local.json}
     depends_on:
       - redis
 
@@ -23,9 +29,15 @@ services:
       context: ./consumer
     container_name: consumer
     ports:
-      - "8081:8081"
+      - "8081:8080"
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.h2.Driver}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
+      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
+      - NAVER_LOCATION_SEARCH_URL=${NAVER_LOCATION_SEARCH_URL:https://openapi.naver.com/v1/search/local.json}
     depends_on:
       - redis
