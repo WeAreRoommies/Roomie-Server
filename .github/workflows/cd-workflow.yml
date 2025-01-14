@@ -59,10 +59,6 @@ jobs:
             echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
             echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> .env
             echo "NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }}" >> .env
-            
-            echo "Copying .env file to build context"
-            cp .env ./producer/
-            cp .env ./consumer/
 
             sudo docker-compose down
             sudo docker-compose pull
