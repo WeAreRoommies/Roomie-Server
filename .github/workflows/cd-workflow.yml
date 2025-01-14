@@ -43,7 +43,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
 
-      - name: 🚀 Deploy with Docker Compose
+      - name: 🚀 Deploy without Docker Compose
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -51,33 +51,14 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            echo "Uploading docker-compose.yml and other files to EC2"
+            echo "Uploading environment variables to EC2"
 
             # .pem 키를 파일로 저장
             echo "${{ secrets.EC2_KEY }}" > /tmp/Roomie.pem
             chmod 600 /tmp/Roomie.pem
 
-            # docker-compose.yml을 업로드하기 전에 존재 여부를 확인
-            if [ ! -f "docker-compose.yml" ]; then
-              echo "Error: docker-compose.yml not found in current directory"
-              exit 1
-            fi
-
-            # Host Key 검증 비활성화 및 파일 전송
-            scp -o StrictHostKeyChecking=no -i /tmp/Roomie.pem ./docker-compose.yml ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/deployment/
-
             # EC2에 접속하여 작업 수행
             ssh -o StrictHostKeyChecking=no -i /tmp/Roomie.pem ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
-              # 디렉토리 준비
-              mkdir -p /home/ubuntu/deployment
-              cd /home/ubuntu/deployment
-
-              # docker-compose.yml 확인
-              if [ ! -f "docker-compose.yml" ]; then
-                echo "Error: docker-compose.yml not found in /home/ubuntu/deployment"
-                exit 1
-              fi
-
               echo "Writing environment variables to .env"
               echo "SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" > .env
               echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
@@ -86,9 +67,25 @@ jobs:
               echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> .env
               echo "NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }}" >> .env
 
-              echo "Bringing up Docker Compose services"
-              sudo docker compose down || true
-              sudo docker compose pull
-              sudo docker compose up -d
+              echo "Stopping and removing existing containers"
+              sudo docker stop producer || true
+              sudo docker rm producer || true
+              sudo docker stop consumer || true
+              sudo docker rm consumer || true
+
+              echo "Running Redis container"
+              sudo docker run -d --name redis -p 6379:6379 redis:alpine
+
+              echo "Running Producer container"
+              sudo docker run -d --name producer -p 8080:8080 \
+                --env-file .env \
+                ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
+
+              echo "Running Consumer container"
+              sudo docker run -d --name consumer -p 8081:8080 \
+                --env-file .env \
+                ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
+
+              echo "Cleaning up unused Docker images"
               sudo docker image prune -f
             EOF
