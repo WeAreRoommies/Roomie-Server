@@ -1,12 +1,14 @@
 package server.producer.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name="user")
+@Data
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,10 +20,9 @@ public class User {
     @Column(nullable = false)
     private String location;
 
-    @OneToMany(mappedBy = "pin", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Pin> pins = new ArrayList<>();
 
-    @OneToMany(mappedBy = "recently_viewed_houses", cascade = CascadeType.ALL)
-    private List<RecentlyViewedHouses> recentlyViewedHouses = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<RecentlyViewedHouse> recentlyViewedHouses = new ArrayList<>();
 }
-

@@ -1,6 +1,7 @@
 package server.producer.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name="room")
+@Data
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,10 +19,10 @@ public class Room {
     private String name;
 
     @Column(nullable = false)
-    private Long monthlyRent;
+    private int monthlyRent;
 
     @Column(nullable = false)
-    private Long deposit;
+    private int deposit;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
