@@ -12,4 +12,4 @@ spring:
 naver:
   client-id: ${NAVER_CLIENT_ID}
   client-secret: ${NAVER_CLIENT_SECRET}
-  location-search-url: ${NAVER_LOCATIO내ㅕN_SEARCH_URL}
+  location-search-url: ${NAVER_LOCATION_SEARCH_URL}
