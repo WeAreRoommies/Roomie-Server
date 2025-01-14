@@ -1,12 +1,14 @@
 package server.producer.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name="house")
+@Data
 public class House {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,7 +58,7 @@ public class House {
     private String facilityImgDescription;
 
     @Column(nullable = false)
-    private String contractTerm;
+    private int contractTerm;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

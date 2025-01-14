@@ -17,10 +17,10 @@ public class Room {
     private String name;
 
     @Column(nullable = false)
-    private Long monthlyRent;
+    private int monthlyRent;
 
     @Column(nullable = false)
-    private Long deposit;
+    private int deposit;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
