@@ -44,6 +44,8 @@ public class HouseController {
             return ApiResponseDto.success(SuccessCode.PIN_TOGGLE_SUCCESS, isPinned);
         } catch (Exception e) {
             return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping("/pins")
     public ApiResponseDto<PinnedListResponseDto> getPinnedHouses() {
