@@ -47,7 +47,6 @@ public class MapService {
 			List<FilterResponseDto.HouseMapDto> houseMapDtos = new ArrayList<>();
 			List<House> houses = filterRepository.findFilteredHouses(requestDto);
 			for (House house : houses) {
-				List<Room> rooms = house.getRooms();
 				final boolean isPinned = house.getPins().stream()
 						.anyMatch(pin -> pin.getUser().getId().equals(userId));
 				FilterResponseDto.HouseMapDto dto = FilterResponseDto.HouseMapDto.builder()
@@ -67,7 +66,7 @@ public class MapService {
 						.build();
 				houseMapDtos.add(dto);
 			}
-			return new FilterResponseDto(houseMapDtos);
+			return FilterResponseDto.builder().houses(houseMapDtos).build();
 		} else {
 			throw new IllegalArgumentException();
 		}
