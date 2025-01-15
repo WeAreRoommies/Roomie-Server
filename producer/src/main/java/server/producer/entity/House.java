@@ -63,11 +63,11 @@ public class House {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private SafetyLivingFacilityType safetyLivingFacilityType;
+    private String safetyLivingFacilityType;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private KitchenFacilityType kitchenFacilityType;
+    private String kitchenFacilityType;
 
     @OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
     private List<Room> rooms = new ArrayList<>();
