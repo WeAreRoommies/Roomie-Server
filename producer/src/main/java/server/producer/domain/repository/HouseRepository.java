@@ -20,4 +20,8 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "WHERE h.id = :houseId")
     Optional<House> findHouseDetailsById(@Param("houseId") Long houseId);
 
+    @Query("SELECT h FROM House h " +
+            "JOIN h.pins p " +
+            "WHERE p.user.id = :userId")
+    List<House> findPinnedHouseByUserId(@Param("userId") Long userId);
 }

@@ -11,6 +11,7 @@ import server.producer.common.dto.enums.ErrorCode;
 import server.producer.common.dto.enums.SuccessCode;
 import server.producer.domain.dto.response.HouseDetailsResponseDto;
 import server.producer.domain.dto.response.MoodHouseResponseDto;
+import server.producer.domain.dto.response.PinnedListResponseDto;
 import server.producer.domain.service.HouseService;
 
 @RestController
@@ -39,4 +40,13 @@ public class HouseController {
 			return ApiResponseDto.fail(ErrorCode.NOT_FOUND_HOUSE);
 		}
 	}
+    @GetMapping("/pins")
+    public ApiResponseDto<PinnedListResponseDto> getPinnedList() {
+        try {
+            PinnedListResponseDto pinnedListResponseDto = houseService.getPinnedHouses(userId);
+            return ApiResponseDto.success(SuccessCode.HOUSE_GET_SUCCESS, pinnedListResponseDto);
+        } catch (Exception e) {
+            return ApiResponseDto.fail(ErrorCode.NOT_FOUND_HOUSE);
+        }
+    }
 }
