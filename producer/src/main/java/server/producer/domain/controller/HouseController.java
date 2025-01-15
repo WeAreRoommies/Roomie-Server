@@ -41,7 +41,7 @@ public class HouseController {
 		}
 	}
     @GetMapping("/pins")
-    public ApiResponseDto<PinnedListResponseDto> getPinnedList() {
+    public ApiResponseDto<PinnedListResponseDto> getPinnedHouses() {
         try {
             PinnedListResponseDto pinnedListResponseDto = houseService.getPinnedHouses(userId);
             return ApiResponseDto.success(SuccessCode.HOUSE_GET_SUCCESS, pinnedListResponseDto);
