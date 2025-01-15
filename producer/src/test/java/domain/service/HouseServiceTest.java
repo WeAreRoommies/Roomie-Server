@@ -101,8 +101,8 @@ public class HouseServiceTest {
 		house.setFacilityImgUrl("https://example.com/images/facility" + id + ".jpg");
 		house.setFacilityImgDescription("Facility image of house " + id);
 		house.setContractTerm(contractTerm);
-		house.setSafetyLivingFacilityType("소화기");
-		house.setKitchenFacilityType("냉장고");
+		house.setSafetyLivingFacility("소화기");
+		house.setKitchenFacility("냉장고");
 
 		// Room 생성 및 추가
 		List<Room> rooms = new ArrayList<>();
