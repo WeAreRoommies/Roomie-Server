@@ -2,9 +2,6 @@ package server.producer.domain.service;
 
 import org.springframework.stereotype.Service;
 import server.producer.domain.RoomStatistics;
-import server.producer.domain.dto.HouseInfoDto;
-import server.producer.domain.dto.RoomDto;
-import server.producer.domain.dto.RoommateDto;
 import server.producer.domain.dto.response.HouseDetailsResponseDto;
 import server.producer.domain.repository.HouseRepository;
 import server.producer.entity.House;
@@ -39,7 +36,7 @@ public class HouseService {
 
         final boolean isPinned = selectedHouse.getPins().stream()
                 .anyMatch(pin -> pin.getUser().getId().equals(userId));
-        HouseInfoDto houseInfoDto = HouseInfoDto.builder()
+        HouseDetailsResponseDto.HouseInfoDto houseInfoDto = HouseDetailsResponseDto.HouseInfoDto.builder()
                 .houseId(houseId)
                 .name(selectedHouse.getName())
                 .mainImgUrl(selectedHouse.getMainImgUrl())
@@ -59,9 +56,9 @@ public class HouseService {
                 .build();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        List<RoomDto> roomDtos = rooms.stream()
+        List<HouseDetailsResponseDto.RoomDto> roomDtos = rooms.stream()
                 .sorted(Comparator.comparing(Room::getId))
-                .map(room -> RoomDto.builder()
+                .map(room -> HouseDetailsResponseDto.RoomDto.builder()
                         .roomId(room.getId())
                         .name(room.getName())
                         .status(room.getStatus() != room.getOccupancyType())
@@ -75,9 +72,9 @@ public class HouseService {
                         .build())
                 .collect(Collectors.toList());
 
-        List<RoommateDto> roommateDtos = rooms.stream()
+        List<HouseDetailsResponseDto.RoommateDto> roommateDtos = rooms.stream()
                 .flatMap(room -> room.getRoommates().stream()
-                        .map(roommate -> RoommateDto.builder()
+                        .map(roommate -> HouseDetailsResponseDto.RoommateDto.builder()
                                 .name(room.getName())
                                 .age(roommate.getAge())
                                 .job(roommate.getJob())
