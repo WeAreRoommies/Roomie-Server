@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,7 @@ public class House {
     @Column(nullable = false)
     private String moodTag;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String subMoodTag;
 
     @Column(nullable = false)
@@ -62,10 +63,10 @@ public class House {
     private int contractTerm;
 
     @Column(nullable = false)
-    private String safetyLivingFacilityType;
+    private String safetyLivingFacility;
 
     @Column(nullable = false)
-    private String kitchenFacilityType;
+    private String kitchenFacility;
 
     @OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
     private List<Room> rooms = new ArrayList<>();
@@ -111,5 +112,22 @@ public class House {
         return occupancyTypes.stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(",")) + "인실";
+    }
+
+    public String calculateOccupancyStatus() {
+        int max = 0;
+        int current = 0;
+        for (Room room : this.rooms) {
+            current += room.getStatus();
+            max += room.getOccupancyType();
+        }
+        return current + "/" + max;
+    }
+
+    public List<String> mergeTags() {
+        String moodTag = this.getMoodTag();
+        String subTag = this.getSubMoodTag();
+        List<String> tags = Arrays.stream((moodTag+" "+ subTag).split(" ")).toList();
+        return tags;
     }
 }

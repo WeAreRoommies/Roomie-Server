@@ -22,7 +22,7 @@ public class UserController {
 	public ApiResponseDto<HomeInfoResponseDto> getUserHomeInfo() {
 		try{
 			HomeInfoResponseDto userHomeInfo = userService.getUserInfoAndRecentlyViewedHouse(userId);
-			return ApiResponseDto.success(SuccessCode.HOUSE_GET_SUCCESS, userHomeInfo);
+			return ApiResponseDto.success(SuccessCode.ROOM_DETAIL_GET_SUCCESS, userHomeInfo);
 		} catch (Exception e){
 			return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
 		}

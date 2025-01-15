@@ -25,8 +25,7 @@ public class Room {
     private int deposit;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private RoomFacilityType facilityType;
+    private String facility;
 
     @Column(nullable = true)
     private Date contractPeriod;
