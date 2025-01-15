@@ -2,6 +2,7 @@ package server.producer.domain.service;
 
 import org.springframework.stereotype.Service;
 import server.producer.domain.dto.response.HouseDetailsResponseDto;
+import server.producer.domain.dto.response.PinnedListResponseDto;
 import server.producer.entity.House;
 import server.producer.entity.Room;
 
@@ -21,6 +22,28 @@ import java.util.ArrayList;
 public class HouseService {
 	private final HouseRepository houseRepository;
 	private final UserRepository userRepository;
+
+	public PinnedListResponseDto getPinnedHouses(Long userId) {
+		List<House> pinnedHouses = houseRepository.findPinnedHouseByUserId(userId);
+		List<PinnedListResponseDto.PinnedHouseDto> pinnedHouseDtos = pinnedHouses.stream()
+				.map(house -> PinnedListResponseDto.PinnedHouseDto.builder()
+						.houseId(house.getId())
+						.monthlyRent(house.calculateMonthlyRent())
+						.deposit(house.calculateDeposit())
+						.occupancyTypes(house.calculateOccupancyType())
+						.location(house.getLocation())
+						.genderPolicy(house.getGenderPolicyType().toString())
+						.locationDescription(house.getLocationDescription())
+						.isPinned(true)
+						.contractTerm(house.getContractTerm())
+						.mainImgUrl(house.getMainImgUrl())
+						.moodTag(house.getMoodTag())
+						.build())
+				.collect(Collectors.toList());
+		return PinnedListResponseDto.builder()
+				.pinnedHouses(pinnedHouseDtos)
+				.build();
+	}
 
 	public MoodHouseResponseDto getHousesByMoodAndLocation(String moodTag, Long userId){
 		String location = userRepository.findLocationById(userId).orElseThrow(RuntimeException::new);
