@@ -119,11 +119,9 @@ public class HouseService {
 			pinRepository.deleteByUserIdAndHouseId(userId, houseId);
 			return false;
 		} else {
-			User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException());
-			House house = houseRepository.findById(houseId).orElseThrow(()-> new RuntimeException());
 			Pin pin = new Pin();
-			pin.setUser(user);
-			pin.setHouse(house);
+			pin.setUser(userRepository.getReferenceById(userId));
+			pin.setHouse(houseRepository.getReferenceById(houseId));
 			pinRepository.save(pin);
 			return true;
 		}
