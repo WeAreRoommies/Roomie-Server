@@ -1,9 +1,7 @@
 package server.producer.domain.service;
 
 import org.springframework.stereotype.Service;
-import server.producer.domain.RoomStatistics;
 import server.producer.domain.dto.response.HouseDetailsResponseDto;
-import server.producer.domain.repository.HouseRepository;
 import server.producer.entity.House;
 import server.producer.entity.Room;
 
@@ -12,24 +10,48 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import server.producer.domain.dto.response.MoodHouseResponseDto;
+import server.producer.domain.repository.HouseRepository;
+import server.producer.domain.repository.UserRepository;
+import java.util.ArrayList;
 
 @Service
+@RequiredArgsConstructor
 public class HouseService {
-    private final HouseRepository houseRepository;
+	private final HouseRepository houseRepository;
+	private final UserRepository userRepository;
 
-    public HouseService(HouseRepository houseRepository) {
-        this.houseRepository = houseRepository;
-    }
+	public MoodHouseResponseDto getHousesByMoodAndLocation(String moodTag, Long userId){
+		String location = userRepository.findLocationById(userId).orElseThrow(RuntimeException::new);
+		List<House> houses = houseRepository.findByLocationAndMoodTag(location, moodTag);
+		List<MoodHouseResponseDto.MoodHouseDto> moodHouseDtos = new ArrayList<>();
+		for (House house : houses) {
+			final boolean isPinned = house.getPins().stream()
+					.anyMatch(pin -> pin.getUser().getId().equals(userId));
+			MoodHouseResponseDto.MoodHouseDto dto = MoodHouseResponseDto.MoodHouseDto.builder()
+					.houseId(house.getId())
+					.monthlyRent(house.calculateMonthlyRent())
+					.deposit(house.calculateDeposit())
+					.occupancyTypes(house.calculateOccupancyType())
+					.location(location)
+					.genderPolicy(house.getGenderPolicyType().toString())
+					.locationDescription(house.getLocationDescription())
+					.isPinned(isPinned)
+					.contractTerm(house.getContractTerm())
+					.mainImgUrl(house.getMainImgUrl())
+					.build();
+			moodHouseDtos.add(dto);
+		}
+		return MoodHouseResponseDto.builder()
+				.moodTag(moodTag)
+				.houses(moodHouseDtos).build();
+	}
 
     public HouseDetailsResponseDto getHouseDetails(final Long houseId, final Long userId) {
-        House selectedHouse = houseRepository.findById(houseId)
+        House selectedHouse = houseRepository.findHouseDetailsById(houseId)
                 .orElseThrow(()->new IllegalArgumentException("해당 House를 찾을 수 없습니다."));
         List<Room> rooms = selectedHouse.getRooms();
-        final String monthlyRent = RoomStatistics.calculateMonthlyRent(rooms);
-        final String deposit = RoomStatistics.calculateDeposit(rooms);
-        final String occupancyType = RoomStatistics.calculateOccupancyType(rooms);
-        final String occupancyStatus = RoomStatistics.calculateOccupancyStatus(rooms);
-        final List<String> moodTags = RoomStatistics.mergeTags(selectedHouse);
         final List<String> groundRules = Arrays.stream(selectedHouse.getGroundRule().split("#")).toList();
         final List<String> safetyLivingFacilities = Arrays.stream(selectedHouse.getSafetyLivingFacility().split("#")).toList();
         final List<String> kitchenFacilities = Arrays.stream(selectedHouse.getKitchenFacility().split("#")).toList();
@@ -40,14 +62,14 @@ public class HouseService {
                 .houseId(houseId)
                 .name(selectedHouse.getName())
                 .mainImgUrl(selectedHouse.getMainImgUrl())
-                .monthlyRent(monthlyRent)
-                .deposit(deposit)
+                .monthlyRent(selectedHouse.calculateMonthlyRent())
+                .deposit(selectedHouse.calculateDeposit())
                 .location(selectedHouse.getLocation())
-                .occupancyTypes(occupancyType)
-                .occupancyStatus(occupancyStatus)
+                .occupancyTypes(selectedHouse.calculateOccupancyType())
+                .occupancyStatus(selectedHouse.calculateOccupancyStatus())
                 .genderPolicy(selectedHouse.getGenderPolicyType().toString())
                 .contractTerm(selectedHouse.getContractTerm())
-                .moodTags(moodTags)
+                .moodTags(selectedHouse.mergeTags())
                 .roomMood(selectedHouse.getRoomMood())
                 .groundRule(groundRules)
                 .isPinned(isPinned)
