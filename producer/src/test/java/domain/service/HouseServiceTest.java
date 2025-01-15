@@ -46,8 +46,8 @@ public class HouseServiceTest {
 		when(userRepository.findLocationById(anyLong())).thenReturn(Optional.of(location));
 
 		// HouseRepository 동작 설정
-		House house1 = createHouse(1L, location, "자이아파트", true, 6, "https://example.com/images/house1.jpg");
-		House house2 = createHouse(2L, location, "자이아파트", true, 6, "https://example.com/images/house2.jpg");
+		House house1 = createHouse(1L, moodTag, location, "자이아파트", true, 6, "https://example.com/images/house1.jpg");
+		House house2 = createHouse(2L, moodTag, location, "자이아파트", true, 6, "https://example.com/images/house2.jpg");
 
 		when(houseRepository.findByLocationAndMoodTag(eq(location), eq(moodTag)))
 				.thenReturn(List.of(house1, house2));
@@ -62,6 +62,7 @@ public class HouseServiceTest {
 		MoodHouseResponseDto.MoodHouseDto houseDto1 = result.houses().get(0);
 		assertEquals(1L, houseDto1.houseId());
 		assertEquals("30~40", houseDto1.monthlyRent());
+		assertEquals(location, houseDto1.location());
 		assertEquals("100~300", houseDto1.deposit());
 		assertEquals("1,2,3인실", houseDto1.occupancyTypes());
 		assertEquals(location, houseDto1.location());
@@ -70,10 +71,17 @@ public class HouseServiceTest {
 		assertEquals(true, houseDto1.isPinned());
 		assertEquals(6, houseDto1.contractTerm());
 		assertEquals("https://example.com/images/house1.jpg", houseDto1.mainImgUrl());
+
+		MoodHouseResponseDto.MoodHouseDto houseDto2 = result.houses().get(1);
+		assertEquals(2L, houseDto2.houseId());
+		assertEquals("30~40", houseDto2.monthlyRent());
+		assertEquals("100~300", houseDto2.deposit());
+		assertEquals(moodTag, result.moodTag());
+
 	}
 
 
-	private House createHouse(Long id,
+	private House createHouse(Long id, String moodTag,
 							  String location, String locationDescription,
 							  boolean isPinned, int contractTerm, String mainImgUrl) {
 		House house = new House();
@@ -85,7 +93,7 @@ public class HouseServiceTest {
 		house.setGroundRule("No smoking");
 		house.setLocation(location);
 		house.setLocationDescription(locationDescription);
-		house.setMoodTag("#" + (id % 2 == 0 ? "차분한" : "활기찬"));
+		house.setMoodTag(moodTag);
 		house.setSubMoodTag("#추가태그");
 		house.setGenderPolicyType(GenderPolicyType.남녀공용); // Enum 변환
 		house.setMainImgUrl(mainImgUrl);
