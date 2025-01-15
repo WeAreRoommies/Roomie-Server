@@ -62,11 +62,9 @@ public class House {
     private int contractTerm;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private String safetyLivingFacilityType;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private String kitchenFacilityType;
 
     @OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
