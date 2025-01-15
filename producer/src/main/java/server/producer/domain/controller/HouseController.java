@@ -1,11 +1,7 @@
 package server.producer.domain.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import server.producer.common.dto.ApiResponseDto;
 import server.producer.common.dto.enums.ErrorCode;
 import server.producer.common.dto.enums.SuccessCode;
@@ -40,6 +36,17 @@ public class HouseController {
 			return ApiResponseDto.fail(ErrorCode.NOT_FOUND_HOUSE);
 		}
 	}
+
+    @PatchMapping("/{houseId}/pins")
+    public ApiResponseDto<Boolean> pinHouse(@PathVariable Long houseId) {
+        try {
+            boolean isPinned = houseService.togglePin(userId, houseId);
+            return ApiResponseDto.success(SuccessCode.PIN_TOGGLE_SUCCESS, isPinned);
+        } catch (Exception e) {
+            return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/pins")
     public ApiResponseDto<PinnedListResponseDto> getPinnedHouses() {
         try {
