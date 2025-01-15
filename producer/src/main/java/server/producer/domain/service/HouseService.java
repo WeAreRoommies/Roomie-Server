@@ -1,7 +1,9 @@
 package server.producer.domain.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import server.producer.domain.dto.response.HouseDetailsResponseDto;
+import server.producer.domain.dto.response.ImageDetailsResponseDto;
 import server.producer.domain.repository.PinRepository;
 import server.producer.domain.dto.response.PinnedListResponseDto;
 import server.producer.entity.House;
@@ -148,5 +150,19 @@ public class HouseService {
 			pinRepository.save(pin);
 			return true;
 		}
+	}
+
+	public ImageDetailsResponseDto getHouseImages(Long houseId) {
+		House house = houseRepository.findById(houseId)
+				.orElseThrow(()-> new EntityNotFoundException("House not found."));
+		return ImageDetailsResponseDto.builder()
+				.images(ImageDetailsResponseDto.Images.builder()
+						.mainImgUrls(house.getMainImgUrl())
+						.mainImgDescription(house.getMainImgDescription())
+						.facilityImgUrls(Arrays.asList(house.getFacilityImgUrl().split(" ")))
+						.facilityImgDescription(house.getFacilityImgDescription())
+						.floorImgUrls(house.getLocationDescription())
+						.build())
+				.build();
 	}
 }

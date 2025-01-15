@@ -24,4 +24,6 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "JOIN h.pins p " +
             "WHERE p.user.id = :userId")
     List<House> findPinnedHouseByUserId(@Param("userId") Long userId);
+
+    Optional<House> findById(Long id);
 }
