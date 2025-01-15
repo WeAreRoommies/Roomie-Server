@@ -1,4 +1,9 @@
 package server.consumer.repository;
 
-public class TourRequestRepository {
+import entity.HousingRequest;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface TourRequestRepository extends JpaRepository<HousingRequest, Long> {
 }

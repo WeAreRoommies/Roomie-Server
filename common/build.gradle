@@ -1,5 +1,15 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'org.springframework.boot' version '3.2.1'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+jar {
+    enabled = true // JAR 파일 생성
+}
+
+bootJar {
+    enabled = false // bootJar 작업 비활성화
 }
 
 repositories {
@@ -7,5 +17,15 @@ repositories {
 }
 
 dependencies {
-//    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis' // Redis 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // Lettuce Client (Redis 연결 라이브러리 - 기본적으로 포함됨)
+    implementation files('libs/lettuce-core-6.2.3.jar')
+    // Lombok (선택 사항: DTO, Config 등에서 활용 가능)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Spring Boot Test 라이브러리 (테스트용 - 선택 사항)
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }

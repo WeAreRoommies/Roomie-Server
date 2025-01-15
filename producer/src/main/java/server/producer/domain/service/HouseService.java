@@ -4,9 +4,9 @@ import org.springframework.stereotype.Service;
 import server.producer.domain.dto.response.HouseDetailsResponseDto;
 import server.producer.domain.repository.PinRepository;
 import server.producer.domain.dto.response.PinnedListResponseDto;
-import server.producer.entity.House;
-import server.producer.entity.Pin;
-import server.producer.entity.Room;
+import entity.House;
+import entity.Pin;
+import entity.Room;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import server.producer.domain.dto.response.MoodHouseResponseDto;
 import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.UserRepository;
-import server.producer.entity.User;
 
 @Service
 @RequiredArgsConstructor

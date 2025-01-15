@@ -12,10 +12,23 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation project(':common')
+
+    // Lombok (선택 사항: DTO, Config 등에서 활용 가능)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // JPA & DataBase
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'com.h2database:h2'
+    implementation project(':common') // 공통 모듈 추가
 }
 
 
 application {
     mainClassName = 'server.consumer.ConsumerApplication'
+}
+
+tasks.jar {
+    dependsOn compileJava // classes가 아닌 compileJava에만 의존
 }

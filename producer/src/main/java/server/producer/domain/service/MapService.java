@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 import server.producer.domain.dto.request.FilterRequestDto;
 import server.producer.domain.dto.response.FilterResponseDto;
 import server.producer.domain.repository.FilterRepository;
-import server.producer.entity.House;
-import server.producer.entity.Room;
+import entity.House;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class TourQueueService {
+public class QueueService {
 	private final StringRedisTemplate redisTemplate;
 	private final ObjectMapper objectMapper;
 

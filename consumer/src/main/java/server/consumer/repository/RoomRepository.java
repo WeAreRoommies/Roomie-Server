@@ -1,2 +1,9 @@
-package server.consumer.repository;public interface RoomRepository {
+package server.consumer.repository;
+
+import entity.Room;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface RoomRepository extends JpaRepository<Room, Long> {
 }

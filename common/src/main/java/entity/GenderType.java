@@ -1,4 +1,4 @@
-package server.producer.entity;
+package entity;
 
 public enum GenderType {
     여성,

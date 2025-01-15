@@ -1,6 +1,5 @@
-package server.producer.entity;
+package entity;
 
-import entity.House;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;

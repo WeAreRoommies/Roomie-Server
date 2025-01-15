@@ -1,4 +1,4 @@
-package server.producer.domain.dto.request;
+package dto;
 import java.time.LocalDate;
 import lombok.Builder;
 
