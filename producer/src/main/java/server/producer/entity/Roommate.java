@@ -1,9 +1,11 @@
 package server.producer.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name="roommate")
+@Data
 public class Roommate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

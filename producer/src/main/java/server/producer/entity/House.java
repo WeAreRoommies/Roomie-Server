@@ -38,7 +38,7 @@ public class House {
     @Column(nullable = false)
     private String moodTag;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String subMoodTag;
 
     @Column(nullable = false)
@@ -61,12 +61,10 @@ public class House {
     private int contractTerm;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private SafetyLivingFacilityType safetyLivingFacilityType;
+    private String safetyLivingFacility;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private KitchenFacilityType kitchenFacilityType;
+    private String kitchenFacility;
 
     @OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
     private List<Room> rooms = new ArrayList<>();
@@ -75,5 +73,5 @@ public class House {
     private List<Pin> pins = new ArrayList<>();
 
     @OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
-    private List<RecentlyViewedHouses> recentlyViewedHouses = new ArrayList<>();
+    private List<RecentlyViewedHouse> recentlyViewedHouses = new ArrayList<>();
 }

@@ -21,7 +21,7 @@ public class HouseInfoDto {
     private String occupancyTypes;
     private String occupancyStatus;
     private String genderPolicy;
-    private String contractTerm;
+    private int contractTerm;
     private List<String> moodTags;
     private String roomMood;
     private List<String> groundRule;
