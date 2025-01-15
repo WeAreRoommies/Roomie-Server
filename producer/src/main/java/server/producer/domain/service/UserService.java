@@ -3,6 +3,7 @@ package server.producer.domain.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
+import server.producer.domain.dto.response.MyPageResponseDto;
 import server.producer.domain.repository.UserRepository;
 import server.producer.entity.House;
 import server.producer.entity.RecentlyViewedHouse;
@@ -52,6 +53,15 @@ public class UserService {
 				.name(name)
 				.location(location)
 				.recentlyViewedHouses(recentlyViewedHouseDtos)
+				.build();
+	}
+
+	public MyPageResponseDto getMyPage(Long userId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+		final String name = user.getName();
+		return MyPageResponseDto.builder()
+				.name(name)
 				.build();
 	}
 }
