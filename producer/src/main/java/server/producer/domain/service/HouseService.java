@@ -2,25 +2,26 @@ package server.producer.domain.service;
 
 import org.springframework.stereotype.Service;
 import server.producer.domain.dto.response.HouseDetailsResponseDto;
+import server.producer.domain.repository.PinRepository;
 import server.producer.entity.House;
+import server.producer.entity.Pin;
 import server.producer.entity.Room;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import server.producer.domain.dto.response.MoodHouseResponseDto;
 import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.UserRepository;
-import java.util.ArrayList;
+import server.producer.entity.User;
 
 @Service
 @RequiredArgsConstructor
 public class HouseService {
 	private final HouseRepository houseRepository;
 	private final UserRepository userRepository;
+	private final PinRepository pinRepository;
 
 	public MoodHouseResponseDto getHousesByMoodAndLocation(String moodTag, Long userId){
 		String location = userRepository.findLocationById(userId).orElseThrow(RuntimeException::new);
@@ -111,4 +112,20 @@ public class HouseService {
                 .roommates(roommateDtos)
                 .build();
     }
+
+	public boolean togglePin(Long userId, Long houseId) {
+		Optional<Pin> existingPin = pinRepository.findByUserIdAndHouseId(userId, houseId);
+		if (existingPin.isPresent()) {
+			pinRepository.deleteByUserIdAndHouseId(userId, houseId);
+			return false;
+		} else {
+			User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException());
+			House house = houseRepository.findById(houseId).orElseThrow(()-> new RuntimeException());
+			Pin pin = new Pin();
+			pin.setUser(user);
+			pin.setHouse(house);
+			pinRepository.save(pin);
+			return true;
+		}
+	}
 }
