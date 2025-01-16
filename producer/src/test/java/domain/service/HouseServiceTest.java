@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import server.producer.domain.dto.response.MoodHouseResponseDto;
+import server.producer.domain.dto.response.PinnedListResponseDto;
 import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.UserRepository;
 import server.producer.domain.service.HouseService;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -33,6 +35,53 @@ public class HouseServiceTest {
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
+	}
+	@Test
+	void testGetPinnedHouses() {
+		// Given: Mock 데이터 준비
+		Long userId = 1L;
+
+		// House Mock 데이터 생성
+		House house1 = createHouse(1L, "#활기찬", "서울 강남구", "자이 아파트", true, 12, "https://example.com/images/house1.jpg");
+		House house2 = createHouse(2L, "#차분한", "서울 송파구", "오피스텔", true, 6, "https://example.com/images/house2.jpg");
+
+		// houseRepository 동작 설정
+		when(houseRepository.findPinnedHouseByUserId(userId)).thenReturn(List.of(house1, house2));
+
+		// When: 서비스 호출
+		PinnedListResponseDto response = houseService.getPinnedHouses(userId);
+
+		// Then: 검증
+		assertNotNull(response); // 응답이 null이 아님
+		assertEquals(2, response.pinnedHouses().size()); // 반환된 집의 개수 검증
+
+		// House 1 검증
+		PinnedListResponseDto.PinnedHouseDto houseDto1 = response.pinnedHouses().get(0);
+		assertEquals(1L, houseDto1.houseId());
+		assertEquals("서울 강남구", houseDto1.location());
+		assertEquals("자이 아파트", houseDto1.locationDescription());
+		assertEquals("30~40", houseDto1.monthlyRent()); // Mock된 값에 따라 예상 값
+		assertEquals("100~300", houseDto1.deposit());
+		assertEquals("1,2,3인실", houseDto1.occupancyTypes());
+		assertEquals("남녀공용", houseDto1.genderPolicy());
+		assertEquals(true, houseDto1.isPinned());
+		assertEquals(12, houseDto1.contractTerm());
+		assertEquals("https://example.com/images/house1.jpg", houseDto1.mainImgUrl());
+		assertEquals("#활기찬", houseDto1.moodTag());
+
+		// House 2 검증
+		PinnedListResponseDto.PinnedHouseDto houseDto2 = response.pinnedHouses().get(1);
+		assertEquals(2L, houseDto2.houseId());
+		assertEquals("서울 송파구", houseDto2.location());
+		assertEquals("오피스텔", houseDto2.locationDescription());
+		assertEquals("30~40", houseDto2.monthlyRent()); // Mock된 값에 따라 예상 값
+		assertEquals("100~300", houseDto2.deposit());
+		assertEquals("1,2,3인실", houseDto2.occupancyTypes());
+		assertEquals("남녀공용", houseDto2.genderPolicy());
+		assertEquals(true, houseDto2.isPinned());
+		assertEquals(6, houseDto2.contractTerm());
+		assertEquals("https://example.com/images/house2.jpg", houseDto2.mainImgUrl());
+		assertEquals("#차분한", houseDto2.moodTag());
 	}
 
 	@Test
