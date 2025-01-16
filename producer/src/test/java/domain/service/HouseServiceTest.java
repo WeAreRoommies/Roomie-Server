@@ -1,4 +1,5 @@
 package domain.service;
+import entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -8,7 +9,6 @@ import server.producer.domain.dto.response.MoodHouseResponseDto;
 import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.UserRepository;
 import server.producer.domain.service.HouseService;
-import server.producer.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;

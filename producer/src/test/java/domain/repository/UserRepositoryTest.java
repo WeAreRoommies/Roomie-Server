@@ -3,11 +3,12 @@ package domain.repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
 import server.producer.ProducerApplication;
 import server.producer.domain.repository.UserRepository;
-import server.producer.entity.User;
+import entity.User;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @ContextConfiguration(classes = ProducerApplication.class)
+@EntityScan(basePackages = "entity")
 public class UserRepositoryTest {
 
 	@Autowired

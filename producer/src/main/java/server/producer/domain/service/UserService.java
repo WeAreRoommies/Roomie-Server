@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
 import server.producer.domain.dto.response.MyPageResponseDto;
 import server.producer.domain.repository.UserRepository;
-import server.producer.entity.House;
-import server.producer.entity.RecentlyViewedHouse;
-import server.producer.entity.Room;
-import server.producer.entity.User;
+import entity.House;
+import entity.RecentlyViewedHouse;
+import entity.Room;
+import entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
