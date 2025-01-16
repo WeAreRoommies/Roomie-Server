@@ -3,6 +3,7 @@ package entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +17,7 @@ public class Room {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String name="";
 
     @Column(nullable = false)
     private int monthlyRent;
@@ -25,10 +26,10 @@ public class Room {
     private int deposit;
 
     @Column(nullable = false)
-    private String facility;
+    private String facility="";
 
     @Column(nullable = true)
-    private Date contractPeriod;
+    private LocalDate contractPeriod;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -41,13 +42,13 @@ public class Room {
     private int occupancyType;
 
     @Column(nullable = false)
-    private String mainImgUrl;
+    private String mainImgUrl="";
 
     @Column(nullable = false)
     private int prepaidUtilities;
 
     @Column(nullable = false)
-    private String managementFee;
+    private String managementFee="";
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "house_id")

@@ -40,15 +40,12 @@ public class TourQueueProcessor {
 						room
 						);
 				tourRequestRepository.save(housingRequest);
-				/*
-				카카오톡 API 나중에 선택적으로 개발
-				 */
-				System.out.println(housingRequest);
+				System.out.println(housingRequest); // 나중에 로깅 추가하기
 			} catch (JsonProcessingException e) {
 				throw new RuntimeException("Failed to deserialize message", e);
 			}
 		} else {
-			System.out.println("No messages in the queue.");
+			System.out.println("No messages in the queue."); // 나중에 로깅 추가하기
 		}
 	}
 }

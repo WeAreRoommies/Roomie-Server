@@ -1,24 +1,36 @@
-package config;
+package server.producer.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 @Configuration
 public class RedisConfig {
+
 	@Value("${redis.host}")
 	private String redisHost;
 
+	@Value("${redis.port:6379}")
+	private int redisPort;
+
+	@Value("${redis.password}")
+	private String redisPassword;
+
 	@Bean
-	public RedisConnectionFactory redisConnectionFactory() {
-		return new LettuceConnectionFactory(redisHost, 6379); // 호스트와 포트 설정
+	public LettuceConnectionFactory redisConnectionFactory() {
+		// RedisStandaloneConfiguration을 사용하여 비밀번호 설정
+		RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+		config.setHostName(redisHost);
+		config.setPort(redisPort);
+		config.setPassword(redisPassword); // 비밀번호 설정
+		return new LettuceConnectionFactory(config);
 	}
 
 	@Bean
-	public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+	public StringRedisTemplate stringRedisTemplate(LettuceConnectionFactory connectionFactory) {
 		return new StringRedisTemplate(connectionFactory);
 	}
 }

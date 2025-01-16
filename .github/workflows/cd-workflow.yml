@@ -66,7 +66,9 @@ jobs:
               echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
               echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> .env
               echo "NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }}" >> .env
-
+              echo "AWS_EC2_REDIS_HOST=${{ secrets.AWS_EC2_REDIS_HOST }}" >> .env
+              echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
+  
               echo "Stopping and removing existing containers"
               sudo docker stop producer || true
               sudo docker rm producer || true
