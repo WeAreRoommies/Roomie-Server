@@ -12,11 +12,11 @@ public record ImageDetailsResponseDto(
     public ImageDetailsResponseDto{
     }
     public record Images(
-            String mainImgUrls,
+            String mainImgUrl,
             String mainImgDescription,
             List<String> facilityImgUrls,
             String facilityImgDescription,
-            String floorImgUrls
+            String floorImgUrl
     ){
         @Builder
         public Images{

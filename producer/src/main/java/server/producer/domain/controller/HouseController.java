@@ -1,5 +1,6 @@
 package server.producer.domain.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import server.producer.common.dto.ApiResponseDto;
@@ -60,7 +61,7 @@ public class HouseController {
         try {
             ImageDetailsResponseDto imageDetailsResponseDto = houseService.getHouseImages(houseId);
             return ApiResponseDto.success(SuccessCode.ROOM_DETAIL_GET_SUCCESS, imageDetailsResponseDto);
-        } catch (Exception e) {
+        } catch (EntityNotFoundException e) {
             return ApiResponseDto.fail(ErrorCode.NOT_FOUND_HOUSE);
         }
     }
@@ -70,7 +71,7 @@ public class HouseController {
         try {
             RoomDetailsResponseDto roomDetailsResponseDto = houseService.getHouseRooms(houseId);
             return ApiResponseDto.success(SuccessCode.ROOM_DETAIL_GET_SUCCESS, roomDetailsResponseDto);
-        } catch (Exception e) {
+        } catch (EntityNotFoundException e) {
             return ApiResponseDto.fail(ErrorCode.NOT_FOUND_HOUSE);
         }
     }

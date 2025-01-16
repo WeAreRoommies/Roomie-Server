@@ -154,11 +154,11 @@ public class HouseService {
 				.orElseThrow(()-> new EntityNotFoundException("House not found."));
 		return ImageDetailsResponseDto.builder()
 				.images(ImageDetailsResponseDto.Images.builder()
-						.mainImgUrls(house.getMainImgUrl())
+						.mainImgUrl(house.getMainImgUrl())
 						.mainImgDescription(house.getMainImgDescription())
 						.facilityImgUrls(Arrays.asList(house.getFacilityImgUrl().split(" ")))
 						.facilityImgDescription(house.getFacilityImgDescription())
-						.floorImgUrls(house.getLocationDescription())
+						.floorImgUrl(house.getLocationDescription())
 						.build())
 				.build();
 	}
