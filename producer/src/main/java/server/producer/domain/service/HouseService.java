@@ -1,7 +1,8 @@
 package server.producer.domain.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import server.producer.domain.dto.response.HouseDetailsResponseDto;
+import server.producer.domain.dto.response.*;
 import server.producer.domain.repository.PinRepository;
 import server.producer.domain.dto.response.PinnedListResponseDto;
 import entity.House;
@@ -12,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import server.producer.domain.dto.response.MoodHouseResponseDto;
 import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.UserRepository;
 
@@ -147,5 +147,36 @@ public class HouseService {
 			pinRepository.save(pin);
 			return true;
 		}
+	}
+
+	public ImageDetailsResponseDto getHouseImages(Long houseId) {
+		House house = houseRepository.findById(houseId)
+				.orElseThrow(()-> new EntityNotFoundException("House not found."));
+		return ImageDetailsResponseDto.builder()
+				.images(ImageDetailsResponseDto.Images.builder()
+						.mainImgUrl(house.getMainImgUrl())
+						.mainImgDescription(house.getMainImgDescription())
+						.facilityImgUrls(Arrays.asList(house.getFacilityImgUrl().split(" ")))
+						.facilityImgDescription(house.getFacilityImgDescription())
+						.floorImgUrl(house.getLocationDescription())
+						.build())
+				.build();
+	}
+
+	public RoomDetailsResponseDto getHouseRooms(Long houseId) {
+		List<Room> rooms = houseRepository.findAllRoomsByHouseId(houseId);
+		List<RoomDetailsResponseDto.Room> roomDtos = rooms.stream()
+				.sorted(Comparator.comparing(Room::getId))
+				.map(room -> RoomDetailsResponseDto.Room.builder()
+						.roomId(room.getId())
+						.name(room.getName())
+						.facility(Arrays.asList(room.getFacility().split(" ")))
+						.status(room.getStatus() != room.getOccupancyType())
+						.mainImageUrl(Arrays.asList(room.getMainImgUrl().split(" ")))
+						.build())
+				.toList();
+		return RoomDetailsResponseDto.builder()
+				.rooms(roomDtos)
+				.build();
 	}
 }
