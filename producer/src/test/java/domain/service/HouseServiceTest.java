@@ -9,6 +9,7 @@ import server.producer.domain.dto.response.HouseDetailsResponseDto;
 import server.producer.domain.dto.response.MoodHouseResponseDto;
 import server.producer.domain.dto.response.PinnedListResponseDto;
 import server.producer.domain.repository.HouseRepository;
+import server.producer.domain.repository.PinRepository;
 import server.producer.domain.repository.UserRepository;
 import server.producer.domain.service.HouseService;
 
@@ -20,7 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class HouseServiceTest {
 
@@ -29,6 +30,9 @@ public class HouseServiceTest {
 
 	@Mock
 	private UserRepository userRepository;
+
+	@Mock
+	private PinRepository pinRepository;
 
 	@InjectMocks
 	private HouseService houseService;
@@ -295,4 +299,54 @@ public class HouseServiceTest {
 
 		return pin;
 	}
+
+	@Test
+	void testTogglePin_AddPin() {
+		// Given
+		Long userId = 1L;
+		Long houseId = 2L;
+
+		User mockUser = new User();
+		mockUser.setId(userId);
+
+		House mockHouse = new House();
+		mockHouse.setId(houseId);
+
+		when(pinRepository.findByUserIdAndHouseId(userId, houseId)).thenReturn(Optional.empty());
+		when(userRepository.getReferenceById(userId)).thenReturn(mockUser);
+		when(houseRepository.getReferenceById(houseId)).thenReturn(mockHouse);
+
+		// When
+		boolean result = houseService.togglePin(userId, houseId);
+
+		// Then
+		assertTrue(result); // 핀이 추가되므로 true 반환
+		verify(pinRepository, times(1)).save(argThat(pin ->
+				pin.getUser().equals(mockUser) &&
+						pin.getHouse().equals(mockHouse)
+		));
+		verify(pinRepository, never()).deleteByUserIdAndHouseId(userId, houseId); // 삭제는 호출되지 않아야 함
+	}
+
+	@Test
+	void testTogglePin_RemovePin() {
+		// Given
+		Long userId = 1L;
+		Long houseId = 2L;
+
+		Pin existingPin = new Pin();
+		existingPin.setId(1L);
+
+		when(pinRepository.findByUserIdAndHouseId(userId, houseId)).thenReturn(Optional.of(existingPin));
+
+		// When
+		boolean result = houseService.togglePin(userId, houseId);
+
+		// Then
+		assertFalse(result); // 핀이 삭제되므로 false 반환
+		verify(pinRepository, times(1)).deleteByUserIdAndHouseId(userId, houseId); // 삭제 메서드 호출 확인
+		verify(pinRepository, never()).save(any(Pin.class)); // 저장은 호출되지 않아야 함
+	}
+
+
 }
