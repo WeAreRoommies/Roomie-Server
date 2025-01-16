@@ -170,7 +170,7 @@ public class HouseService {
 				.map(room -> RoomDetailsResponseDto.Room.builder()
 						.roomId(room.getId())
 						.name(room.getName())
-						.facility(Arrays.asList(room.getFacility().split(" ")))
+						.facility(Arrays.asList(room.getFacility().split("#")))
 						.status(room.getStatus() != room.getOccupancyType())
 						.mainImageUrl(Arrays.asList(room.getMainImgUrl().split(" ")))
 						.build())
