@@ -14,7 +14,7 @@ public enum ErrorCode {
 	//404 Not Found
 	NOT_FOUND(40400, "존재하지 않는 API입니다."),
 	NOT_FOUND_HOUSE(40401, "존재하지 않는 매물 ID 입니다."),
-	THEATER_NOT_FOUND(40402, "존재하지 않는 매물입니다."),
+	HOUSE_NOT_FOUND(40402, "존재하지 않는 매물입니다."),
 	//405 Method Not Allowed
 	METHOD_NOT_ALLOWED(40500, "지원하지 않는 매물입니다."),
 	//500 Internal Server Error
