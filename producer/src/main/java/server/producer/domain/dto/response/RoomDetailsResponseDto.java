@@ -1,7 +1,6 @@
 package server.producer.domain.dto.response;
 
 import lombok.Builder;
-import server.producer.entity.Room;
 
 import java.util.List;
 
