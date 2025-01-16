@@ -5,18 +5,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import server.producer.domain.dto.response.HouseDetailsResponseDto;
 import server.producer.domain.dto.response.MoodHouseResponseDto;
 import server.producer.domain.dto.response.PinnedListResponseDto;
 import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.UserRepository;
 import server.producer.domain.service.HouseService;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -182,5 +183,116 @@ public class HouseServiceTest {
 			house.setPins(List.of(pin));
 		}
 		return house;
+	}
+
+	@Test
+	void testGetHouseDetails() {
+		// Given: Mock 데이터 준비
+		Long houseId = 1L;
+		Long userId = 2L;
+
+		// House, Room, Roommate, and Pin Mock 데이터 생성
+		House mockHouse = createMockHouse(houseId, "루미 100호점(이대역)", "서울 강남구", "전반적으로 조용하고 깔끔한 환경을 선호하는 아침형 룸메이트들이에요.");
+		Room mockRoom1 = createMockRoom(101L, "1A", 2, "남성", 300000, 5000000, "2024-12-31", "100000");
+		Room mockRoom2 = createMockRoom(102L, "2A", 1, "여성", 200000, 3000000, "2025-06-30", "50000");
+
+		Roommate roommate1 = createMockRoommate(25, "학생", "INTJ", "23:00-24:00", "09:00-23:00");
+		Roommate roommate2 = createMockRoommate(28, "디자이너", "ENFP", "22:00-23:00", "08:00-22:00");
+
+		mockRoom1.setRoommates(List.of(roommate1));
+		mockRoom2.setRoommates(List.of(roommate2));
+		mockHouse.setRooms(List.of(mockRoom1, mockRoom2));
+
+		Pin mockPin = createMockPin(userId, mockHouse);
+		mockHouse.setPins(List.of(mockPin));
+
+		when(houseRepository.findHouseDetailsById(houseId)).thenReturn(Optional.of(mockHouse));
+
+		// When: 서비스 호출
+		HouseDetailsResponseDto response = houseService.getHouseDetails(houseId, userId);
+
+		// Then: 검증
+		assertNotNull(response); // 응답이 null이 아님
+
+		// HouseInfoDto 검증
+		HouseDetailsResponseDto.HouseInfoDto houseInfo = response.houseInfo();
+		assertEquals(houseId, houseInfo.houseId());
+		assertEquals("루미 100호점(이대역)", houseInfo.name());
+		assertEquals("서울 강남구", houseInfo.location());
+		assertEquals("전반적으로 조용하고 깔끔한 환경을 선호하는 아침형 룸메이트들이에요.", houseInfo.roomMood());
+		assertEquals(List.of("요리 후 바로 설거지해요","청소는 주3회 돌아가면서 해요"), houseInfo.groundRule());
+		assertTrue(houseInfo.isPinned());
+		assertEquals(List.of("소화기", "비상구"), houseInfo.safetyLivingFacility());
+		assertEquals(List.of("냉장고", "전자레인지"), houseInfo.kitchenFacility());
+
+		// RoomDto 검증
+		assertEquals(2, response.rooms().size());
+		HouseDetailsResponseDto.RoomDto roomDto1 = response.rooms().get(0);
+		assertEquals(101L, roomDto1.roomId());
+		assertEquals("1A", roomDto1.name());
+		assertFalse(roomDto1.status());
+		assertEquals(2, roomDto1.occupancyType());
+		assertEquals("남성", roomDto1.gender());
+		assertEquals(300000, roomDto1.monthlyRent());
+		assertEquals(5000000, roomDto1.deposit());
+		assertEquals("2024-12-31", roomDto1.contractPeriod());
+		assertEquals("100000", roomDto1.managementFee());
+
+		// RoommateDto 검증
+		assertEquals(2, response.roommates().size());
+		HouseDetailsResponseDto.RoommateDto roommateDto1 = response.roommates().get(0);
+		assertEquals("1A", roommateDto1.name());
+		assertEquals(25, roommateDto1.age());
+		assertEquals("학생", roommateDto1.job());
+		assertEquals("INTJ", roommateDto1.mbti());
+		assertEquals("23:00-24:00", roommateDto1.sleepTime());
+		assertEquals("09:00-23:00", roommateDto1.activityTime());
+	}
+
+	private House createMockHouse(Long houseId, String name, String location, String roomMood) {
+		House house = new House();
+		house.setId(houseId);
+		house.setName(name);
+		house.setLocation(location);
+		house.setRoomMood(roomMood);
+		house.setGroundRule("요리 후 바로 설거지해요#청소는 주3회 돌아가면서 해요");
+		house.setSafetyLivingFacility("소화기#비상구");
+		house.setKitchenFacility("냉장고#전자레인지");
+		house.setGenderPolicyType(GenderPolicyType.남녀공용);
+		return house;
+	}
+	private Room createMockRoom(Long roomId, String name, int occupancyType, String gender, int monthlyRent,
+								int deposit, String contractPeriod, String managementFee) {
+		Room room = new Room();
+		room.setId(roomId);
+		room.setName(name);
+		room.setOccupancyType(occupancyType);
+		room.setGenderType(GenderType.valueOf(gender));
+		room.setMonthlyRent(monthlyRent);
+		room.setDeposit(deposit);
+		room.setContractPeriod(Date.valueOf(contractPeriod));
+		room.setManagementFee(managementFee);
+		room.setStatus(occupancyType);
+		return room;
+	}
+	private Roommate createMockRoommate(int age, String job, String mbti, String sleepTime, String activityTime) {
+		Roommate roommate = new Roommate();
+		roommate.setAge(age);
+		roommate.setJob(job);
+		roommate.setMbti(mbti);
+		roommate.setSleepTime(sleepTime);
+		roommate.setActivateTime(activityTime);
+		return roommate;
+	}
+	private Pin createMockPin(Long userId, House house) {
+		Pin pin = new Pin();
+		pin.setId(1L);
+		pin.setHouse(house);
+
+		User user = new User();
+		user.setId(userId);
+		pin.setUser(user);
+
+		return pin;
 	}
 }
