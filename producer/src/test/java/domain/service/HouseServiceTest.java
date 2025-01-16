@@ -52,7 +52,7 @@ public class HouseServiceTest {
 		when(houseRepository.findByLocationAndMoodTag(eq(location), eq(moodTag)))
 				.thenReturn(List.of(house1, house2));
 
-		// 테스트 실행
+		// given
 		MoodHouseResponseDto result = houseService.getHousesByMoodAndLocation(moodTag, userId);
 
 		// 검증

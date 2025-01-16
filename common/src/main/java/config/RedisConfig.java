@@ -14,7 +14,7 @@ public class RedisConfig {
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
-		return new LettuceConnectionFactory("AWS_EC2_REDIS_HOST", 6379); // 호스트와 포트 설정
+		return new LettuceConnectionFactory(redisHost, 6379); // 호스트와 포트 설정
 	}
 
 	@Bean
