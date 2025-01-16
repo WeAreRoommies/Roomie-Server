@@ -1,4 +1,4 @@
-package server.producer.entity;
+package entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

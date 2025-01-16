@@ -1,11 +1,11 @@
-package server.producer.entity;
+package entity;
 
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name="housing_request")
@@ -18,7 +18,7 @@ public class HousingRequest {
     private String name;
 
     @Column(nullable = false)
-    private Date birth;
+    private LocalDate birth;
 
     @Column(nullable = false)
     private String gender;
@@ -27,7 +27,7 @@ public class HousingRequest {
     private String phoneNumber;
 
     @Column(nullable = false)
-    private Date preferredDate;
+    private LocalDate preferredDate;
 
     @Column(nullable = true)
     private String message;
@@ -41,4 +41,18 @@ public class HousingRequest {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
+
+    public HousingRequest(String name, LocalDate birth, String gender, String phoneNumber, LocalDate preferredDate, String message, Room room) {
+        this.name = name;
+        this.birth = birth;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+        this.preferredDate = preferredDate;
+        this.message = message;
+        this.room = room;
+    }
+
+    public HousingRequest() {
+
+    }
 }

@@ -7,8 +7,8 @@ import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import server.producer.domain.dto.request.FilterRequestDto;
-import server.producer.entity.House;
-import server.producer.entity.Room;
+import entity.House;
+import entity.Room;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;

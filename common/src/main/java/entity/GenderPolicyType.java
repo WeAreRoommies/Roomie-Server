@@ -1,4 +1,4 @@
-package server.producer.entity;
+package entity;
 
 public enum GenderPolicyType {
     여성전용,
