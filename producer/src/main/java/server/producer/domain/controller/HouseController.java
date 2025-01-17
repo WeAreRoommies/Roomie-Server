@@ -67,7 +67,7 @@ public class HouseController {
         }
     }
 
-    @GetMapping("/{houseId}/details/images")
+    @GetMapping("/{houseId}/details/rooms")
     public ApiResponseDto<RoomDetailsResponseDto> getHouseRooms(@PathVariable Long houseId) {
         try {
             RoomDetailsResponseDto roomDetailsResponseDto = houseService.getHouseRooms(houseId);
