@@ -1,22 +1,19 @@
 package domain.service;
 import entity.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import server.producer.domain.dto.response.HouseDetailsResponseDto;
-import server.producer.domain.dto.response.MoodHouseResponseDto;
-import server.producer.domain.dto.response.PinnedListResponseDto;
+import server.producer.domain.dto.response.*;
 import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.PinRepository;
 import server.producer.domain.repository.UserRepository;
 import server.producer.domain.service.HouseService;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -348,5 +345,109 @@ public class HouseServiceTest {
 		verify(pinRepository, never()).save(any(Pin.class)); // 저장은 호출되지 않아야 함
 	}
 
+	@Test
+	void testGetHouseImages_Success() {
+		// Given
+		Long houseId = 1L;
 
+		// Mock House 객체 생성
+		House mockHouse = new House();
+		mockHouse.setId(houseId);
+		mockHouse.setMainImgUrl("https://example.com/main.jpg");
+		mockHouse.setMainImgDescription("메인 이미지 상세설명");
+		mockHouse.setFacilityImgUrl("https://example.com/facility1.jpg https://example.com/facility2.jpg");
+		mockHouse.setFacilityImgDescription("시설 이미지 상세설명");
+		mockHouse.setFloorImgUrl("https://example.com/floor.jpg");
+
+		when(houseRepository.findById(houseId)).thenReturn(Optional.of(mockHouse));
+
+		// When
+		ImageDetailsResponseDto response = houseService.getHouseImages(houseId);
+
+		// Then
+		assertNotNull(response); // 응답이 null이 아님
+		assertNotNull(response.images()); // images 필드가 null이 아님
+
+		ImageDetailsResponseDto.Images images = response.images();
+		assertEquals("https://example.com/main.jpg", images.mainImgUrl());
+		assertEquals("메인 이미지 상세설명", images.mainImgDescription());
+		assertEquals(
+				List.of("https://example.com/facility1.jpg", "https://example.com/facility2.jpg"),
+				images.facilityImgUrls()
+		);
+		assertEquals("시설 이미지 상세설명", images.facilityImgDescription());
+		assertEquals("https://example.com/floor.jpg", images.floorImgUrl());
+
+		// Verify Repository 호출 확인
+		verify(houseRepository, times(1)).findById(houseId);
+	}
+
+	@Test
+	void testGetHouseImages_HouseNotFound() {
+		// Given
+		Long houseId = 1L;
+
+		when(houseRepository.findById(houseId)).thenReturn(Optional.empty());
+
+		// When & Then
+		EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+			houseService.getHouseImages(houseId);
+		});
+
+		assertEquals("House not found.", exception.getMessage());
+
+		// Verify Repository 호출 확인
+		verify(houseRepository, times(1)).findById(houseId);
+	}
+
+	@Test
+	void testGetHouseRooms() {
+		// Given: Mock 데이터 생성
+		Room mockRoom1 = createMockRoom(1L, "1A", "책상#침대#옷장", 2, 1, "https://example.com/room1.jpg https://example.com/room1-2.jpg");
+		Room mockRoom2 = createMockRoom(2L, "2A", "책상#침대#의자", 1, 1, "https://example.com/room2.jpg");
+
+		List<Room> mockRooms = List.of(mockRoom1, mockRoom2);
+
+		// When: 변환 로직 호출
+		List<RoomDetailsResponseDto.Room> roomDtos = mockRooms.stream()
+				.sorted(Comparator.comparing(Room::getId))
+				.map(room -> RoomDetailsResponseDto.Room.builder()
+						.roomId(room.getId())
+						.name(room.getName())
+						.facility(Arrays.asList(room.getFacility().split("#")))
+						.status(room.getStatus() != room.getOccupancyType())
+						.mainImageUrl(Arrays.asList(room.getMainImgUrl().split(" ")))
+						.build())
+				.toList();
+
+		// Then: 변환 결과 검증
+		assertEquals(2, roomDtos.size());
+
+		// Room 1 검증
+		RoomDetailsResponseDto.Room roomDto1 = roomDtos.get(0);
+		assertEquals(1L, roomDto1.roomId());
+		assertEquals("1A", roomDto1.name());
+		assertEquals(List.of("책상", "침대", "옷장"), roomDto1.facility());
+		assertTrue(roomDto1.status());
+		assertEquals(List.of("https://example.com/room1.jpg", "https://example.com/room1-2.jpg"), roomDto1.mainImageUrl());
+
+		// Room 2 검증
+		RoomDetailsResponseDto.Room roomDto2 = roomDtos.get(1);
+		assertEquals(2L, roomDto2.roomId());
+		assertEquals("2A", roomDto2.name());
+		assertEquals(List.of("책상", "침대", "의자"), roomDto2.facility());
+		assertFalse(roomDto2.status());
+		assertEquals(List.of("https://example.com/room2.jpg"), roomDto2.mainImageUrl());
+	}
+
+	private Room createMockRoom(Long roomId, String name, String facility, int occupancyType, int status, String mainImgUrl) {
+		Room room = new Room();
+		room.setId(roomId);
+		room.setName(name);
+		room.setFacility(facility);
+		room.setOccupancyType(occupancyType);
+		room.setStatus(status);
+		room.setMainImgUrl(mainImgUrl);
+		return room;
+	}
 }
