@@ -74,15 +74,20 @@ public class HouseService {
 	}
 
     public HouseDetailsResponseDto getHouseDetails(final Long houseId, final Long userId) {
-        House selectedHouse = houseRepository.findHouseDetailsById(houseId)
-                .orElseThrow(()->new IllegalArgumentException("해당 House를 찾을 수 없습니다."));
-        List<Room> rooms = selectedHouse.getRooms();
+		House selectedHouse = houseRepository.findHouseWithRoomsById(houseId)
+				.orElseThrow(() -> new IllegalArgumentException("해당 House를 찾을 수 없습니다."));
+
+		List<Room> rooms = houseRepository.findRoomsAndRoommatesByHouseId(houseId);
+
+		boolean isPinned = houseRepository.findHouseWithPinsById(houseId)
+				.map(h -> h.getPins().stream()
+						.anyMatch(pin -> pin.getUser().getId().equals(userId)))
+				.orElse(false);
+
         final List<String> groundRules = Arrays.stream(selectedHouse.getGroundRule().split("#")).toList();
         final List<String> safetyLivingFacilities = Arrays.stream(selectedHouse.getSafetyLivingFacility().split("#")).toList();
         final List<String> kitchenFacilities = Arrays.stream(selectedHouse.getKitchenFacility().split("#")).toList();
 
-        final boolean isPinned = selectedHouse.getPins().stream()
-                .anyMatch(pin -> pin.getUser().getId().equals(userId));
         HouseDetailsResponseDto.HouseInfoDto houseInfoDto = HouseDetailsResponseDto.HouseInfoDto.builder()
                 .houseId(houseId)
                 .name(selectedHouse.getName())
