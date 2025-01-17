@@ -60,6 +60,9 @@ public class House {
     private String facilityImgDescription;
 
     @Column(nullable = false)
+    private String floorImgUrl;
+
+    @Column(nullable = false)
     private int contractTerm;
 
     @Column(nullable = false)

@@ -1,6 +1,9 @@
 package server.producer.domain.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
+
+import java.time.LocalDate;
 import java.util.List;
 
 public record HouseDetailsResponseDto (
@@ -43,7 +46,8 @@ public record HouseDetailsResponseDto (
             int deposit,
             int prepaidUtilities,
             int monthlyRent,
-            String contractPeriod,
+            @JsonFormat(pattern = "yy-MM-dd")
+            LocalDate contractPeriod,
             String managementFee
     ) {
         @Builder
