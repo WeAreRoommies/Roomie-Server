@@ -158,7 +158,7 @@ public class HouseService {
 						.mainImgDescription(house.getMainImgDescription())
 						.facilityImgUrls(Arrays.asList(house.getFacilityImgUrl().split(" ")))
 						.facilityImgDescription(house.getFacilityImgDescription())
-						.floorImgUrl(house.getLocationDescription())
+						.floorImgUrl(house.getFloorImgUrl())
 						.build())
 				.build();
 	}
