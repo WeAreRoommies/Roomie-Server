@@ -1,6 +1,7 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name="housing_request")
+@Data
 public class HousingRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

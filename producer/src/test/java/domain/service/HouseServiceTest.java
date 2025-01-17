@@ -13,6 +13,8 @@ import server.producer.domain.repository.UserRepository;
 import server.producer.domain.service.HouseService;
 
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -103,7 +105,7 @@ public class HouseServiceTest {
 		when(houseRepository.findByLocationAndMoodTag(eq(location), eq(moodTag)))
 				.thenReturn(List.of(house1, house2));
 
-		// 테스트 실행
+		// given
 		MoodHouseResponseDto result = houseService.getHousesByMoodAndLocation(moodTag, userId);
 
 		// 검증
@@ -192,10 +194,12 @@ public class HouseServiceTest {
 		Long houseId = 1L;
 		Long userId = 2L;
 
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd");
+
 		// House, Room, Roommate, and Pin Mock 데이터 생성
 		House mockHouse = createMockHouse(houseId, "루미 100호점(이대역)", "서울 강남구", "전반적으로 조용하고 깔끔한 환경을 선호하는 아침형 룸메이트들이에요.");
-		Room mockRoom1 = createMockRoom(101L, "1A", 2, "남성", 300000, 5000000, "2024-12-31", "100000");
-		Room mockRoom2 = createMockRoom(102L, "2A", 1, "여성", 200000, 3000000, "2025-06-30", "50000");
+		Room mockRoom1 = createMockRoom(101L, "1A", 2, "남성", 300000, 5000000, LocalDate.of(2024,12,31), "100000");
+		Room mockRoom2 = createMockRoom(102L, "2A", 1, "여성", 200000, 3000000, LocalDate.of(2025,01,17), "50000");
 
 		Roommate roommate1 = createMockRoommate(25, "학생", "INTJ", "23:00-24:00", "09:00-23:00");
 		Roommate roommate2 = createMockRoommate(28, "디자이너", "ENFP", "22:00-23:00", "08:00-22:00");
@@ -236,7 +240,7 @@ public class HouseServiceTest {
 		assertEquals("남성", roomDto1.gender());
 		assertEquals(300000, roomDto1.monthlyRent());
 		assertEquals(5000000, roomDto1.deposit());
-		assertEquals("2024-12-31", roomDto1.contractPeriod());
+		assertEquals("24-12-31", roomDto1.contractPeriod().format(formatter));
 		assertEquals("100000", roomDto1.managementFee());
 
 		// RoommateDto 검증
@@ -263,7 +267,7 @@ public class HouseServiceTest {
 		return house;
 	}
 	private Room createMockRoom(Long roomId, String name, int occupancyType, String gender, int monthlyRent,
-								int deposit, String contractPeriod, String managementFee) {
+								int deposit, LocalDate contractPeriod, String managementFee) {
 		Room room = new Room();
 		room.setId(roomId);
 		room.setName(name);
@@ -271,7 +275,7 @@ public class HouseServiceTest {
 		room.setGenderType(GenderType.valueOf(gender));
 		room.setMonthlyRent(monthlyRent);
 		room.setDeposit(deposit);
-		room.setContractPeriod(Date.valueOf(contractPeriod));
+		room.setContractPeriod(contractPeriod);
 		room.setManagementFee(managementFee);
 		room.setStatus(occupancyType);
 		return room;

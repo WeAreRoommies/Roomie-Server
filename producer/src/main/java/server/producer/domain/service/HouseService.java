@@ -10,6 +10,8 @@ import entity.Pin;
 import entity.Room;
 
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -100,7 +102,6 @@ public class HouseService {
                 .kitchenFacility(kitchenFacilities)
                 .build();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         List<HouseDetailsResponseDto.RoomDto> roomDtos = rooms.stream()
                 .sorted(Comparator.comparing(Room::getId))
                 .map(room -> HouseDetailsResponseDto.RoomDto.builder()
@@ -112,7 +113,7 @@ public class HouseService {
                         .deposit(room.getDeposit())
                         .prepaidUtilities(room.getPrepaidUtilities())
                         .monthlyRent(room.getMonthlyRent())
-                        .contractPeriod(dateFormat.format(room.getContractPeriod()))
+                        .contractPeriod(room.getContractPeriod())
                         .managementFee(room.getManagementFee())
                         .build())
                 .collect(Collectors.toList());

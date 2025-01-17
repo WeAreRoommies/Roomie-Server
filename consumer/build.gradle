@@ -12,6 +12,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // Lombok (선택 사항: DTO, Config 등에서 활용 가능)
     compileOnly 'org.projectlombok:lombok'
@@ -22,6 +23,9 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
     implementation project(':common') // 공통 모듈 추가
+
+    // JUnit 5 (Jupiter)
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 }
 
 
@@ -31,4 +35,7 @@ application {
 
 tasks.jar {
     dependsOn compileJava // classes가 아닌 compileJava에만 의존
+}
+tasks.test {
+    useJUnitPlatform()
 }
