@@ -18,7 +18,7 @@ public class QueueService {
 			// DTO를 JSON 문자열로 직렬화
 			String jsonMessage = objectMapper.writeValueAsString(message);
 			redisTemplate.opsForList().rightPush(queueName, jsonMessage);
-//			System.out.println("Message added to queue: " + jsonMessage); 나중에 로그
+			System.out.println("Message added to queue: " + jsonMessage); // 나중에 로그
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException("Failed to serialize message", e);
 		}

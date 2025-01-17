@@ -1,5 +1,6 @@
 package server.producer.domain.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
@@ -21,8 +22,8 @@ public class UserService {
 
 	public HomeInfoResponseDto getUserInfoAndRecentlyViewedHouse(Long userId) {
 		// 사용자 정보 조회
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
+		User user = userRepository.findByIdWithHousesAndRooms(userId)
+				.orElseThrow(EntityNotFoundException::new);
 		final String name = user.getName();
 		final String location = user.getLocation().split(" ")[user.getLocation().split(" ").length-1];
 		final List<HomeInfoResponseDto.RecentlyViewedHouseDto> recentlyViewedHouseDtos = new ArrayList<>();
@@ -41,6 +42,7 @@ public class UserService {
 					.deposit(house.calculateDeposit())
 					.occupancyTypes(house.calculateOccupancyType())
 					.genderPolicy(house.getGenderPolicyType().toString())
+					.location(house.getLocation())
 					.locationDescription(house.getLocationDescription())
 					.isPinned(isPinned)
 					.moodTag(house.getMoodTag())

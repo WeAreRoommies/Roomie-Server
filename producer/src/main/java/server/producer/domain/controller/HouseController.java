@@ -1,8 +1,10 @@
 package server.producer.domain.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.servlet.DispatcherServlet;
 import server.producer.common.dto.ApiResponseDto;
 import server.producer.common.dto.enums.ErrorCode;
 import server.producer.common.dto.enums.SuccessCode;
@@ -14,7 +16,6 @@ import server.producer.domain.service.HouseService;
 @RequiredArgsConstructor
 public class HouseController {
     private final HouseService houseService;
-
     private final Long userId = 1L;
 
     @GetMapping("/{houseId}/details")
