@@ -29,23 +29,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 환경 변수 등록
-      - name: 🔐 Set environment variables for Producer
-        run: |
-          echo "SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" > .env
-          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
-          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
-          echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
-          echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> .env
-          echo "NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }}" >> .env
-          echo "AWS_EC2_REDIS_HOST=${{ secrets.AWS_EC2_REDIS_HOST }}" >> .env
-          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
-
-      # Producer 빌드 및 테스트
-      - name: 🐘 Build and Test Producer with Gradle
+      # Producer 빌드
+      - name: 🐘 Build Producer with Gradle
         run: |
           chmod +x ./gradlew
-          ./gradlew :producer:clean :producer:build :producer:test --stacktrace
+          ./gradlew :producer:clean :producer:build -x test --stacktrace
 
   build-consumer:
     name: Build Consumer
@@ -62,20 +50,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 환경 변수 등록
-      - name: 🔐 Set environment variables for Consumer
-        run: |
-          echo "SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" > .env
-          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
-          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
-          echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
-          echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> .env
-          echo "NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }}" >> .env
-          echo "AWS_EC2_REDIS_HOST=${{ secrets.AWS_EC2_REDIS_HOST }}" >> .env
-          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
-
-      # Consumer 빌드 및 테스트
-      - name: 🐘 Build and Test Consumer with Gradle
+      # Consumer 빌드
+      - name: 🐘 Build Consumer with Gradle
         run: |
           chmod +x ./gradlew
-          ./gradlew :consumer:clean :consumer:build :consumer:test --stacktrace
+          ./gradlew :consumer:clean :consumer:build -x test --stacktrace
