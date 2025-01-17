@@ -12,6 +12,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -20,10 +21,24 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
-    implementation project(':common')
-}
 
+    // JUnit 5 (Jupiter)
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+
+    // Lettuce Client (Redis 연결 라이브러리 - 기본적으로 포함됨)
+    implementation files('libs/lettuce-core-6.2.3.jar') // 필요한 버전을 명시
+
+    // Mockito
+    testImplementation 'org.mockito:mockito-core:5.5.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
+
+    implementation project(':common') // 공통 모듈 추가
+}
 
 application {
     mainClassName = 'server.producer.ProducerApplication'
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
