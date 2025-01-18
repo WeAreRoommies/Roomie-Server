@@ -26,22 +26,22 @@ public class House {
     private Double longitude;
 
     @Column(nullable = false)
-    private String roomMood;
+    private String roomMood = "";
 
     @Column(nullable = false)
-    private String groundRule;
+    private String groundRule = "";
 
     @Column(nullable = false)
     private String location;
 
     @Column(nullable = false)
-    private String locationDescription;
+    private String locationDescription = "";
 
     @Column(nullable = false)
     private String moodTag;
 
     @Column(nullable = false)
-    private String subMoodTag;
+    private String subMoodTag = "";
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -51,25 +51,25 @@ public class House {
     private String mainImgUrl;
 
     @Column(nullable = false)
-    private String mainImgDescription;
+    private String mainImgDescription = "";
 
     @Column(nullable = false)
-    private String facilityImgUrl;
+    private String facilityImgUrl = "";
 
     @Column(nullable = false)
-    private String facilityImgDescription;
+    private String facilityImgDescription = "";
 
     @Column(nullable = false)
-    private String floorImgUrl;
+    private String floorImgUrl = "";
 
     @Column(nullable = false)
     private int contractTerm;
 
     @Column(nullable = false)
-    private String safetyLivingFacility;
+    private String safetyLivingFacility = "";
 
     @Column(nullable = false)
-    private String kitchenFacility;
+    private String kitchenFacility = "";
 
     @OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
     private List<Room> rooms = new ArrayList<>();

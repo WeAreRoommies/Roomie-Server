@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
 import server.producer.domain.dto.response.MyPageResponseDto;
+import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.UserRepository;
 import entity.House;
 import entity.RecentlyViewedHouse;
@@ -19,18 +20,17 @@ import java.util.List;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final HouseRepository houseRepository;
 
 	public HomeInfoResponseDto getUserInfoAndRecentlyViewedHouse(Long userId) {
 		// 사용자 정보 조회
-		User user = userRepository.findByIdWithHousesAndRooms(userId)
+		User user = userRepository.findUserWithRecentlyViewedHouses(userId)
 				.orElseThrow(EntityNotFoundException::new);
 		final String name = user.getName();
 		final String location = user.getLocation().split(" ")[user.getLocation().split(" ").length-1];
 		final List<HomeInfoResponseDto.RecentlyViewedHouseDto> recentlyViewedHouseDtos = new ArrayList<>();
 
-		List<House> houses = user.getRecentlyViewedHouses().stream()
-				.map(RecentlyViewedHouse::getHouse)
-				.toList();
+		List<House> houses = houseRepository.findRecentlyViewedHousesByUserId(user.getId());
 
 		for (House house : houses) {
 			List<Room> rooms = house.getRooms();
