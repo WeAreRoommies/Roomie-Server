@@ -45,7 +45,7 @@ public class House {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private GenderPolicyType genderPolicyType;
+    private GenderPolicyType genderPolicy;
 
     @Column(nullable = false)
     private String mainImgUrl;

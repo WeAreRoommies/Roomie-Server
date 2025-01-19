@@ -72,7 +72,7 @@ public class FilterRepositoryTest {
 	}
 
 	private House createHouse(Long id, String moodTag, String location, String locationDescription,
-							  boolean isPinned, int contractTerm, GenderPolicyType genderPolicyType) {
+							  boolean isPinned, int contractTerm, GenderPolicyType genderPolicy) {
 		House house = new House();
 		house.setName("Sample House " + id);
 		house.setLocation(location);
@@ -81,7 +81,7 @@ public class FilterRepositoryTest {
 		house.setMainImgUrl("https://www.example.com");
 		house.setMoodTag(moodTag);
 		house.setContractTerm(contractTerm);
-		house.setGenderPolicyType(genderPolicyType);
+		house.setGenderPolicy(genderPolicy);
 
 		entityManager.persist(house);
 
@@ -104,7 +104,7 @@ public class FilterRepositoryTest {
 		room.setMonthlyRent(monthlyRent);
 		room.setDeposit(deposit);
 		room.setContractPeriod(contractDate);
-		room.setGenderType(GenderType.남성);
+		room.setGender(GenderType.남성);
 		room.setHouse(entityManager.merge(house)); // House를 관리 상태로 연결
 		entityManager.persist(room);
 		return room;

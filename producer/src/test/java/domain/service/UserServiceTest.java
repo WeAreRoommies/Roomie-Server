@@ -105,7 +105,7 @@ public class UserServiceTest {
 			house.setLocationDescription("자이아파트 " + houseId);
 			house.setMoodTag("#차분한");
 			house.setSubMoodTag("#추가태그");
-			house.setGenderPolicyType(GenderPolicyType.남녀공용);
+			house.setGenderPolicy(GenderPolicyType.남녀공용);
 			house.setMainImgUrl("https://example.com/images/house" + houseId + ".jpg");
 			house.setMainImgDescription("Main image of house " + houseId);
 			house.setFacilityImgUrl("https://example.com/images/facility" + houseId + ".jpg");

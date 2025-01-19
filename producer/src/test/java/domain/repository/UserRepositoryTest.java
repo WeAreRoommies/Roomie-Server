@@ -127,7 +127,7 @@ public class UserRepositoryTest {
 		house.setLocationDescription(locationDescription);
 		house.setMoodTag(moodTag);
 		house.setSubMoodTag(subMoodTag);
-		house.setGenderPolicyType(GenderPolicyType.남성전용);
+		house.setGenderPolicy(GenderPolicyType.남성전용);
 		house.setMainImgUrl("https://example.com/main.jpg");
 		house.setMainImgDescription("Main Image");
 		house.setFacilityImgUrl("https://example.com/facility.jpg");
@@ -145,7 +145,7 @@ public class UserRepositoryTest {
 		room.setMonthlyRent(monthlyRent);
 		room.setDeposit(deposit);
 		room.setFacility("Bed, Desk");
-		room.setGenderType(genderType);
+		room.setGender(genderType);
 		room.setStatus(0);
 		room.setOccupancyType(1);
 		room.setMainImgUrl("https://example.com/room.jpg");

@@ -40,7 +40,7 @@ public class FilterRepository {
 
 		// Optional 조건: genderPolicy
 		if (filter.genderPolicy() != null && !filter.genderPolicy().isEmpty()) {
-			predicates.add(house.get("genderPolicyType").in(filter.genderPolicy()));
+			predicates.add(house.get("genderPolicy").in(filter.genderPolicy()));
 		}
 
 		// Optional 조건: contractPeriod

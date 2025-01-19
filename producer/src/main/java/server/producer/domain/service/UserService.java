@@ -41,7 +41,7 @@ public class UserService {
 					.monthlyRent(house.calculateMonthlyRent())
 					.deposit(house.calculateDeposit())
 					.occupancyTypes(house.calculateOccupancyType())
-					.genderPolicy(house.getGenderPolicyType().toString())
+					.genderPolicy(house.getGenderPolicy().toString())
 					.location(house.getLocation())
 					.locationDescription(house.getLocationDescription())
 					.isPinned(isPinned)

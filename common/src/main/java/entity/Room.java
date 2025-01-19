@@ -33,7 +33,7 @@ public class Room {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private GenderType genderType;
+    private GenderType gender;
 
     @Column(nullable = false)
     private int status;
