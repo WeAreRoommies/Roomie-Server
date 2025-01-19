@@ -9,8 +9,7 @@ import server.producer.common.dto.enums.SuccessCode;
 import server.producer.domain.dto.response.*;
 import server.producer.domain.service.HouseService;
 
-@RestController
-@RequestMapping("/v1/houses")
+@RestController("/v1/houses")
 @RequiredArgsConstructor
 public class HouseController {
 
