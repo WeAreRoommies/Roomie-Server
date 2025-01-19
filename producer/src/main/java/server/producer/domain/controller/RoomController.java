@@ -8,7 +8,8 @@ import server.producer.common.dto.enums.SuccessCode;
 import dto.TourRequestDto;
 import server.producer.domain.service.RoomService;
 
-@RestController("v1/rooms")
+@RestController
+@RequestMapping("v1/rooms")
 @RequiredArgsConstructor
 public class RoomController {
 	private final RoomService roomService;

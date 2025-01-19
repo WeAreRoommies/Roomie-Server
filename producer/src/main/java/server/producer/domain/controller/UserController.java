@@ -12,7 +12,8 @@ import server.producer.domain.dto.response.HomeInfoResponseDto;
 import server.producer.domain.dto.response.MyPageResponseDto;
 import server.producer.domain.service.UserService;
 
-@RestController("/v1/users")
+@RestController
+@RequestMapping("/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 	private final Long userId = 1L;
