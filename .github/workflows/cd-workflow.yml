@@ -63,6 +63,7 @@ jobs:
               echo "SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" > .env
               echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
               echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
+              echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" >> .env
               echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
               echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> .env
               echo "NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }}" >> .env

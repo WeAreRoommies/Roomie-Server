@@ -11,7 +11,7 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:root}
     password: ${SPRING_DATASOURCE_PASSWORD:1234}
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
   h2:
     console:
