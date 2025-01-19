@@ -8,8 +8,8 @@ spring:
   datasource:
     driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.h2.Driver}
     url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:testdb}
-    username: ${SPRING_DATASOURCE_USERNAME:root}
-    password: ${SPRING_DATASOURCE_PASSWORD:1234}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     hibernate:
       ddl-auto: create-drop
     show-sql: true
@@ -17,6 +17,8 @@ spring:
     console:
       enabled: true
       path: /h2-console
+      settings:
+        web-allow-others: true
 redis:
   host: ${AWS_EC2_REDIS_HOST}        # Redis 서버 호스트 (AWS EC2 호스트 이름 또는 IP)
   port: 6379                        # Redis 포트 (기본값: 6379)
