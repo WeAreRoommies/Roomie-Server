@@ -17,6 +17,14 @@ spring:
         globally_quoted_identifiers: true
         ddl-auto: update
         show-sql: true
+        cache:
+          use_query_cache: false
+          use_second_level_cache: false
+          use_structured_entries: false
+          use_minimal_puts: false
+        generate_statistics: false
+        jdbc:
+          batch_size: 20 # 추가 최적화 옵션
   datasource:
     driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.h2.Driver}
     url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:testdb}
