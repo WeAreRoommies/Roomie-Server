@@ -21,7 +21,7 @@ dependencies {
 
     // JPA & DataBase
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'com.mysql:mysql-connector-j:8.0.35'
     runtimeOnly 'com.h2database:h2'
     testImplementation 'com.h2database:h2'
     implementation project(':common') // 공통 모듈 추가
