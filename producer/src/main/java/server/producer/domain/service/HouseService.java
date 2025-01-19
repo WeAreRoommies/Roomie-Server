@@ -75,7 +75,7 @@ public class HouseService {
 
     public HouseDetailsResponseDto getHouseDetails(final Long houseId, final Long userId) {
 		House selectedHouse = houseRepository.findHouseWithRoomsById(houseId)
-				.orElseThrow(() -> new IllegalArgumentException("해당 House를 찾을 수 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException("해당 House를 찾을 수 없습니다."));
 
 		List<Room> rooms = houseRepository.findRoomsAndRoommatesByHouseId(houseId);
 
