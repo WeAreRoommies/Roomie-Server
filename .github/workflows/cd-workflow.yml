@@ -82,7 +82,7 @@ jobs:
                 ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
 
               echo "Running Consumer container"
-              sudo docker run -d --name consumer -p 8081:8080 \
+              sudo docker run -d --name consumer -p 8081:8081 \
                 --env-file .env \
                 ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
 
