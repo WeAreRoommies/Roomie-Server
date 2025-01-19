@@ -131,7 +131,7 @@ public class HouseService {
                                 .job(roommate.getJob())
                                 .mbti(roommate.getMbti())
                                 .sleepTime(roommate.getSleepTime())
-                                .activityTime(roommate.getActivateTime())
+                                .activityTime(roommate.getActivityTime())
                                 .build()))
                 .collect(Collectors.toList());
         return HouseDetailsResponseDto.builder()

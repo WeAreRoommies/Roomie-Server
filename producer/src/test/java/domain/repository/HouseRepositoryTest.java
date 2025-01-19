@@ -68,7 +68,7 @@ public class HouseRepositoryTest {
         roommate.setJob("개발자");
         roommate.setMbti("INTJ");
         roommate.setSleepTime("23:00-24:00");
-        roommate.setActivateTime("09:00-10:00");
+        roommate.setActivityTime("09:00-10:00");
         roommate.setRoom(room);
 
         Pin pin = new Pin();

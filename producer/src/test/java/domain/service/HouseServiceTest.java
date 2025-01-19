@@ -288,7 +288,7 @@ public class HouseServiceTest {
 		roommate.setJob(job);
 		roommate.setMbti(mbti);
 		roommate.setSleepTime(sleepTime);
-		roommate.setActivateTime(activityTime);
+		roommate.setActivityTime(activityTime);
 		return roommate;
 	}
 	private House createMockHouseWithPins(House house, Long userId) {
