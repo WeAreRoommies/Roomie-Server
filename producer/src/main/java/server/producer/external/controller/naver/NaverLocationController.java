@@ -1,6 +1,7 @@
 package server.producer.external.controller.naver;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,6 +12,7 @@ import server.producer.external.service.naver.NaverService;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class NaverLocationController {
 
     private final NaverService naverService;
@@ -19,6 +21,9 @@ public class NaverLocationController {
     public ResponseEntity<LocationsDto> getLocations(
             @RequestParam(name = "q") final String query
     ) {
+        log.info("Get locations from Naver");
+        log.info("query: {}", query);
+        log.info("naverService: {}", naverService);
         return ResponseEntity.ok(naverService.getLocations(query));
     }
 }

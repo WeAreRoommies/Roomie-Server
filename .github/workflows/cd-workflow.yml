@@ -63,6 +63,7 @@ jobs:
               echo "SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" > .env
               echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
               echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
+              echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" >> .env
               echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
               echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> .env
               echo "NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }}" >> .env
@@ -75,16 +76,13 @@ jobs:
               sudo docker stop consumer || true
               sudo docker rm consumer || true
 
-              echo "Running Redis container"
-              sudo docker run -d --name redis -p 6379:6379 redis:alpine
-
               echo "Running Producer container"
               sudo docker run -d --name producer -p 8080:8080 \
                 --env-file .env \
                 ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
 
               echo "Running Consumer container"
-              sudo docker run -d --name consumer -p 8081:8080 \
+              sudo docker run -d --name consumer -p 8081:8081 \
                 --env-file .env \
                 ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
 

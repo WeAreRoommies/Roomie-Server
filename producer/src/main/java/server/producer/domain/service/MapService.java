@@ -39,7 +39,7 @@ public class MapService {
 					requestDto.monthlyRentRange(),
 					requestDto.genderPolicy(),
 					requestDto.preferredDate(),
-					requestDto.occupancyType(),
+					requestDto.occupancyTypes(),
 					requestDto.contractPeriod()
 			);
 

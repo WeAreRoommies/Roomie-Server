@@ -3,6 +3,7 @@ package server.producer.domain.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import server.producer.common.dto.ApiResponseDto;
 import server.producer.common.dto.enums.ErrorCode;
@@ -12,7 +13,8 @@ import server.producer.domain.dto.request.FilterRequestDto;
 import server.producer.domain.dto.response.FilterResponseDto;
 import server.producer.domain.service.MapService;
 
-@RestController("/v1/maps")
+@RestController
+@RequestMapping("/v1/maps")
 @RequiredArgsConstructor
 public class MapController {
 	private final MapService mapService;
