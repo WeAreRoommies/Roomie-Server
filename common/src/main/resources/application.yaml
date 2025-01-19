@@ -7,7 +7,7 @@ spring:
         globally_quoted_identifiers: true
   datasource:
     driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.h2.Driver}
-    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:testdb}
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL;AUTO_SERVER=TRUE;WEB_ALLOW_OTHERS=TRUE}
     username: ${SPRING_DATASOURCE_USERNAME:root}
     password: ${SPRING_DATASOURCE_PASSWORD:1234}
     hibernate:
