@@ -202,8 +202,8 @@ public class HouseServiceTest {
 		Room mockRoom1 = createMockRoom(101L, "1A", 2, "남성", 300000, 5000000, LocalDate.of(2024,12,31), "100000");
 		Room mockRoom2 = createMockRoom(102L, "2A", 1, "여성", 200000, 3000000, LocalDate.of(2025,01,17), "50000");
 
-		Roommate roommate1 = createMockRoommate(25, "학생", "INTJ", "23:00-24:00", "09:00-23:00");
-		Roommate roommate2 = createMockRoommate(28, "디자이너", "ENFP", "22:00-23:00", "08:00-22:00");
+		Roommate roommate1 = createMockRoommate("20대 중반", "학생", "INTJ", "23:00-24:00", "09:00-23:00");
+		Roommate roommate2 = createMockRoommate("30대 초반", "디자이너", "ENFP", "22:00-23:00", "08:00-22:00");
 
 		mockRoom1.setRoommates(List.of(roommate1));
 		mockRoom2.setRoommates(List.of(roommate2));
@@ -282,7 +282,7 @@ public class HouseServiceTest {
 		room.setStatus(occupancyType);
 		return room;
 	}
-	private Roommate createMockRoommate(int age, String job, String mbti, String sleepTime, String activityTime) {
+	private Roommate createMockRoommate(String age, String job, String mbti, String sleepTime, String activityTime) {
 		Roommate roommate = new Roommate();
 		roommate.setAge(age);
 		roommate.setJob(job);
