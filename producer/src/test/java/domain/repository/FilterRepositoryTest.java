@@ -60,7 +60,7 @@ public class FilterRepositoryTest {
 				new FilterRequestDto.Range(300000, 600000), // monthlyRent 범위
 				List.of("남성전용"), // House의 genderPolicyType
 				null, // Room의 contractPeriod 관련 조건
-				List.of(), // occupancyType (빈 리스트)
+				List.of(), // occupancyTypes (빈 리스트)
 				List.of(12) // contractTerm 조건
 		);
 

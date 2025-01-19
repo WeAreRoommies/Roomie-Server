@@ -76,9 +76,6 @@ jobs:
               sudo docker stop consumer || true
               sudo docker rm consumer || true
 
-              echo "Running Redis container"
-              sudo docker run -d --name redis -p 6379:6379 redis:alpine
-
               echo "Running Producer container"
               sudo docker run -d --name producer -p 8080:8080 \
                 --env-file .env \
