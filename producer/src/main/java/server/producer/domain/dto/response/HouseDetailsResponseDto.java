@@ -56,7 +56,7 @@ public record HouseDetailsResponseDto (
     }
     public record RoommateDto (
             String name,
-            int age,
+            String age,
             String job,
             String mbti,
             String sleepTime,

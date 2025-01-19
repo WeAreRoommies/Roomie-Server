@@ -11,7 +11,7 @@ public class Roommate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int age;
+    private String age;
     private String job;
     private String mbti;
     private String sleepTime;

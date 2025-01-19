@@ -64,7 +64,7 @@ public class HouseRepositoryTest {
         room.setHouse(house);
 
         Roommate roommate = new Roommate();
-        roommate.setAge(25);
+        roommate.setAge("20대 중반");
         roommate.setJob("개발자");
         roommate.setMbti("INTJ");
         roommate.setSleepTime("23:00-24:00");
