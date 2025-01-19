@@ -15,7 +15,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        ddl-auto: update;
+        ddl-auto: none;
         show-sql: true
         cache:
           use_query_cache: false

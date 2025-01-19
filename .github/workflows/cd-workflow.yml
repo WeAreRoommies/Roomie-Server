@@ -75,6 +75,12 @@ jobs:
               sudo docker rm producer || true
               sudo docker stop consumer || true
               sudo docker rm consumer || true
+            
+            echo "Pulling the latest Producer image"
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
+  
+            echo "Pulling the latest Consumer image"
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
 
               echo "Running Producer container"
               sudo docker run -d --name producer -p 8080:8080 \
