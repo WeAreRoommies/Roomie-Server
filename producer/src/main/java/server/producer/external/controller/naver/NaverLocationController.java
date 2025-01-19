@@ -24,6 +24,6 @@ public class NaverLocationController {
         log.info("Get locations from Naver");
         log.info("query: {}", query);
         log.info("naverService: {}", naverService);
-        return ResponseEntity.ok(naverService.getLocations(query)); d
+        return ResponseEntity.ok(naverService.getLocations(query));
     }
 }
