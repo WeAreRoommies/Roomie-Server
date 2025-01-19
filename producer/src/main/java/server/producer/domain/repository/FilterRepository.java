@@ -24,14 +24,14 @@ public class FilterRepository {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<House> query = cb.createQuery(House.class);
 		Root<House> house = query.from(House.class);
-		Join<House, Room> room = house.join("rooms", JoinType.LEFT);
+		Join<House, Room> room = house.join("rooms", JoinType.LEFT); // House와 Room 관계 조인
 
 		List<Predicate> predicates = new ArrayList<>();
 
 		// 필수 조건
 		predicates.add(cb.equal(house.get("location"), filter.location()));
-		predicates.add(cb.between(house.get("deposit"), filter.depositRange().min(), filter.depositRange().max()));
-		predicates.add(cb.between(house.get("monthlyRent"), filter.monthlyRentRange().min(), filter.monthlyRentRange().max()));
+		predicates.add(cb.between(room.get("deposit"), filter.depositRange().min(), filter.depositRange().max()));
+		predicates.add(cb.between(room.get("monthlyRent"), filter.monthlyRentRange().min(), filter.monthlyRentRange().max()));
 
 		// Optional 조건: moodTag
 		if (filter.moodTag() != null) {
@@ -40,10 +40,10 @@ public class FilterRepository {
 
 		// Optional 조건: genderPolicy
 		if (filter.genderPolicy() != null && !filter.genderPolicy().isEmpty()) {
-			predicates.add(house.get("genderPolicy").in(filter.genderPolicy()));
+			predicates.add(house.get("genderPolicyType").in(filter.genderPolicy()));
 		}
 
-		// Optional 조건: contractTerm
+		// Optional 조건: contractPeriod
 		if (filter.contractPeriod() != null && !filter.contractPeriod().isEmpty()) {
 			predicates.add(house.get("contractTerm").in(filter.contractPeriod()));
 		}
