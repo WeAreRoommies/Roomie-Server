@@ -3,15 +3,17 @@ package server.producer.domain.service;
 import entity.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import server.producer.domain.dto.response.*;
 import server.producer.domain.repository.PinRepository;
 import server.producer.domain.dto.response.PinnedListResponseDto;
+import entity.House;
+import entity.Pin;
+import entity.Room;
 
-import java.text.SimpleDateFormat;
+import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,9 @@ public class HouseService {
 	private final RecentlyViewedHouseRepository recentlyViewedHouseRepository;
 
 	public PinnedListResponseDto getPinnedHouses(Long userId) {
+		if (userId == null || userId <= 0) {
+			throw new InvalidParameterException("Invalid userId: " + userId);
+		}
 		List<House> pinnedHouses = houseRepository.findPinnedHouseByUserId(userId);
 		List<PinnedListResponseDto.PinnedHouseDto> pinnedHouseDtos = pinnedHouses.stream()
 				.map(house -> PinnedListResponseDto.PinnedHouseDto.builder()
@@ -50,8 +55,16 @@ public class HouseService {
 	}
 
 	public MoodHouseResponseDto getHousesByMoodAndLocation(String moodTag, Long userId){
-		String location = userRepository.findLocationById(userId).orElseThrow(EntityNotFoundException::new);
+		String location = userRepository.findLocationById(userId)
+				.orElseThrow(()-> new EntityNotFoundException("User location not found."));
 		List<House> houses = houseRepository.findByLocationAndMoodTag(location, moodTag);
+		//결과가 없을 경우 빈 리스트 반환
+		if (houses.isEmpty()) {
+			return MoodHouseResponseDto.builder()
+					.moodTag(moodTag)
+					.houses(Collections.emptyList())
+					.build();
+		}
 		List<MoodHouseResponseDto.MoodHouseDto> moodHouseDtos = new ArrayList<>();
 		for (House house : houses) {
 			final boolean isPinned = house.getPins().stream()
@@ -95,7 +108,12 @@ public class HouseService {
     public HouseDetailsResponseDto getHouseDetails(final Long houseId, final Long userId) {
 		House selectedHouse = houseRepository.findHouseWithRoomsById(houseId)
 				.orElseThrow(() -> new EntityNotFoundException("해당 House를 찾을 수 없습니다."));
+
 		List<Room> rooms = houseRepository.findRoomsAndRoommatesByHouseId(houseId);
+
+		if (rooms.isEmpty()) {
+			throw new EntityNotFoundException("해당 매물에 방 정보가 없습니다.");
+		}
 
 		boolean isPinned = houseRepository.findHouseWithPinsById(houseId)
 				.map(h -> h.getPins().stream()
@@ -164,20 +182,34 @@ public class HouseService {
     }
 
 	public boolean togglePin(Long userId, Long houseId) {
-		Optional<Pin> existingPin = pinRepository.findByUserIdAndHouseId(userId, houseId);
-		if (existingPin.isPresent()) {
-			pinRepository.deleteById(existingPin.get().getId());
-			return false;
-		} else {
-			Pin pin = new Pin();
-			pin.setUser(userRepository.getReferenceById(userId));
-			pin.setHouse(houseRepository.getReferenceById(houseId));
-			pinRepository.save(pin);
-			return true;
+		try {
+			Optional<Pin> existingPin = pinRepository.findByUserIdAndHouseId(userId, houseId);
+			if (existingPin.isPresent()) {
+				pinRepository.deleteById(existingPin.get().getId());
+				return false;
+			} else {
+				Pin pin = new Pin();
+				pin.setUser(userRepository.getReferenceById(userId));
+				pin.setHouse(houseRepository.getReferenceById(houseId));
+				pinRepository.save(pin);
+				return true;
+			}
+		} catch (EntityNotFoundException e) {
+			// 유저나 매물이 없는 경우
+			throw new EntityNotFoundException("User or House not found: " + e.getMessage());
+		} catch (DataAccessException e) {
+			// 데이터베이스 관련 예외
+			throw new RuntimeException("Database error occurred while toggling pin.", e);
+		} catch (Exception e) {
+			// 기타 예외
+			throw new RuntimeException("An unexpected error occurred.", e);
 		}
 	}
 
 	public ImageDetailsResponseDto getHouseImages(Long houseId) {
+		if (houseId == null || houseId <= 0) {
+			throw new InvalidParameterException("Invalid houseId: " + houseId);
+		}
 		House house = houseRepository.findById(houseId)
 				.orElseThrow(()-> new EntityNotFoundException("House not found."));
 		return ImageDetailsResponseDto.builder()
@@ -192,7 +224,13 @@ public class HouseService {
 	}
 
 	public RoomDetailsResponseDto getHouseRooms(Long houseId) {
+		if (houseId == null || houseId <= 0) {
+			throw new InvalidParameterException("Invalid houseId: " + houseId);
+		}
 		List<Room> rooms = houseRepository.findAllRoomsByHouseId(houseId);
+		if (rooms.isEmpty()) {
+			throw new EntityNotFoundException("No rooms found for houseId: " + houseId);
+		}
 		List<RoomDetailsResponseDto.Room> roomDtos = rooms.stream()
 				.sorted(Comparator.comparing(Room::getId))
 				.map(room -> RoomDetailsResponseDto.Room.builder()
