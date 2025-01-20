@@ -15,6 +15,7 @@ spring:
   jpa:
     properties:
       hibernate:
+        globally_quoted_identifies: true
         ddl-auto: none;
         show-sql: true
         cache:

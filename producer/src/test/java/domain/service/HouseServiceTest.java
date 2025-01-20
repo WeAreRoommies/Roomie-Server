@@ -167,7 +167,7 @@ public class HouseServiceTest {
 			room.setMonthlyRent(300000 + (i * 50000));
 			room.setDeposit(1000000 + (i * 1000000));
 			room.setOccupancyType(i + 1);
-			room.setStatus(1); // 활성 상태
+			room.setStatus(false); // 활성 상태
 			room.setMainImgUrl("https://example.com/images/room" + ((id * 10) + i) + ".jpg");
 			room.setPrepaidUtilities(50000);
 			room.setManagementFee("100000");
@@ -199,8 +199,8 @@ public class HouseServiceTest {
 		// House, Room, Roommate, and Pin Mock 데이터 생성
 		House mockHouse = createMockHouse(houseId, "루미 100호점(이대역)", "서울 강남구", "전반적으로 조용하고 깔끔한 환경을 선호하는 아침형 룸메이트들이에요.");
 
-		Room mockRoom1 = createMockRoom(101L, "1A", 2, "남성", 300000, 5000000, LocalDate.of(2024,12,31), "100000");
-		Room mockRoom2 = createMockRoom(102L, "2A", 1, "여성", 200000, 3000000, LocalDate.of(2025,01,17), "50000");
+		Room mockRoom1 = createMockRoom(101L, "1A", 2, "남성", 300000, 5000000, LocalDate.of(2024,12,31), "100000", true);
+		Room mockRoom2 = createMockRoom(102L, "2A", 1, "여성", 200000, 3000000, LocalDate.of(2025,01,17), "50000", false);
 
 		Roommate roommate1 = createMockRoommate("20대", "학생", "INTJ", "23:00-24:00", "09:00-23:00");
 		Roommate roommate2 = createMockRoommate("30대", "디자이너", "ENFP", "22:00-23:00", "08:00-22:00");
@@ -237,7 +237,7 @@ public class HouseServiceTest {
 		HouseDetailsResponseDto.RoomDto roomDto1 = response.rooms().get(0);
 		assertEquals(101L, roomDto1.roomId());
 		assertEquals("1A", roomDto1.name());
-		assertFalse(roomDto1.status());
+		assertTrue(roomDto1.status());
 		assertEquals(2, roomDto1.occupancyType());
 		assertEquals("남성", roomDto1.gender());
 		assertEquals(300000, roomDto1.monthlyRent());
@@ -269,7 +269,7 @@ public class HouseServiceTest {
 		return house;
 	}
 	private Room createMockRoom(Long roomId, String name, int occupancyType, String gender, int monthlyRent,
-								int deposit, LocalDate contractPeriod, String managementFee) {
+								int deposit, LocalDate contractPeriod, String managementFee, boolean status) {
 		Room room = new Room();
 		room.setId(roomId);
 		room.setName(name);
@@ -279,7 +279,7 @@ public class HouseServiceTest {
 		room.setDeposit(deposit);
 		room.setContractPeriod(contractPeriod);
 		room.setManagementFee(managementFee);
-		room.setStatus(occupancyType);
+		room.setStatus(status);
 		return room;
 	}
 	private Roommate createMockRoommate(String age, String job, String mbti, String sleepTime, String activityTime) {
@@ -409,8 +409,8 @@ public class HouseServiceTest {
 	@Test
 	void testGetHouseRooms() {
 		// Given: Mock 데이터 생성
-		Room mockRoom1 = createMockRoom(1L, "1A", "책상#침대#옷장", 2, 1, "https://example.com/room1.jpg https://example.com/room1-2.jpg");
-		Room mockRoom2 = createMockRoom(2L, "2A", "책상#침대#의자", 1, 1, "https://example.com/room2.jpg");
+		Room mockRoom1 = createMockRoom(1L, "1A", "책상#침대#옷장", 2, true, "https://example.com/room1.jpg https://example.com/room1-2.jpg");
+		Room mockRoom2 = createMockRoom(2L, "2A", "책상#침대#의자", 1, false, "https://example.com/room2.jpg");
 
 		List<Room> mockRooms = List.of(mockRoom1, mockRoom2);
 
@@ -421,7 +421,7 @@ public class HouseServiceTest {
 						.roomId(room.getId())
 						.name(room.getName())
 						.facility(Arrays.asList(room.getFacility().split("#")))
-						.status(room.getStatus() != room.getOccupancyType())
+						.status(room.getStatus())
 						.mainImageUrl(Arrays.asList(room.getMainImgUrl().split(" ")))
 						.build())
 				.toList();
@@ -446,7 +446,7 @@ public class HouseServiceTest {
 		assertEquals(List.of("https://example.com/room2.jpg"), roomDto2.mainImageUrl());
 	}
 
-	private Room createMockRoom(Long roomId, String name, String facility, int occupancyType, int status, String mainImgUrl) {
+	private Room createMockRoom(Long roomId, String name, String facility, int occupancyType, boolean status, String mainImgUrl) {
 		Room room = new Room();
 		room.setId(roomId);
 		room.setName(name);

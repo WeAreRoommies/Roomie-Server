@@ -48,7 +48,7 @@ public class HouseService {
 	}
 
 	public MoodHouseResponseDto getHousesByMoodAndLocation(String moodTag, Long userId){
-		String location = userRepository.findLocationById(userId).orElseThrow(RuntimeException::new);
+		String location = userRepository.findLocationById(userId).orElseThrow(()->new EntityNotFoundException("User location not found for userId: \" + userId)"));
 		List<House> houses = houseRepository.findByLocationAndMoodTag(location, moodTag);
 		List<MoodHouseResponseDto.MoodHouseDto> moodHouseDtos = new ArrayList<>();
 		for (House house : houses) {
@@ -112,7 +112,7 @@ public class HouseService {
                 .map(room -> HouseDetailsResponseDto.RoomDto.builder()
                         .roomId(room.getId())
                         .name(room.getName())
-                        .status(room.getStatus() != room.getOccupancyType())
+                        .status(room.getStatus())
                         .occupancyType(room.getOccupancyType())
                         .gender(room.getGender().toString())
                         .deposit(room.getDeposit())
@@ -177,7 +177,7 @@ public class HouseService {
 						.roomId(room.getId())
 						.name(room.getName())
 						.facility(Arrays.asList(room.getFacility().split("#")))
-						.status(room.getStatus() != room.getOccupancyType())
+						.status(room.getStatus())
 						.mainImageUrl(Arrays.asList(room.getMainImgUrl().split(" ")))
 						.build())
 				.toList();

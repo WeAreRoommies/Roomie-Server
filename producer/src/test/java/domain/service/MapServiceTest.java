@@ -101,7 +101,7 @@ public class MapServiceTest {
 			room.setMonthlyRent(300000 + (i * 50000));
 			room.setDeposit(1000000 + (i * 1000000));
 			room.setOccupancyType(i + 1);
-			room.setStatus(1); // 활성 상태
+			room.setStatus(true); // 활성 상태
 			room.setMainImgUrl("https://example.com/images/room" + ((id * 10) + i) + ".jpg");
 			room.setPrepaidUtilities(50000);
 			room.setManagementFee("100000");

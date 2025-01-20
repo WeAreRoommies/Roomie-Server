@@ -124,7 +124,7 @@ public class UserServiceTest {
 				room.setMonthlyRent(300000 + i * 50000);
 				room.setDeposit(1000000 + i * 100000);
 				room.setOccupancyType(i % 2 == 0 ? 2 : 1); // 1인실 또는 2인실
-				room.setStatus(1); // 활성 상태
+				room.setStatus(false); // 활성 상태
 				room.setMainImgUrl("https://example.com/images/room" + (houseId * 10 + i) + ".jpg");
 				room.setPrepaidUtilities(50000);
 				room.setManagementFee("100000");

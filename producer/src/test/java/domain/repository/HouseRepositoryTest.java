@@ -56,7 +56,7 @@ public class HouseRepositoryTest {
         room.setFacility("에어컨#와이파이");
         room.setContractPeriod(LocalDate.of(2025, 12, 31));
         room.setGender(GenderType.혼성);
-        room.setStatus(1);
+        room.setStatus(false);
         room.setOccupancyType(2);
         room.setMainImgUrl("room_main.jpg");
         room.setPrepaidUtilities(100000);
@@ -238,7 +238,7 @@ public class HouseRepositoryTest {
         room1.setFacility("에어컨, 와이파이");
         room1.setContractPeriod(LocalDate.of(2025, 12, 31));
         room1.setGender(GenderType.혼성);
-        room1.setStatus(1);
+        room1.setStatus(true);
         room1.setOccupancyType(2);
         room1.setMainImgUrl("room1_main.jpg");
         room1.setPrepaidUtilities(100000);
@@ -252,7 +252,7 @@ public class HouseRepositoryTest {
         room2.setFacility("히터, 책상");
         room2.setContractPeriod(LocalDate.of(2026, 12, 31));
         room2.setGender(GenderType.혼성);
-        room2.setStatus(1);
+        room2.setStatus(false);
         room2.setOccupancyType(1);
         room2.setMainImgUrl("room2_main.jpg");
         room2.setPrepaidUtilities(150000);

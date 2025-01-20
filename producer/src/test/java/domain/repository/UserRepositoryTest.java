@@ -146,7 +146,7 @@ public class UserRepositoryTest {
 		room.setDeposit(deposit);
 		room.setFacility("Bed, Desk");
 		room.setGender(genderType);
-		room.setStatus(0);
+		room.setStatus(true);
 		room.setOccupancyType(1);
 		room.setMainImgUrl("https://example.com/room.jpg");
 		room.setPrepaidUtilities(50000);

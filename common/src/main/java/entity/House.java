@@ -118,13 +118,15 @@ public class House {
     }
 
     public String calculateOccupancyStatus() {
-        int max = 0;
-        int current = 0;
+        int totalCapacity = 0;
+        int occupiedCapacity = 0;
         for (Room room : this.rooms) {
-            current += room.getStatus();
-            max += room.getOccupancyType();
+            totalCapacity += room.getOccupancyType();
+            if (!room.getStatus()){
+                occupiedCapacity++;
+            }
         }
-        return current + "/" + max;
+        return occupiedCapacity + "/" + totalCapacity;
     }
 
     public List<String> mergeTags() {

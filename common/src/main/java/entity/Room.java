@@ -35,7 +35,7 @@ public class Room {
     private GenderType gender;
 
     @Column(nullable = false)
-    private int status;
+    private Boolean status;
 
     @Column(nullable = false)
     private int occupancyType;
