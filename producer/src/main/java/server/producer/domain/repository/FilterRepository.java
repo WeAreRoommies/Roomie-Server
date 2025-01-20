@@ -22,14 +22,20 @@ public class FilterRepository {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<House> query = cb.createQuery(House.class);
 		Root<House> house = query.from(House.class);
+
 		Join<House, Room> room = house.join("rooms", JoinType.LEFT); // House와 Room 관계 조인
 
 		List<Predicate> predicates = new ArrayList<>();
+		List<Integer> occupancyTypes = filter.occupancyTypes()
+				.stream()
+				.map(li -> Integer.parseInt(li.replaceAll("[^0-9]", "")))
+				.toList();
 
 		// 필수 조건
 		predicates.add(cb.equal(house.get("location"), filter.location()));
 		predicates.add(cb.between(room.get("deposit"), filter.depositRange().min(), filter.depositRange().max()));
 		predicates.add(cb.between(room.get("monthlyRent"), filter.monthlyRentRange().min(), filter.monthlyRentRange().max()));
+
 		predicates.add(cb.notEqual(room.get("status"), room.get("occupancyType")));
 		// Optional 조건: moodTag
 		if (filter.moodTag() != null) {
@@ -46,6 +52,10 @@ public class FilterRepository {
 			predicates.add(house.get("contractTerm").in(filter.contractPeriod()));
 		}
 
+		if (!occupancyTypes.isEmpty()) {
+			predicates.add(room.get("occupancyType").in(occupancyTypes));
+		}
+
 		// Optional 조건: room 조건
 		if (filter.preferredDate() != null) {
 			predicates.add(cb.or(
@@ -56,6 +66,7 @@ public class FilterRepository {
 
 		query.select(house).distinct(true).where(cb.and(predicates.toArray(new Predicate[0])));
 		TypedQuery<House> typedQuery = entityManager.createQuery(query);
+		System.out.println(typedQuery.unwrap(org.hibernate.query.Query.class).getQueryString());
 		return typedQuery.getResultList();
 	}
 }

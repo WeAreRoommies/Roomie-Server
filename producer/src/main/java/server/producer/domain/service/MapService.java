@@ -30,9 +30,10 @@ public class MapService {
 				dong = part;
 			}
 		}
+		FilterRequestDto updated;
 		if (gu != null && dong != null) {
 			location =  gu + " " + dong;
-			FilterRequestDto updated = new FilterRequestDto(
+			updated = new FilterRequestDto(
 					location, // 변경된 location
 					requestDto.moodTag(),
 					requestDto.depositRange(),
@@ -44,7 +45,7 @@ public class MapService {
 			);
 
 			List<FilterResponseDto.HouseMapDto> houseMapDtos = new ArrayList<>();
-			List<House> houses = filterRepository.findFilteredHouses(requestDto);
+			List<House> houses = filterRepository.findFilteredHouses(updated);
 			for (House house : houses) {
 				final boolean isPinned = house.getPins().stream()
 						.anyMatch(pin -> pin.getUser().getId().equals(userId));
