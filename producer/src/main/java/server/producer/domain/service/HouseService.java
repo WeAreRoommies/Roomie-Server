@@ -48,7 +48,7 @@ public class HouseService {
 	}
 
 	public MoodHouseResponseDto getHousesByMoodAndLocation(String moodTag, Long userId){
-		String location = userRepository.findLocationById(userId).orElseThrow(RuntimeException::new);
+		String location = userRepository.findLocationById(userId).orElseThrow(EntityNotFoundException::new);
 		List<House> houses = houseRepository.findByLocationAndMoodTag(location, moodTag);
 		List<MoodHouseResponseDto.MoodHouseDto> moodHouseDtos = new ArrayList<>();
 		for (House house : houses) {
