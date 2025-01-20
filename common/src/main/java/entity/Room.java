@@ -58,4 +58,11 @@ public class Room {
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<HousingRequest> housingRequests = new ArrayList<>();
+
+    public boolean isTourAvailable(){
+        if (this.contractPeriod == null) return true;
+        if (this.contractPeriod.isAfter(LocalDate.now().plusDays(60))) return false;
+        return true;
+    }
+
 }

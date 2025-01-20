@@ -10,8 +10,6 @@ import server.producer.domain.dto.request.FilterRequestDto;
 import entity.House;
 import entity.Room;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +22,21 @@ public class FilterRepository {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<House> query = cb.createQuery(House.class);
 		Root<House> house = query.from(House.class);
+
 		Join<House, Room> room = house.join("rooms", JoinType.LEFT); // House와 Room 관계 조인
 
 		List<Predicate> predicates = new ArrayList<>();
+		List<Integer> occupancyTypes = filter.occupancyTypes()
+				.stream()
+				.map(li -> Integer.parseInt(li.replaceAll("[^0-9]", "")))
+				.toList();
 
 		// 필수 조건
 		predicates.add(cb.equal(house.get("location"), filter.location()));
 		predicates.add(cb.between(room.get("deposit"), filter.depositRange().min(), filter.depositRange().max()));
 		predicates.add(cb.between(room.get("monthlyRent"), filter.monthlyRentRange().min(), filter.monthlyRentRange().max()));
 
+		predicates.add(cb.notEqual(room.get("status"), room.get("occupancyType")));
 		// Optional 조건: moodTag
 		if (filter.moodTag() != null) {
 			predicates.add(cb.equal(house.get("moodTag"), filter.moodTag()));
@@ -48,21 +52,21 @@ public class FilterRepository {
 			predicates.add(house.get("contractTerm").in(filter.contractPeriod()));
 		}
 
+		if (!occupancyTypes.isEmpty()) {
+			predicates.add(room.get("occupancyType").in(occupancyTypes));
+		}
+
 		// Optional 조건: room 조건
 		if (filter.preferredDate() != null) {
-			LocalDate maxContractDate = filter.preferredDate().plus(60, ChronoUnit.DAYS);
 			predicates.add(cb.or(
-					cb.between(room.get("monthlyRent"), filter.monthlyRentRange().min(), filter.monthlyRentRange().max()),
-					cb.between(room.get("deposit"), filter.depositRange().min(), filter.depositRange().max()),
-					cb.or(
-							room.get("contractPeriod").isNull(), // 계약 기간이 null인 경우 조건 만족
-							cb.between(room.get("contractPeriod"), filter.preferredDate(), maxContractDate)
-					)
+					room.get("contractPeriod").isNull(), // 계약 기간이 null인 경우 조건 만족
+					cb.lessThanOrEqualTo(room.get("contractPeriod"), filter.preferredDate()) // 계약기간이 preferredDate 이전이나 같을 경우 조건 만족
 			));
 		}
 
 		query.select(house).distinct(true).where(cb.and(predicates.toArray(new Predicate[0])));
 		TypedQuery<House> typedQuery = entityManager.createQuery(query);
+		System.out.println(typedQuery.unwrap(org.hibernate.query.Query.class).getQueryString());
 		return typedQuery.getResultList();
 	}
 }
