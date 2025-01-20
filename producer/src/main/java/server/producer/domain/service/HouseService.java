@@ -113,6 +113,7 @@ public class HouseService {
                         .roomId(room.getId())
                         .name(room.getName())
                         .status(room.getStatus() != room.getOccupancyType())
+						.isTourAvailable(room.isTourAvailable())
                         .occupancyType(room.getOccupancyType())
                         .gender(room.getGender().toString())
                         .deposit(room.getDeposit())

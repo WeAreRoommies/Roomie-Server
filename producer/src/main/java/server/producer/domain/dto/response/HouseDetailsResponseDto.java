@@ -41,6 +41,7 @@ public record HouseDetailsResponseDto (
             Long roomId,
             String name,
             boolean status,
+            boolean isTourAvailable,
             int occupancyType,
             String gender,
             int deposit,
