@@ -1,6 +1,7 @@
 package server.producer.domain.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import server.producer.domain.dto.response.*;
 import server.producer.domain.repository.PinRepository;
@@ -9,6 +10,7 @@ import entity.House;
 import entity.Pin;
 import entity.Room;
 
+import java.security.InvalidParameterException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +28,9 @@ public class HouseService {
 	private final PinRepository pinRepository;
 
 	public PinnedListResponseDto getPinnedHouses(Long userId) {
+		if (userId == null || userId <= 0) {
+			throw new InvalidParameterException("Invalid userId: " + userId);
+		}
 		List<House> pinnedHouses = houseRepository.findPinnedHouseByUserId(userId);
 		List<PinnedListResponseDto.PinnedHouseDto> pinnedHouseDtos = pinnedHouses.stream()
 				.map(house -> PinnedListResponseDto.PinnedHouseDto.builder()
@@ -154,20 +159,37 @@ public class HouseService {
     }
 
 	public boolean togglePin(Long userId, Long houseId) {
-		Optional<Pin> existingPin = pinRepository.findByUserIdAndHouseId(userId, houseId);
-		if (existingPin.isPresent()) {
-			pinRepository.deleteByUserIdAndHouseId(userId, houseId);
-			return false;
-		} else {
-			Pin pin = new Pin();
-			pin.setUser(userRepository.getReferenceById(userId));
-			pin.setHouse(houseRepository.getReferenceById(houseId));
-			pinRepository.save(pin);
-			return true;
+		try {
+			// 핀 존재 여부 확인
+			Optional<Pin> existingPin = pinRepository.findByUserIdAndHouseId(userId, houseId);
+			if (existingPin.isPresent()) {
+				// 핀 삭제
+				pinRepository.deleteByUserIdAndHouseId(userId, houseId);
+				return false;
+			} else {
+				// 핀 생성
+				Pin pin = new Pin();
+				pin.setUser(userRepository.getReferenceById(userId)); // 유저 참조
+				pin.setHouse(houseRepository.getReferenceById(houseId)); // 매물 참조
+				pinRepository.save(pin);
+				return true;
+			}
+		} catch (EntityNotFoundException e) {
+			// 유저나 매물이 없는 경우
+			throw new EntityNotFoundException("User or House not found: " + e.getMessage());
+		} catch (DataAccessException e) {
+			// 데이터베이스 관련 예외
+			throw new RuntimeException("Database error occurred while toggling pin.", e);
+		} catch (Exception e) {
+			// 기타 예외
+			throw new RuntimeException("An unexpected error occurred.", e);
 		}
 	}
 
 	public ImageDetailsResponseDto getHouseImages(Long houseId) {
+		if (houseId == null || houseId <= 0) {
+			throw new InvalidParameterException("Invalid houseId: " + houseId);
+		}
 		House house = houseRepository.findById(houseId)
 				.orElseThrow(()-> new EntityNotFoundException("House not found."));
 		return ImageDetailsResponseDto.builder()

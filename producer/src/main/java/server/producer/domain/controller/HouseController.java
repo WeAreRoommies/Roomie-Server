@@ -1,6 +1,7 @@
 package server.producer.domain.controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import server.producer.common.dto.ApiResponseDto;
@@ -54,6 +55,12 @@ public class HouseController {
         try {
             boolean isPinned = houseService.togglePin(userId, houseId);
             return ApiResponseDto.success(SuccessCode.PIN_TOGGLE_SUCCESS, isPinned);
+        } catch (EntityNotFoundException e) {
+            return ApiResponseDto.fail(ErrorCode.NOT_FOUND_HOUSE);
+        } catch (InvalidParameterException e) {
+            return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
+        } catch (DataAccessException e) {
+            return ApiResponseDto.fail(ErrorCode.DATABASE_CONNECTION_ERROR);
         } catch (Exception e) {
             return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
         }
@@ -63,9 +70,11 @@ public class HouseController {
     public ApiResponseDto<PinnedListResponseDto> getPinnedHouses() {
         try {
             PinnedListResponseDto pinnedListResponseDto = houseService.getPinnedHouses(userId);
-            return ApiResponseDto.success(SuccessCode.HOUSE_GET_SUCCESS, pinnedListResponseDto);
+            return ApiResponseDto.success(SuccessCode.PINNED_HOUSES_GET_SUCCESS, pinnedListResponseDto);
+        } catch (InvalidParameterException e) {
+            return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
         } catch (Exception e) {
-            return ApiResponseDto.fail(ErrorCode.NOT_FOUND_HOUSE);
+            return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -86,6 +95,10 @@ public class HouseController {
             return ApiResponseDto.success(SuccessCode.HOUSE_DETAIL_GET_SUCCESS, roomDetailsResponseDto);
         } catch (EntityNotFoundException e) {
             return ApiResponseDto.fail(ErrorCode.NOT_FOUND_HOUSE);
+        } catch (InvalidParameterException e) {
+            return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
+        } catch (Exception e) {
+            return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 }

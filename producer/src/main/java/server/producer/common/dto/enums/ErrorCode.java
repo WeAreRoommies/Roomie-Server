@@ -23,6 +23,7 @@ public enum ErrorCode {
 	METHOD_NOT_ALLOWED(40500, "해당 요청은 지원되지 않습니다."),
 	//500 Internal Server Error
 	INTERNAL_SERVER_ERROR(50000, "서버 내부 오류입니다."),
+	DATABASE_CONNECTION_ERROR(50001, "데이터베이스 연결 오류입니다."),
 	//503 Service Unavailable
 	SERVICE_UNAVAILABLE(50300, "서비스를 이용할 수 없습니다.");
 
