@@ -204,7 +204,13 @@ public class HouseService {
 	}
 
 	public RoomDetailsResponseDto getHouseRooms(Long houseId) {
+		if (houseId == null || houseId <= 0) {
+			throw new InvalidParameterException("Invalid houseId: " + houseId);
+		}
 		List<Room> rooms = houseRepository.findAllRoomsByHouseId(houseId);
+		if (rooms.isEmpty()) {
+			throw new EntityNotFoundException("No rooms found for houseId: " + houseId);
+		}
 		List<RoomDetailsResponseDto.Room> roomDtos = rooms.stream()
 				.sorted(Comparator.comparing(Room::getId))
 				.map(room -> RoomDetailsResponseDto.Room.builder()

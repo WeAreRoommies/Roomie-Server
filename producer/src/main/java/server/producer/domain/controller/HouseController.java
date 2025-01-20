@@ -85,6 +85,10 @@ public class HouseController {
             return ApiResponseDto.success(SuccessCode.HOUSE_DETAIL_GET_SUCCESS, imageDetailsResponseDto);
         } catch (EntityNotFoundException e) {
             return ApiResponseDto.fail(ErrorCode.NOT_FOUND_HOUSE);
+        } catch (InvalidParameterException e) {
+            return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
+        } catch (Exception e) {
+            return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -94,7 +98,7 @@ public class HouseController {
             RoomDetailsResponseDto roomDetailsResponseDto = houseService.getHouseRooms(houseId);
             return ApiResponseDto.success(SuccessCode.HOUSE_DETAIL_GET_SUCCESS, roomDetailsResponseDto);
         } catch (EntityNotFoundException e) {
-            return ApiResponseDto.fail(ErrorCode.NOT_FOUND_HOUSE);
+            return ApiResponseDto.fail(ErrorCode.ROOM_NOT_FOUND);
         } catch (InvalidParameterException e) {
             return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
         } catch (Exception e) {
