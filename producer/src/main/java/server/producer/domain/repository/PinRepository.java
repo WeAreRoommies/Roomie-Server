@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface PinRepository extends JpaRepository<Pin, Long> {
     Optional<Pin> findByUserIdAndHouseId(Long userId, Long houseId);
-    void deleteByUserIdAndHouseId(Long userId, Long houseId);
+//    void deleteByUserIdAndHouseId(Long userId, Long houseId);
 }

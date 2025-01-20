@@ -21,15 +21,9 @@ public class MapService {
 			throw new IllegalArgumentException();
 		}
 		String[] parts = location.split(" ");
-		String gu = null;
-		String dong = null;
-		for (String part : parts) {
-			if (part.endsWith("구")) {
-				gu = part;
-			} else if (part.endsWith("동")) {
-				dong = part;
-			}
-		}
+		String gu = parts[1];
+		String dong = parts[2];
+
 		FilterRequestDto updated;
 		if (gu != null && dong != null) {
 			location =  gu + " " + dong;
