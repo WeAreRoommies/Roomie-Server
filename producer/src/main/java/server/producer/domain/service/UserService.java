@@ -12,6 +12,7 @@ import entity.RecentlyViewedHouse;
 import entity.Room;
 import entity.User;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,9 @@ public class UserService {
 	private final HouseRepository houseRepository;
 
 	public HomeInfoResponseDto getUserInfoAndRecentlyViewedHouse(Long userId) {
+		if (userId == null || userId <= 0) {
+			throw new InvalidParameterException("Invalid userId: " + userId);
+		}
 		// 사용자 정보 조회
 		User user = userRepository.findUserWithRecentlyViewedHouses(userId)
 				.orElseThrow(EntityNotFoundException::new);
@@ -60,7 +64,7 @@ public class UserService {
 
 	public MyPageResponseDto getMyPage(Long userId) {
 		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
+				.orElseThrow(() -> new EntityNotFoundException("User not found"));
 		final String name = user.getName();
 		return MyPageResponseDto.builder()
 				.name(name)

@@ -8,6 +8,8 @@ import server.producer.common.dto.enums.SuccessCode;
 import dto.TourRequestDto;
 import server.producer.domain.service.RoomService;
 
+import java.security.InvalidParameterException;
+
 @RestController
 @RequestMapping("v1/rooms")
 @RequiredArgsConstructor
@@ -17,8 +19,13 @@ public class RoomController {
 	@PostMapping("/{room_id}/tour-requests")
 	public ApiResponseDto<Object> createRoomTourRequest(@PathVariable("room_id") Long roomId, @RequestBody TourRequestDto tourRequestDto){
 		try {
+			if (roomId == null || roomId <= 0) {
+				return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER); // roomId가 유효하지 않은 경우
+			}
 			roomService.createRoomTourRequest(tourRequestDto);
 			return ApiResponseDto.success(SuccessCode.ROOM_REQUEST_POST_SUCCESS);
+		} catch (InvalidParameterException e){
+			return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
 		} catch (Exception e) {
 			return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
