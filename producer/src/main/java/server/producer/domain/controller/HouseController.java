@@ -9,6 +9,9 @@ import server.producer.common.dto.enums.SuccessCode;
 import server.producer.domain.dto.response.*;
 import server.producer.domain.service.HouseService;
 
+import java.nio.file.AccessDeniedException;
+import java.security.InvalidParameterException;
+
 @RestController
 @RequestMapping("/v1/houses")
 @RequiredArgsConstructor
@@ -22,6 +25,10 @@ public class HouseController {
         try{
             HouseDetailsResponseDto responseDto = houseService.getHouseDetails(houseId, userId);
             return ApiResponseDto.success(SuccessCode.HOUSE_GET_SUCCESS, responseDto);
+        } catch (EntityNotFoundException e) {
+            return ApiResponseDto.fail(ErrorCode.HOUSE_NOT_FOUND);
+        } catch (InvalidParameterException e) {
+            return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
         } catch (Exception e){
             return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
         }

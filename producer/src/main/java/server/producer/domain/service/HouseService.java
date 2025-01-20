@@ -79,6 +79,10 @@ public class HouseService {
 
 		List<Room> rooms = houseRepository.findRoomsAndRoommatesByHouseId(houseId);
 
+		if (rooms.isEmpty()) {
+			throw new EntityNotFoundException("해당 매물에 방 정보가 없습니다.");
+		}
+
 		boolean isPinned = houseRepository.findHouseWithPinsById(houseId)
 				.map(h -> h.getPins().stream()
 						.anyMatch(pin -> pin.getUser().getId().equals(userId)))
