@@ -17,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilterRepository {
 	private final EntityManager entityManager;
+	private final int TENTHOUSAND = 10000;
 
 	public List<House> findFilteredHouses(FilterRequestDto filter) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -33,8 +34,8 @@ public class FilterRepository {
 
 		// 필수 조건
 		predicates.add(cb.equal(house.get("location"), filter.location()));
-		predicates.add(cb.between(room.get("deposit"), filter.depositRange().min(), filter.depositRange().max()));
-		predicates.add(cb.between(room.get("monthlyRent"), filter.monthlyRentRange().min(), filter.monthlyRentRange().max()));
+		predicates.add(cb.between(room.get("deposit"), filter.depositRange().min()*TENTHOUSAND, filter.depositRange().max()*TENTHOUSAND));
+		predicates.add(cb.between(room.get("monthlyRent"), filter.monthlyRentRange().min()*TENTHOUSAND, filter.monthlyRentRange().max()*TENTHOUSAND));
 
 		predicates.add(cb.notEqual(room.get("status"), room.get("occupancyType")));
 		// Optional 조건: moodTag

@@ -46,8 +46,8 @@ public class MapServiceTest {
 		FilterRequestDto requestDto = new FilterRequestDto(
 				"서울특별시 서대문구 대현동 11-1",
 				"#차분한",
-				new FilterRequestDto.Range(0, 10000000),
-				new FilterRequestDto.Range(0,10000000),
+				new FilterRequestDto.Range(0, 1000),
+				new FilterRequestDto.Range(0,1000),
 				genderPolicy,
 				null,
 				occp,
