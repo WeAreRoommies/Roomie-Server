@@ -10,8 +10,6 @@ import server.producer.domain.dto.request.FilterRequestDto;
 import entity.House;
 import entity.Room;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,14 +48,9 @@ public class FilterRepository {
 
 		// Optional 조건: room 조건
 		if (filter.preferredDate() != null) {
-			LocalDate maxContractDate = filter.preferredDate().plus(60, ChronoUnit.DAYS);
 			predicates.add(cb.or(
-					cb.between(room.get("monthlyRent"), filter.monthlyRentRange().min(), filter.monthlyRentRange().max()),
-					cb.between(room.get("deposit"), filter.depositRange().min(), filter.depositRange().max()),
-					cb.or(
-							room.get("contractPeriod").isNull(), // 계약 기간이 null인 경우 조건 만족
-							cb.between(room.get("contractPeriod"), filter.preferredDate(), maxContractDate)
-					)
+					room.get("contractPeriod").isNull(), // 계약 기간이 null인 경우 조건 만족
+					cb.lessThanOrEqualTo(room.get("contractPeriod"), filter.preferredDate()) // 계약기간이 preferredDate 이전이나 같을 경우 조건 만족
 			));
 		}
 
