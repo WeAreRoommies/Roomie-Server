@@ -1,5 +1,6 @@
 package server.producer.domain.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,8 @@ import server.producer.domain.dto.response.HomeInfoResponseDto;
 import server.producer.domain.dto.response.MyPageResponseDto;
 import server.producer.domain.service.UserService;
 
+import java.security.InvalidParameterException;
+
 @RestController
 @RequestMapping("/v1/users")
 @RequiredArgsConstructor
@@ -21,11 +24,13 @@ public class UserController {
 
 	@GetMapping("/home")
 	public ApiResponseDto<HomeInfoResponseDto> getUserHomeInfo() {
-		try{
+		try {
 			HomeInfoResponseDto userHomeInfo = userService.getUserInfoAndRecentlyViewedHouse(userId);
 			return ApiResponseDto.success(SuccessCode.MAIN_PAGE_GET_SUCCESS, userHomeInfo);
-		} catch (Exception e){
-			return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
+		} catch (InvalidParameterException e) {
+			return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER); // userId가 유효하지 않은 경우
+		} catch (Exception e) {
+			return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR); // 기타 예상치 못한 예외
 		}
 	}
 
@@ -34,7 +39,9 @@ public class UserController {
         try{
             MyPageResponseDto userMyPage = userService.getMyPage(userId);
             return ApiResponseDto.success(SuccessCode.MY_PAGE_GET_SUCCESS, userMyPage);
-        } catch (Exception e){
+        } catch (EntityNotFoundException e) {
+			return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER); // userId가 유효하지 않은 경우
+		} catch (Exception e){
             return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }

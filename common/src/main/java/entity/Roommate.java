@@ -11,11 +11,11 @@ public class Roommate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int age;
+    private String age;
     private String job;
     private String mbti;
     private String sleepTime;
-    private String activateTime;
+    private String activityTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")

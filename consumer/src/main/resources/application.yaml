@@ -1,18 +1,16 @@
 server:
-  port: 8080
+  port: 8081
 spring:
   jpa:
     properties:
       hibernate:
-        globally_quoted_identifiers: true
+        ddl-auto: none
+        show-sql: true
   datasource:
     driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.h2.Driver}
     url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:testdb}
-    username: ${SPRING_DATASOURCE_USERNAME:root}
-    password: ${SPRING_DATASOURCE_PASSWORD:1234}
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
   h2:
     console:
       enabled: true

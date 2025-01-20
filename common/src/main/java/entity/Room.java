@@ -5,7 +5,6 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -33,7 +32,7 @@ public class Room {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private GenderType genderType;
+    private GenderType gender;
 
     @Column(nullable = false)
     private int status;

@@ -39,7 +39,7 @@ public class MapService {
 					requestDto.monthlyRentRange(),
 					requestDto.genderPolicy(),
 					requestDto.preferredDate(),
-					requestDto.occupancyType(),
+					requestDto.occupancyTypes(),
 					requestDto.contractPeriod()
 			);
 
@@ -56,7 +56,7 @@ public class MapService {
 						.deposit(house.calculateDeposit())
 						.occupancyTypes(house.calculateOccupancyType())
 						.location(location)
-						.genderPolicy(house.getGenderPolicyType().toString())
+						.genderPolicy(house.getGenderPolicy().toString())
 						.locationDescription(house.getLocationDescription())
 						.isPinned(isPinned)
 						.moodTag(house.getMoodTag())

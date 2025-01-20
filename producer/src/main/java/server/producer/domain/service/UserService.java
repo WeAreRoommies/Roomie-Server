@@ -5,12 +5,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
 import server.producer.domain.dto.response.MyPageResponseDto;
+import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.UserRepository;
 import entity.House;
 import entity.RecentlyViewedHouse;
 import entity.Room;
 import entity.User;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,18 +21,20 @@ import java.util.List;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final HouseRepository houseRepository;
 
 	public HomeInfoResponseDto getUserInfoAndRecentlyViewedHouse(Long userId) {
+		if (userId == null || userId <= 0) {
+			throw new InvalidParameterException("Invalid userId: " + userId);
+		}
 		// 사용자 정보 조회
-		User user = userRepository.findByIdWithHousesAndRooms(userId)
+		User user = userRepository.findUserWithRecentlyViewedHouses(userId)
 				.orElseThrow(EntityNotFoundException::new);
 		final String name = user.getName();
 		final String location = user.getLocation().split(" ")[user.getLocation().split(" ").length-1];
 		final List<HomeInfoResponseDto.RecentlyViewedHouseDto> recentlyViewedHouseDtos = new ArrayList<>();
 
-		List<House> houses = user.getRecentlyViewedHouses().stream()
-				.map(RecentlyViewedHouse::getHouse)
-				.toList();
+		List<House> houses = houseRepository.findRecentlyViewedHousesByUserId(user.getId());
 
 		for (House house : houses) {
 			List<Room> rooms = house.getRooms();
@@ -41,7 +45,7 @@ public class UserService {
 					.monthlyRent(house.calculateMonthlyRent())
 					.deposit(house.calculateDeposit())
 					.occupancyTypes(house.calculateOccupancyType())
-					.genderPolicy(house.getGenderPolicyType().toString())
+					.genderPolicy(house.getGenderPolicy().toString())
 					.location(house.getLocation())
 					.locationDescription(house.getLocationDescription())
 					.isPinned(isPinned)
@@ -60,7 +64,7 @@ public class UserService {
 
 	public MyPageResponseDto getMyPage(Long userId) {
 		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
+				.orElseThrow(() -> new EntityNotFoundException("User not found"));
 		final String name = user.getName();
 		return MyPageResponseDto.builder()
 				.name(name)

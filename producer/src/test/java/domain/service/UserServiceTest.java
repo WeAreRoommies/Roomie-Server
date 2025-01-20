@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
+import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.UserRepository;
 import server.producer.domain.service.UserService;
 
@@ -26,6 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
+
+	@Mock
+	private HouseRepository houseRepository;
 
     @BeforeEach
     void setUp() {
@@ -60,8 +64,10 @@ public class UserServiceTest {
 		Long userId = 1L;
 		User user = createUserWithHousesAndRooms(userId);
 
-		when(userRepository.findByIdWithHousesAndRooms(anyLong()))
+		when(userRepository.findUserWithRecentlyViewedHouses(anyLong()))
 				.thenReturn(Optional.of(user));
+		when(houseRepository.findRecentlyViewedHousesByUserId(user.getId()))
+				.thenReturn(user.getRecentlyViewedHouses().stream().map(RecentlyViewedHouse::getHouse).toList());
 		//when
 		HomeInfoResponseDto result = userService.getUserInfoAndRecentlyViewedHouse(userId);
 		HomeInfoResponseDto.RecentlyViewedHouseDto resultHouse = result.recentlyViewedHouses().get(0);
@@ -99,7 +105,7 @@ public class UserServiceTest {
 			house.setLocationDescription("자이아파트 " + houseId);
 			house.setMoodTag("#차분한");
 			house.setSubMoodTag("#추가태그");
-			house.setGenderPolicyType(GenderPolicyType.남녀공용);
+			house.setGenderPolicy(GenderPolicyType.남녀공용);
 			house.setMainImgUrl("https://example.com/images/house" + houseId + ".jpg");
 			house.setMainImgDescription("Main image of house " + houseId);
 			house.setFacilityImgUrl("https://example.com/images/facility" + houseId + ".jpg");

@@ -34,8 +34,12 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "WHERE p.user.id = :userId")
     List<House> findPinnedHouseByUserId(@Param("userId") Long userId);
 
+    @Query("SELECT rvh.house FROM RecentlyViewedHouse rvh WHERE rvh.user.id = :userId")
+    List<House> findRecentlyViewedHousesByUserId(@Param("userId") Long userId);
+
     Optional<House> findById(Long id);
 
     @Query("SELECT r FROM Room r WHERE r.house.id = :houseId")
     List<Room> findAllRoomsByHouseId(@Param("houseId") Long houseId);
+
 }

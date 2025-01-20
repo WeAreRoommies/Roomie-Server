@@ -13,6 +13,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-logging' // 기본 로깅 설정
 
     // Lombok (선택 사항: DTO, Config 등에서 활용 가능)
     compileOnly 'org.projectlombok:lombok'
@@ -20,8 +21,10 @@ dependencies {
 
     // JPA & DataBase
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'com.mysql:mysql-connector-j:8.0.32'
+    implementation 'org.hibernate:hibernate-core:6.2.8.Final'
     runtimeOnly 'com.h2database:h2'
+    testImplementation 'com.h2database:h2'
     implementation project(':common') // 공통 모듈 추가
 
     // JUnit 5 (Jupiter)

@@ -148,7 +148,7 @@ public class HouseServiceTest {
 		house.setLocationDescription(locationDescription);
 		house.setMoodTag(moodTag);
 		house.setSubMoodTag("#추가태그");
-		house.setGenderPolicyType(GenderPolicyType.남녀공용); // Enum 변환
+		house.setGenderPolicy(GenderPolicyType.남녀공용); // Enum 변환
 		house.setMainImgUrl(mainImgUrl);
 		house.setMainImgDescription("Main image of house " + id);
 		house.setFacilityImgUrl("https://example.com/images/facility" + id + ".jpg");
@@ -202,8 +202,8 @@ public class HouseServiceTest {
 		Room mockRoom1 = createMockRoom(101L, "1A", 2, "남성", 300000, 5000000, LocalDate.of(2024,12,31), "100000");
 		Room mockRoom2 = createMockRoom(102L, "2A", 1, "여성", 200000, 3000000, LocalDate.of(2025,01,17), "50000");
 
-		Roommate roommate1 = createMockRoommate(25, "학생", "INTJ", "23:00-24:00", "09:00-23:00");
-		Roommate roommate2 = createMockRoommate(28, "디자이너", "ENFP", "22:00-23:00", "08:00-22:00");
+		Roommate roommate1 = createMockRoommate("20대", "학생", "INTJ", "23:00-24:00", "09:00-23:00");
+		Roommate roommate2 = createMockRoommate("30대", "디자이너", "ENFP", "22:00-23:00", "08:00-22:00");
 
 		mockRoom1.setRoommates(List.of(roommate1));
 		mockRoom2.setRoommates(List.of(roommate2));
@@ -249,7 +249,7 @@ public class HouseServiceTest {
 		assertEquals(2, response.roommates().size());
 		HouseDetailsResponseDto.RoommateDto roommateDto1 = response.roommates().get(0);
 		assertEquals("1A", roommateDto1.name());
-		assertEquals(25, roommateDto1.age());
+		assertEquals("20대", roommateDto1.age());
 		assertEquals("학생", roommateDto1.job());
 		assertEquals("INTJ", roommateDto1.mbti());
 		assertEquals("23:00-24:00", roommateDto1.sleepTime());
@@ -265,7 +265,7 @@ public class HouseServiceTest {
 		house.setGroundRule("요리 후 바로 설거지해요#청소는 주3회 돌아가면서 해요");
 		house.setSafetyLivingFacility("소화기#비상구");
 		house.setKitchenFacility("냉장고#전자레인지");
-		house.setGenderPolicyType(GenderPolicyType.남녀공용);
+		house.setGenderPolicy(GenderPolicyType.남녀공용);
 		return house;
 	}
 	private Room createMockRoom(Long roomId, String name, int occupancyType, String gender, int monthlyRent,
@@ -274,7 +274,7 @@ public class HouseServiceTest {
 		room.setId(roomId);
 		room.setName(name);
 		room.setOccupancyType(occupancyType);
-		room.setGenderType(GenderType.valueOf(gender));
+		room.setGender(GenderType.valueOf(gender));
 		room.setMonthlyRent(monthlyRent);
 		room.setDeposit(deposit);
 		room.setContractPeriod(contractPeriod);
@@ -282,13 +282,13 @@ public class HouseServiceTest {
 		room.setStatus(occupancyType);
 		return room;
 	}
-	private Roommate createMockRoommate(int age, String job, String mbti, String sleepTime, String activityTime) {
+	private Roommate createMockRoommate(String age, String job, String mbti, String sleepTime, String activityTime) {
 		Roommate roommate = new Roommate();
 		roommate.setAge(age);
 		roommate.setJob(job);
 		roommate.setMbti(mbti);
 		roommate.setSleepTime(sleepTime);
-		roommate.setActivateTime(activityTime);
+		roommate.setActivityTime(activityTime);
 		return roommate;
 	}
 	private House createMockHouseWithPins(House house, Long userId) {

@@ -3,29 +3,33 @@ package server.consumer.processor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dto.TourRequestDto;
+import entity.History;
 import entity.HousingRequest;
 import entity.Room;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import server.consumer.repository.HistoryRepository;
 import server.consumer.repository.RoomRepository;
 import server.consumer.repository.TourRequestRepository;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TourQueueProcessor {
 	private final StringRedisTemplate redisTemplate;
 	private final ObjectMapper objectMapper;
 	private final TourRequestRepository tourRequestRepository;
 	private final RoomRepository roomRepository;
+	private final HistoryRepository historyRepository;
 
 	public void processMessage(String queueName) {
 		String jsonMessage = redisTemplate.opsForList().leftPop(queueName);
 		if (jsonMessage != null) {
 			try {
 				TourRequestDto tourRequestDto = objectMapper.readValue(jsonMessage, TourRequestDto.class);
-				System.out.println("Processing message: " + tourRequestDto); // 나중에 로그 추가하기
-
+				log.info("Processing message: " + tourRequestDto);
 				/*
 				메세지 처리 로직
 				 */
@@ -40,12 +44,13 @@ public class TourQueueProcessor {
 						room
 						);
 				tourRequestRepository.save(housingRequest);
-				System.out.println(housingRequest); // 나중에 로깅 추가하기
+				log.info(housingRequest.toString());
 			} catch (JsonProcessingException e) {
-				throw new RuntimeException("Failed to deserialize message", e);
+				History history = new History();
+				history.setBody(jsonMessage);
+				historyRepository.save(history);
 			}
-		} else {
-			System.out.println("No messages in the queue."); // 나중에 로깅 추가하기
+			log.info("No messages in the queue.");
 		}
 	}
 }

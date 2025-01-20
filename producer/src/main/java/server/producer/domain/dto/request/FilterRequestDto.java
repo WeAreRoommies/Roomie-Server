@@ -11,7 +11,7 @@ public record FilterRequestDto(
 		Range monthlyRentRange,          // 월세 범위
 		List<String> genderPolicy,       // 성별 정책
 		LocalDate preferredDate,         // 선호 입주 날짜
-		List<String> occupancyType,      // 숙소 유형
+		List<String> occupancyTypes,      // 숙소 유형
 		List<Integer> contractPeriod     // 계약 기간
 ) {
 	public record Range(
