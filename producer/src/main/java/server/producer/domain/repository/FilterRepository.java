@@ -30,7 +30,7 @@ public class FilterRepository {
 		predicates.add(cb.equal(house.get("location"), filter.location()));
 		predicates.add(cb.between(room.get("deposit"), filter.depositRange().min(), filter.depositRange().max()));
 		predicates.add(cb.between(room.get("monthlyRent"), filter.monthlyRentRange().min(), filter.monthlyRentRange().max()));
-
+		predicates.add(cb.notEqual(room.get("status"), room.get("occupancyType")));
 		// Optional 조건: moodTag
 		if (filter.moodTag() != null) {
 			predicates.add(cb.equal(house.get("moodTag"), filter.moodTag()));
