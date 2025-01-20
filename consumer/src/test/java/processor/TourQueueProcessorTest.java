@@ -53,7 +53,7 @@ public class TourQueueProcessorTest {
 		Room room = new Room();
 		room.setId(1L); // 외래 키 참조를 만족하기 위해 ID 설정
 		room.setName("Test Room");
-		room.setGenderType(GenderType.남성);
+		room.setGender(GenderType.남성);
 		roomRepository.save(room);
 	}
 

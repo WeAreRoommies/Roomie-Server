@@ -10,13 +10,21 @@ redis:
       min-idle: 1
 server:
   port: 8080
+spring.devtools.restart.enabled: false
 spring:
   jpa:
     properties:
       hibernate:
-        globally_quoted_identifiers: true
-        ddl-auto: update
+        ddl-auto: none;
         show-sql: true
+        cache:
+          use_query_cache: false
+          use_second_level_cache: false
+          use_structured_entries: false
+          use_minimal_puts: false
+          region:
+            factory_class: org.hibernate.cache.internal.NoCachingRegionFactory
+        generate_statistics: false
   datasource:
     driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.h2.Driver}
     url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:testdb}

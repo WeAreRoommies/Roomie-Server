@@ -44,7 +44,7 @@ public class HouseRepositoryTest {
         house.setFacilityImgDescription("시설이미지 상세설명");
         house.setFloorImgUrl("floor_plan.jpg");
         house.setContractTerm(12);
-        house.setGenderPolicyType(GenderPolicyType.남녀공용);
+        house.setGenderPolicy(GenderPolicyType.남녀공용);
         house.setGroundRule("담배 피지 말기#변기 막히지 말기");
         house.setKitchenFacility("냉장고#싱크대");
         house.setSafetyLivingFacility("소화기#티비");
@@ -55,7 +55,7 @@ public class HouseRepositoryTest {
         room.setDeposit(5000000);
         room.setFacility("에어컨#와이파이");
         room.setContractPeriod(LocalDate.of(2025, 12, 31));
-        room.setGenderType(GenderType.혼성);
+        room.setGender(GenderType.혼성);
         room.setStatus(1);
         room.setOccupancyType(2);
         room.setMainImgUrl("room_main.jpg");
@@ -68,7 +68,7 @@ public class HouseRepositoryTest {
         roommate.setJob("개발자");
         roommate.setMbti("INTJ");
         roommate.setSleepTime("23:00-24:00");
-        roommate.setActivateTime("09:00-10:00");
+        roommate.setActivityTime("09:00-10:00");
         roommate.setRoom(room);
 
         Pin pin = new Pin();
@@ -145,7 +145,7 @@ public class HouseRepositoryTest {
         house1.setRoomMood("아늑한 방");
         house1.setFloorImgUrl("floor_img_1.jpg");
         house1.setContractTerm(12);
-        house1.setGenderPolicyType(GenderPolicyType.남녀공용);
+        house1.setGenderPolicy(GenderPolicyType.남녀공용);
         house1.setGroundRule("금연");
         house1.setKitchenFacility("싱크대#냉장고");
         house1.setSafetyLivingFacility("소화기#응급키트");
@@ -165,7 +165,7 @@ public class HouseRepositoryTest {
         house2.setRoomMood("활기찬 방");
         house2.setFloorImgUrl("floor_img_2.jpg");
         house2.setContractTerm(6);
-        house2.setGenderPolicyType(GenderPolicyType.남녀공용);
+        house2.setGenderPolicy(GenderPolicyType.남녀공용);
         house2.setGroundRule("소음 금지");
         house2.setKitchenFacility("전자레인지#가스레인지");
         house2.setSafetyLivingFacility("CCTV#소화기");
@@ -226,7 +226,7 @@ public class HouseRepositoryTest {
         house.setRoomMood("조용한 방");
         house.setFloorImgUrl("floor_img_url.jpg");
         house.setContractTerm(12);
-        house.setGenderPolicyType(GenderPolicyType.남녀공용);
+        house.setGenderPolicy(GenderPolicyType.남녀공용);
         house.setGroundRule("금연");
         house.setKitchenFacility("싱크대, 냉장고");
         house.setSafetyLivingFacility("CCTV, 소화기");
@@ -237,7 +237,7 @@ public class HouseRepositoryTest {
         room1.setDeposit(5000000);
         room1.setFacility("에어컨, 와이파이");
         room1.setContractPeriod(LocalDate.of(2025, 12, 31));
-        room1.setGenderType(GenderType.혼성);
+        room1.setGender(GenderType.혼성);
         room1.setStatus(1);
         room1.setOccupancyType(2);
         room1.setMainImgUrl("room1_main.jpg");
@@ -251,7 +251,7 @@ public class HouseRepositoryTest {
         room2.setDeposit(7000000);
         room2.setFacility("히터, 책상");
         room2.setContractPeriod(LocalDate.of(2026, 12, 31));
-        room2.setGenderType(GenderType.혼성);
+        room2.setGender(GenderType.혼성);
         room2.setStatus(1);
         room2.setOccupancyType(1);
         room2.setMainImgUrl("room2_main.jpg");

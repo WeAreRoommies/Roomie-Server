@@ -82,7 +82,7 @@ public class MapServiceTest {
 		house.setLocationDescription(locationDescription);
 		house.setMoodTag(moodTag);
 		house.setSubMoodTag("#추가태그");
-		house.setGenderPolicyType(GenderPolicyType.남녀공용); // Enum 변환
+		house.setGenderPolicy(GenderPolicyType.남녀공용); // Enum 변환
 		house.setMainImgUrl(mainImgUrl);
 		house.setMainImgDescription("Main image of house " + id);
 		house.setFacilityImgUrl("https://example.com/images/facility" + id + ".jpg");

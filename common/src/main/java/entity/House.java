@@ -43,9 +43,9 @@ public class House {
     @Column(nullable = false)
     private String subMoodTag = "";
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "gender_policy")
     @Enumerated(EnumType.STRING)
-    private GenderPolicyType genderPolicyType;
+    private GenderPolicyType genderPolicy;
 
     @Column(nullable = false)
     private String mainImgUrl;

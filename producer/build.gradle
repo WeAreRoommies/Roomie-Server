@@ -20,7 +20,8 @@ dependencies {
 
     // JPA & DataBase
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.hibernate:hibernate-core:6.2.8.Final'
+    runtimeOnly 'com.mysql:mysql-connector-j:8.0.32'
     runtimeOnly 'com.h2database:h2'
 
     // JUnit 5 (Jupiter)

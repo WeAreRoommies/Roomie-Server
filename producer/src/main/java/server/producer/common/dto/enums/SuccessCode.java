@@ -15,6 +15,7 @@ public enum SuccessCode {
 	MY_PAGE_GET_SUCCESS(20004, "마이페이지 조회 성공"),
 	PINNED_HOUSES_GET_SUCCESS(20005, "찜 리스트 조회 성공"),
 	PIN_TOGGLE_SUCCESS(20006, "핀 토글 성공"),
+	LOCATION_SUCCESS(20007, "지도 검색 성공"),
 
 	//201 CREATED
 	ROOM_REQUEST_POST_SUCCESS(20101, "입주 신청 성공");
