@@ -48,8 +48,16 @@ public class HouseService {
 	}
 
 	public MoodHouseResponseDto getHousesByMoodAndLocation(String moodTag, Long userId){
-		String location = userRepository.findLocationById(userId).orElseThrow(RuntimeException::new);
+		String location = userRepository.findLocationById(userId)
+				.orElseThrow(()-> new EntityNotFoundException("User location not found."));
 		List<House> houses = houseRepository.findByLocationAndMoodTag(location, moodTag);
+		//결과가 없을 경우 빈 리스트 반환
+		if (houses.isEmpty()) {
+			return MoodHouseResponseDto.builder()
+					.moodTag(moodTag)
+					.houses(Collections.emptyList())
+					.build();
+		}
 		List<MoodHouseResponseDto.MoodHouseDto> moodHouseDtos = new ArrayList<>();
 		for (House house : houses) {
 			final boolean isPinned = house.getPins().stream()
