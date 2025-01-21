@@ -13,7 +13,7 @@ public class TourQueueScheduler {
 
 	private final TourQueueProcessor tourQueueProcessor;
 
-	@Scheduled(fixedDelay = 3000)
+	@Scheduled(fixedDelay = 2000)
 	public void consumeMessages() {
 		String queueName = "tourRequest";
 		log.info("Consuming messages from queue: {}", queueName);
