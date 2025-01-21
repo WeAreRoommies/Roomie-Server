@@ -14,6 +14,8 @@ import server.consumer.repository.HistoryRepository;
 import server.consumer.repository.RoomRepository;
 import server.consumer.repository.TourRequestRepository;
 
+import java.time.LocalDateTime;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -43,6 +45,8 @@ public class TourQueueProcessor {
 						tourRequestDto.message(),
 						room
 						);
+				housingRequest.setUpdatedAt(LocalDateTime.now());
+				housingRequest.setCreatedAt(LocalDateTime.now());
 				tourRequestRepository.save(housingRequest);
 				log.info(housingRequest.toString());
 			} catch (JsonProcessingException e) {
