@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dto.TourRequestDto;
 import entity.History;
+import entity.House;
 import entity.HousingRequest;
 import entity.Room;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import server.consumer.repository.HistoryRepository;
+import server.consumer.repository.HouseRepository;
 import server.consumer.repository.RoomRepository;
 import server.consumer.repository.TourRequestRepository;
 
@@ -24,6 +26,7 @@ public class TourQueueProcessor {
 	private final ObjectMapper objectMapper;
 	private final TourRequestRepository tourRequestRepository;
 	private final RoomRepository roomRepository;
+	private final HouseRepository houseRepository;
 	private final HistoryRepository historyRepository;
 
 	public void processMessage(String queueName) {
@@ -36,6 +39,7 @@ public class TourQueueProcessor {
 				메세지 처리 로직
 				 */
 				Room room = roomRepository.getReferenceById(tourRequestDto.roomId());
+				House house = houseRepository.getReferenceById(tourRequestDto.houseId());
 				HousingRequest housingRequest = new HousingRequest(
 						tourRequestDto.name(),
 						tourRequestDto.birth(),
@@ -43,10 +47,10 @@ public class TourQueueProcessor {
 						tourRequestDto.phoneNumber(),
 						tourRequestDto.preferredDate(),
 						tourRequestDto.message(),
-						room
+						room,
+						house
 						);
 				housingRequest.setUpdatedAt(LocalDateTime.now());
-				housingRequest.setCreatedAt(LocalDateTime.now());
 				tourRequestRepository.save(housingRequest);
 				log.info(housingRequest.toString());
 			} catch (JsonProcessingException e) {
