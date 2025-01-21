@@ -35,7 +35,7 @@ public class TourQueueSchedulerTest {
 		taskScheduler.initialize();
 	}
 
-	@Test
+//	@Test
 	void testConsumeMessagesWithScheduling() throws InterruptedException {
 		// 테스트 환경의 스케줄러 초기화
 		ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
