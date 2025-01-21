@@ -44,7 +44,11 @@ public class HousingRequest {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    public HousingRequest(String name, LocalDate birth, String gender, String phoneNumber, LocalDate preferredDate, String message, Room room) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "house_id")
+    private House house;
+
+    public HousingRequest(String name, LocalDate birth, String gender, String phoneNumber, LocalDate preferredDate, String message, Room room, House house) {
         this.name = name;
         this.birth = birth;
         this.gender = gender;
@@ -52,6 +56,8 @@ public class HousingRequest {
         this.preferredDate = preferredDate;
         this.message = message;
         this.room = room;
+        this.house = house;
+        this.createdAt = LocalDateTime.now();
     }
 
     public HousingRequest() {

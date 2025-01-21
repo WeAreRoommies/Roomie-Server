@@ -57,8 +57,8 @@ public class FilterRepositoryTest {
 		FilterRequestDto filter = new FilterRequestDto(
 		"무슨구 무슨동", // House의 location
 				"#차분한", // House의 moodTag
-				new FilterRequestDto.Range(1000000, 1500000), // deposit 범위
-				new FilterRequestDto.Range(300000, 600000), // monthlyRent 범위
+				new FilterRequestDto.Range(10, 1500), // deposit 범위
+				new FilterRequestDto.Range(30, 1000), // monthlyRent 범위
 				List.of(GenderPolicyType.남성전용.toString()), // House의 genderPolicyType
 				null, // Room의 contractPeriod 관련 조건
 				List.of("1인실", "2인실", "3인실", "4인실"), // occupancyTypes (빈 리스트)
