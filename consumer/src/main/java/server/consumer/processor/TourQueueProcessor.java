@@ -50,9 +50,9 @@ public class TourQueueProcessor {
 						room,
 						house
 						);
+				log.info(housingRequest.toString());
 				housingRequest.setUpdatedAt(LocalDateTime.now());
 				tourRequestRepository.save(housingRequest);
-				log.info(housingRequest.toString());
 			} catch (JsonProcessingException e) {
 				History history = new History();
 				history.setBody(jsonMessage);
