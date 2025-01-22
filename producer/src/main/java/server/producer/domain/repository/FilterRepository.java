@@ -6,6 +6,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import server.producer.common.LocationLabeler;
 import server.producer.domain.dto.request.FilterRequestDto;
 import entity.House;
 import entity.Room;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilterRepository {
 	private final EntityManager entityManager;
+	public final LocationLabeler locationLabeler;
 	private final int TENTHOUSAND = 10000;
 
 	public List<House> findFilteredHouses(FilterRequestDto filter) {
@@ -32,8 +34,11 @@ public class FilterRepository {
 				.map(li -> Integer.parseInt(li.replaceAll("[^0-9]", "")))
 				.toList();
 
+		// 적합한 구 그룹 찾기
+		int label = locationLabeler.findLabelByLocation(filter.location().split(" ")[0]);
+		predicates.add(cb.equal(house.get("label"), label));
+
 		// 필수 조건
-		predicates.add(cb.equal(house.get("location"), filter.location()));
 		predicates.add(cb.between(room.get("deposit"), filter.depositRange().min()*TENTHOUSAND, filter.depositRange().max()*TENTHOUSAND));
 		predicates.add(cb.between(room.get("monthlyRent"), filter.monthlyRentRange().min()*TENTHOUSAND, filter.monthlyRentRange().max()*TENTHOUSAND));
 
