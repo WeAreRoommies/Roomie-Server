@@ -50,7 +50,7 @@ public class MapService {
 						.monthlyRent(house.calculateMonthlyRent())
 						.deposit(house.calculateDeposit())
 						.occupancyTypes(house.calculateOccupancyType())
-						.location(location)
+						.location(house.getLocation())
 						.genderPolicy(house.getGenderPolicy().toString())
 						.locationDescription(house.getLocationDescription())
 						.isPinned(isPinned)
