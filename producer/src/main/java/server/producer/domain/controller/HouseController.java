@@ -10,7 +10,6 @@ import server.producer.common.dto.enums.SuccessCode;
 import server.producer.domain.dto.response.*;
 import server.producer.domain.service.HouseService;
 
-import java.nio.file.AccessDeniedException;
 import java.security.InvalidParameterException;
 
 @RestController

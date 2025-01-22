@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
 import server.producer.domain.dto.response.MyPageResponseDto;
 import server.producer.domain.repository.HouseRepository;
+import server.producer.domain.repository.RecentlyViewedHouseRepository;
 import server.producer.domain.repository.UserRepository;
 import entity.House;
 import entity.RecentlyViewedHouse;
@@ -22,6 +23,7 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final HouseRepository houseRepository;
+	private final RecentlyViewedHouseRepository recentlyViewedHouseRepository;
 
 	public HomeInfoResponseDto getUserInfoAndRecentlyViewedHouse(Long userId) {
 		if (userId == null || userId <= 0) {
@@ -34,9 +36,10 @@ public class UserService {
 		final String location = user.getLocation().split(" ")[user.getLocation().split(" ").length-1];
 		final List<HomeInfoResponseDto.RecentlyViewedHouseDto> recentlyViewedHouseDtos = new ArrayList<>();
 
-		List<House> houses = houseRepository.findRecentlyViewedHousesByUserId(user.getId());
+		List<RecentlyViewedHouse> houses = recentlyViewedHouseRepository.findByUserIdOrderByViewedAtDesc(user.getId());
 
-		for (House house : houses) {
+		for (RecentlyViewedHouse rvh : houses) {
+			House house = rvh.getHouse();
 			List<Room> rooms = house.getRooms();
 			final boolean isPinned = house.getPins().stream()
 					.anyMatch(pin -> pin.getUser().getId().equals(userId));

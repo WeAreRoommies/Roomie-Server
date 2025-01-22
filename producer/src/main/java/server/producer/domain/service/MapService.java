@@ -2,6 +2,7 @@ package server.producer.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import server.producer.common.LocationLabeler;
 import server.producer.domain.dto.request.FilterRequestDto;
 import server.producer.domain.dto.response.FilterResponseDto;
 import server.producer.domain.repository.FilterRepository;
@@ -9,6 +10,7 @@ import entity.House;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -21,18 +23,13 @@ public class MapService {
 			throw new IllegalArgumentException();
 		}
 		String[] parts = location.split(" ");
-		String gu = null;
-		String dong = null;
-		for (String part : parts) {
-			if (part.endsWith("구")) {
-				gu = part;
-			} else if (part.endsWith("동")) {
-				dong = part;
-			}
-		}
+		String gu = parts[1];
+		String dong = parts[2];
+
+		FilterRequestDto updated;
 		if (gu != null && dong != null) {
 			location =  gu + " " + dong;
-			FilterRequestDto updated = new FilterRequestDto(
+			updated = new FilterRequestDto(
 					location, // 변경된 location
 					requestDto.moodTag(),
 					requestDto.depositRange(),
@@ -44,7 +41,7 @@ public class MapService {
 			);
 
 			List<FilterResponseDto.HouseMapDto> houseMapDtos = new ArrayList<>();
-			List<House> houses = filterRepository.findFilteredHouses(requestDto);
+			List<House> houses = filterRepository.findFilteredHouses(updated);
 			for (House house : houses) {
 				final boolean isPinned = house.getPins().stream()
 						.anyMatch(pin -> pin.getUser().getId().equals(userId));

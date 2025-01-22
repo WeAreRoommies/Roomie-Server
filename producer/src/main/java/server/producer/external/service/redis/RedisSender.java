@@ -7,6 +7,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import server.producer.external.repository.HistoryRepository;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class RedisSender {
 			// 예외 발생 시 DB에 기록
 			log.error("Failed to push message to queue [{}]: {}", queueName, e.getMessage(), e);
 			History history = new History();
+			history.setCreatedAt(LocalDateTime.now());
 			history.setBody("Failed to send message: " + message);
 			historyRepository.save(history);
 		}

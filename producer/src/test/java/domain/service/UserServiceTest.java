@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
 import server.producer.domain.repository.HouseRepository;
+import server.producer.domain.repository.RecentlyViewedHouseRepository;
 import server.producer.domain.repository.UserRepository;
 import server.producer.domain.service.UserService;
 
@@ -27,6 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
+
+	@Mock
+	private RecentlyViewedHouseRepository recentlyViewedHouseRepository;
 
 	@Mock
 	private HouseRepository houseRepository;
@@ -66,8 +70,10 @@ public class UserServiceTest {
 
 		when(userRepository.findUserWithRecentlyViewedHouses(anyLong()))
 				.thenReturn(Optional.of(user));
-		when(houseRepository.findRecentlyViewedHousesByUserId(user.getId()))
-				.thenReturn(user.getRecentlyViewedHouses().stream().map(RecentlyViewedHouse::getHouse).toList());
+		when(recentlyViewedHouseRepository.findByUserIdOrderByViewedAtDesc(user.getId()))
+				.thenReturn(user.getRecentlyViewedHouses().stream().toList());
+
+
 		//when
 		HomeInfoResponseDto result = userService.getUserInfoAndRecentlyViewedHouse(userId);
 		HomeInfoResponseDto.RecentlyViewedHouseDto resultHouse = result.recentlyViewedHouses().get(0);

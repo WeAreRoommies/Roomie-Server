@@ -1,10 +1,7 @@
 package server.producer.domain.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import server.producer.common.dto.ApiResponseDto;
 import server.producer.common.dto.enums.ErrorCode;
 import server.producer.common.dto.enums.SuccessCode;
@@ -20,7 +17,7 @@ public class MapController {
 	private final MapService mapService;
 	private final Long userId = 1L;
 
-	@GetMapping("/search")
+	@PostMapping("/search")
 	public ApiResponseDto<FilterResponseDto> searchPropertiesOnMap(@RequestBody FilterRequestDto requestDto){
 		try {
 			FilterResponseDto responseDto = mapService.searchProperties(requestDto, userId);

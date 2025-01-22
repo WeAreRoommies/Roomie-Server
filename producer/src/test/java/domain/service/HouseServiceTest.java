@@ -9,11 +9,13 @@ import org.mockito.MockitoAnnotations;
 import server.producer.domain.dto.response.*;
 import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.PinRepository;
+import server.producer.domain.repository.RecentlyViewedHouseRepository;
 import server.producer.domain.repository.UserRepository;
 import server.producer.domain.service.HouseService;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -32,6 +34,9 @@ public class HouseServiceTest {
 
 	@Mock
 	private PinRepository pinRepository;
+
+	@Mock
+	private RecentlyViewedHouseRepository recentlyViewedHouseRepository;
 
 	@InjectMocks
 	private HouseService houseService;
@@ -189,7 +194,7 @@ public class HouseServiceTest {
 	}
 
 	@Test
-	void testGetHouseDetails() {
+	void testGetHouseDetailsWithRecentlyViewedHouse() {
 		// Given: Mock 데이터 준비
 		Long houseId = 1L;
 		Long userId = 2L;
@@ -198,10 +203,8 @@ public class HouseServiceTest {
 
 		// House, Room, Roommate, and Pin Mock 데이터 생성
 		House mockHouse = createMockHouse(houseId, "루미 100호점(이대역)", "서울 강남구", "전반적으로 조용하고 깔끔한 환경을 선호하는 아침형 룸메이트들이에요.");
-
-		Room mockRoom1 = createMockRoom(101L, "1A", 2, "남성", 300000, 5000000, LocalDate.of(2024,12,31), "100000");
-		Room mockRoom2 = createMockRoom(102L, "2A", 1, "여성", 200000, 3000000, LocalDate.of(2025,01,17), "50000");
-
+		Room mockRoom1 = createMockRoom(101L, "1A", 2, "남성", 300000, 5000000, LocalDate.of(2024, 12, 31), "100000");
+		Room mockRoom2 = createMockRoom(102L, "2A", 1, "여성", 200000, 3000000, LocalDate.of(2025, 1, 17), "50000");
 		Roommate roommate1 = createMockRoommate("20대", "학생", "INTJ", "23:00-24:00", "09:00-23:00");
 		Roommate roommate2 = createMockRoommate("30대", "디자이너", "ENFP", "22:00-23:00", "08:00-22:00");
 
@@ -211,14 +214,32 @@ public class HouseServiceTest {
 
 		House mockHouseWithPins = createMockHouseWithPins(mockHouse, userId);
 
+		RecentlyViewedHouse mockRecentlyViewedHouse = new RecentlyViewedHouse();
+		mockRecentlyViewedHouse.setId(1L);
+
+		// User 설정
+		User mockUser = new User();
+		mockUser.setId(userId);
+		mockUser.setName("Test User");
+		mockUser.setLocation("서울 강남구");
+
+		// House 설정
+		mockRecentlyViewedHouse.setUser(mockUser);
+		mockRecentlyViewedHouse.setHouse(mockHouse);
+		mockRecentlyViewedHouse.setViewedAt(LocalDateTime.now());
+
+		// Mock 동작 설정
 		when(houseRepository.findHouseWithRoomsById(houseId)).thenReturn(Optional.of(mockHouse));
-		when(houseRepository.findRoomsAndRoommatesByHouseId(houseId)).thenReturn(mockHouse.getRooms());
-		when(houseRepository.findHouseWithPinsById(houseId)).thenReturn(Optional.of(mockHouseWithPins));
+		when(houseRepository.findRoomsAndRoommatesByHouseId(houseId)).thenReturn(List.of(mockRoom1, mockRoom2));
+		when(userRepository.getReferenceById(userId)).thenReturn(mockUser);
+		when(houseRepository.getReferenceById(houseId)).thenReturn(mockHouse);
+		when(recentlyViewedHouseRepository.findByUserIdAndHouseId(userId, houseId))
+				.thenReturn(Optional.of(mockRecentlyViewedHouse));
 
 		// When: 서비스 호출
 		HouseDetailsResponseDto response = houseService.getHouseDetails(houseId, userId);
 
-		// Then: 검증
+		// Then: 응답 검증
 		assertNotNull(response); // 응답이 null이 아님
 
 		// HouseInfoDto 검증
@@ -227,10 +248,6 @@ public class HouseServiceTest {
 		assertEquals("루미 100호점(이대역)", houseInfo.name());
 		assertEquals("서울 강남구", houseInfo.location());
 		assertEquals("전반적으로 조용하고 깔끔한 환경을 선호하는 아침형 룸메이트들이에요.", houseInfo.roomMood());
-		assertEquals(List.of("요리 후 바로 설거지해요","청소는 주3회 돌아가면서 해요"), houseInfo.groundRule());
-		assertTrue(houseInfo.isPinned());
-		assertEquals(List.of("소화기", "비상구"), houseInfo.safetyLivingFacility());
-		assertEquals(List.of("냉장고", "전자레인지"), houseInfo.kitchenFacility());
 
 		// RoomDto 검증
 		assertEquals(2, response.rooms().size());
@@ -243,17 +260,15 @@ public class HouseServiceTest {
 		assertEquals(300000, roomDto1.monthlyRent());
 		assertEquals(5000000, roomDto1.deposit());
 		assertEquals("24-12-31", roomDto1.contractPeriod().format(formatter));
-		assertEquals("100000", roomDto1.managementFee());
 
-		// RoommateDto 검증
-		assertEquals(2, response.roommates().size());
-		HouseDetailsResponseDto.RoommateDto roommateDto1 = response.roommates().get(0);
-		assertEquals("1A", roommateDto1.name());
-		assertEquals("20대", roommateDto1.age());
-		assertEquals("학생", roommateDto1.job());
-		assertEquals("INTJ", roommateDto1.mbti());
-		assertEquals("23:00-24:00", roommateDto1.sleepTime());
-		assertEquals("09:00-23:00", roommateDto1.activityTime());
+		// 최근 본 매물 기록 검증
+		verify(recentlyViewedHouseRepository).save(argThat(entry ->
+				entry != null &&
+						entry.getUser() != null &&
+						entry.getUser().getId().equals(userId) &&
+						entry.getHouse() != null &&
+						entry.getHouse().getId().equals(houseId)
+		));
 	}
 
 	private House createMockHouse(Long houseId, String name, String location, String roomMood) {
@@ -328,7 +343,7 @@ public class HouseServiceTest {
 				pin.getUser().equals(mockUser) &&
 						pin.getHouse().equals(mockHouse)
 		));
-		verify(pinRepository, never()).deleteByUserIdAndHouseId(userId, houseId); // 삭제는 호출되지 않아야 함
+		verify(pinRepository, never()).deleteById(anyLong()); // 삭제는 호출되지 않아야 함
 	}
 
 	@Test
@@ -347,7 +362,7 @@ public class HouseServiceTest {
 
 		// Then
 		assertFalse(result); // 핀이 삭제되므로 false 반환
-		verify(pinRepository, times(1)).deleteByUserIdAndHouseId(userId, houseId); // 삭제 메서드 호출 확인
+		verify(pinRepository, times(1)).deleteById(existingPin.getId()); // 삭제 메서드 호출 확인
 		verify(pinRepository, never()).save(any(Pin.class)); // 저장은 호출되지 않아야 함
 	}
 

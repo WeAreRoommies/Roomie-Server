@@ -1,6 +1,8 @@
 package server.producer.domain.service;
 
+import entity.*;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import server.producer.domain.dto.response.*;
@@ -11,13 +13,12 @@ import entity.Pin;
 import entity.Room;
 
 import java.security.InvalidParameterException;
-import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import server.producer.domain.repository.HouseRepository;
+import server.producer.domain.repository.RecentlyViewedHouseRepository;
 import server.producer.domain.repository.UserRepository;
 
 @Service
@@ -26,6 +27,7 @@ public class HouseService {
 	private final HouseRepository houseRepository;
 	private final UserRepository userRepository;
 	private final PinRepository pinRepository;
+	private final RecentlyViewedHouseRepository recentlyViewedHouseRepository;
 
 	public PinnedListResponseDto getPinnedHouses(Long userId) {
 		if (userId == null || userId <= 0) {
@@ -86,6 +88,23 @@ public class HouseService {
 				.houses(moodHouseDtos).build();
 	}
 
+	@Transactional
+	public void upsertRecentlyViewedHouse(Long houseId, Long userId) {
+		// 데이터 존재 여부 확인
+		RecentlyViewedHouse existingEntry = recentlyViewedHouseRepository.findByUserIdAndHouseId(userId, houseId)
+				.orElse(new RecentlyViewedHouse()); // 없으면 새 엔티티 생성
+
+		// 데이터 설정
+		User user = userRepository.getReferenceById(userId);
+		House house = houseRepository.getReferenceById(houseId);
+		existingEntry.setUser(user);
+		existingEntry.setHouse(house);
+		existingEntry.setViewedAt(LocalDateTime.now()); // 현재 시간 업데이트
+
+		// 저장 (존재하면 업데이트, 없으면 삽입)
+		recentlyViewedHouseRepository.save(existingEntry);
+	}
+
     public HouseDetailsResponseDto getHouseDetails(final Long houseId, final Long userId) {
 		House selectedHouse = houseRepository.findHouseWithRoomsById(houseId)
 				.orElseThrow(() -> new EntityNotFoundException("해당 House를 찾을 수 없습니다."));
@@ -130,6 +149,7 @@ public class HouseService {
                         .roomId(room.getId())
                         .name(room.getName())
                         .status(room.getStatus() != room.getOccupancyType())
+						.isTourAvailable(room.isTourAvailable())
                         .occupancyType(room.getOccupancyType())
                         .gender(room.getGender().toString())
                         .deposit(room.getDeposit())
@@ -151,6 +171,9 @@ public class HouseService {
                                 .activityTime(roommate.getActivityTime())
                                 .build()))
                 .collect(Collectors.toList());
+
+		upsertRecentlyViewedHouse(houseId, userId);
+
         return HouseDetailsResponseDto.builder()
                 .houseInfo(houseInfoDto)
                 .rooms(roomDtos)
@@ -160,17 +183,14 @@ public class HouseService {
 
 	public boolean togglePin(Long userId, Long houseId) {
 		try {
-			// 핀 존재 여부 확인
 			Optional<Pin> existingPin = pinRepository.findByUserIdAndHouseId(userId, houseId);
 			if (existingPin.isPresent()) {
-				// 핀 삭제
-				pinRepository.deleteByUserIdAndHouseId(userId, houseId);
+				pinRepository.deleteById(existingPin.get().getId());
 				return false;
 			} else {
-				// 핀 생성
 				Pin pin = new Pin();
-				pin.setUser(userRepository.getReferenceById(userId)); // 유저 참조
-				pin.setHouse(houseRepository.getReferenceById(houseId)); // 매물 참조
+				pin.setUser(userRepository.getReferenceById(userId));
+				pin.setHouse(houseRepository.getReferenceById(houseId));
 				pinRepository.save(pin);
 				return true;
 			}

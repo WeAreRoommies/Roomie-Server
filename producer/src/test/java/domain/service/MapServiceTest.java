@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class MapServiceTest {
@@ -48,13 +49,13 @@ public class MapServiceTest {
 				new FilterRequestDto.Range(0, 1000),
 				new FilterRequestDto.Range(0,1000),
 				genderPolicy,
-				LocalDate.of(2022,10,10),
+				null,
 				occp,
 				contractPeiods
 				);
 
 		// Mock
-		when(filterRepository.findFilteredHouses(requestDto)).thenReturn(List.of(house1, house2));
+		when(filterRepository.findFilteredHouses(any())).thenReturn(List.of(house1, house2));
 
 		// when
 		FilterResponseDto result = mapService.searchProperties(requestDto, userId);
@@ -63,7 +64,7 @@ public class MapServiceTest {
 		FilterResponseDto.HouseMapDto result1 = result.houses().get(0);
 		assertEquals(result.houses().size(), 2);
 		assertEquals(result1.location(), "서대문구 대현동");
-		assertEquals(result1.genderPolicy(), "남녀공용");
+		assertEquals(result1.genderPolicy(), "여성전용");
 		assertEquals(result1.moodTag(), "#차분한");
 		assertEquals(result1.contractTerm(), 6);
 	}
@@ -82,7 +83,7 @@ public class MapServiceTest {
 		house.setLocationDescription(locationDescription);
 		house.setMoodTag(moodTag);
 		house.setSubMoodTag("#추가태그");
-		house.setGenderPolicy(GenderPolicyType.남녀공용); // Enum 변환
+		house.setGenderPolicy(GenderPolicyType.여성전용); // Enum 변환
 		house.setMainImgUrl(mainImgUrl);
 		house.setMainImgDescription("Main image of house " + id);
 		house.setFacilityImgUrl("https://example.com/images/facility" + id + ".jpg");
@@ -101,7 +102,7 @@ public class MapServiceTest {
 			room.setMonthlyRent(300000 + (i * 50000));
 			room.setDeposit(1000000 + (i * 1000000));
 			room.setOccupancyType(i + 1);
-			room.setStatus(1); // 활성 상태
+			room.setStatus(0); // 활성 상태
 			room.setMainImgUrl("https://example.com/images/room" + ((id * 10) + i) + ".jpg");
 			room.setPrepaidUtilities(50000);
 			room.setManagementFee("100000");
