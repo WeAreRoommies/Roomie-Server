@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import server.producer.ProducerApplication;
+import server.producer.common.LocationLabeler;
 import server.producer.domain.dto.request.FilterRequestDto;
 import server.producer.domain.repository.FilterRepository;
 
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @ContextConfiguration(classes = ProducerApplication.class)
 @EntityScan(basePackages = "entity")
-@Import(FilterRepository.class)
+@Import({FilterRepository.class, LocationLabeler.class})
 @Transactional
 public class FilterRepositoryTest {
 
@@ -31,6 +32,9 @@ public class FilterRepositoryTest {
 
 	@Autowired
 	private FilterRepository filterRepository;
+
+	@Autowired
+	private LocationLabeler locationLabeler;
 
 	@BeforeEach
 	void setUp() {
@@ -41,8 +45,8 @@ public class FilterRepositoryTest {
 		entityManager.persist(user);
 
 		// House 저장
-		House house1 = createHouse(1L, "#차분한", "무슨구 무슨동", "Test Location", true, 12, GenderPolicyType.남성전용);
-		House house2 = createHouse(2L, "Cozy", "Seocho", "Relaxing", false, 24, GenderPolicyType.여성전용);
+		House house1 = createHouse(1L, "#차분한", "서대무구 무슨동", "Test Location", true, 12, GenderPolicyType.남성전용,1);
+		House house2 = createHouse(2L, "Cozy", "Seocho", "Relaxing", false, 24, GenderPolicyType.여성전용,0);
 
 		// Room 저장
 		createRoom(101L, "Room 101", 500000, 1300000, null, house1);
@@ -55,7 +59,7 @@ public class FilterRepositoryTest {
 	@Test
 	void testFindFilteredHouses() {
 		FilterRequestDto filter = new FilterRequestDto(
-		"무슨구 무슨동", // House의 location
+		"서대문구 무슨동", // House의 location
 				"#차분한", // House의 moodTag
 				new FilterRequestDto.Range(10, 1500), // deposit 범위
 				new FilterRequestDto.Range(30, 1000), // monthlyRent 범위
@@ -73,7 +77,7 @@ public class FilterRepositoryTest {
 	}
 
 	private House createHouse(Long id, String moodTag, String location, String locationDescription,
-							  boolean isPinned, int contractTerm, GenderPolicyType genderPolicy) {
+							  boolean isPinned, int contractTerm, GenderPolicyType genderPolicy, int label) {
 		House house = new House();
 		house.setName("Sample House " + id);
 		house.setLocation(location);
@@ -83,6 +87,7 @@ public class FilterRepositoryTest {
 		house.setMoodTag(moodTag);
 		house.setContractTerm(contractTerm);
 		house.setGenderPolicy(genderPolicy);
+		house.setLabel(label);
 
 		entityManager.persist(house);
 

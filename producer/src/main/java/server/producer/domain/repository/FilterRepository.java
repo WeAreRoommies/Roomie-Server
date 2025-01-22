@@ -35,7 +35,7 @@ public class FilterRepository {
 				.toList();
 
 		// 적합한 구 그룹 찾기
-		int label = locationLabeler.findLabelByLocation(filter.location());
+		int label = locationLabeler.findLabelByLocation(filter.location().split(" ")[0]);
 		predicates.add(cb.equal(house.get("label"), label));
 
 		// 필수 조건
