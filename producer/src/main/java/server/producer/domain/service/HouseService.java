@@ -5,6 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import server.producer.common.LocationLabeler;
 import server.producer.domain.dto.response.*;
 import server.producer.domain.repository.PinRepository;
 import server.producer.domain.dto.response.PinnedListResponseDto;
@@ -28,6 +29,7 @@ public class HouseService {
 	private final UserRepository userRepository;
 	private final PinRepository pinRepository;
 	private final RecentlyViewedHouseRepository recentlyViewedHouseRepository;
+	private final LocationLabeler locationLabeler;
 
 	public PinnedListResponseDto getPinnedHouses(Long userId) {
 		if (userId == null || userId <= 0) {
@@ -57,7 +59,9 @@ public class HouseService {
 	public MoodHouseResponseDto getHousesByMoodAndLocation(String moodTag, Long userId){
 		String location = userRepository.findLocationById(userId)
 				.orElseThrow(()-> new EntityNotFoundException("User location not found."));
-		List<House> houses = houseRepository.findByLocationAndMoodTag(location, moodTag);
+		String gu = location.split(" ")[0];
+		int label = locationLabeler.findLabelByLocation(gu);
+		List<House> houses = houseRepository.findByLabelAndMoodTag(label, moodTag);
 		//결과가 없을 경우 빈 리스트 반환
 		if (houses.isEmpty()) {
 			return MoodHouseResponseDto.builder()
@@ -181,18 +185,22 @@ public class HouseService {
                 .build();
     }
 
-	public boolean togglePin(Long userId, Long houseId) {
+	public PinnedResponseDto togglePin(Long userId, Long houseId) {
 		try {
-			Optional<Pin> existingPin = pinRepository.findByUserIdAndHouseId(userId, houseId);
-			if (existingPin.isPresent()) {
-				pinRepository.deleteById(existingPin.get().getId());
-				return false;
+			List<Pin> existingPins = pinRepository.findByUserIdAndHouseId(userId, houseId);
+			if (!existingPins.isEmpty()) {
+				pinRepository.deleteAllInBatch(existingPins); // 모든 엔티티 삭제
+				return PinnedResponseDto.builder()
+						.isPinned(false)
+						.build();
 			} else {
 				Pin pin = new Pin();
 				pin.setUser(userRepository.getReferenceById(userId));
 				pin.setHouse(houseRepository.getReferenceById(houseId));
 				pinRepository.save(pin);
-				return true;
+				return PinnedResponseDto.builder()
+						.isPinned(true)
+						.build();
 			}
 		} catch (EntityNotFoundException e) {
 			// 유저나 매물이 없는 경우

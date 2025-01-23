@@ -50,9 +50,9 @@ public class HouseController {
 	}
 
     @PatchMapping("/{houseId}/pins")
-    public ApiResponseDto<Boolean> pinHouse(@PathVariable Long houseId) {
+    public ApiResponseDto<PinnedResponseDto> pinHouse(@PathVariable Long houseId) {
         try {
-            boolean isPinned = houseService.togglePin(userId, houseId);
+            PinnedResponseDto isPinned = houseService.togglePin(userId, houseId);
             return ApiResponseDto.success(SuccessCode.PIN_TOGGLE_SUCCESS, isPinned);
         } catch (EntityNotFoundException e) {
             return ApiResponseDto.fail(ErrorCode.NOT_FOUND_HOUSE);
