@@ -59,7 +59,8 @@ public class HouseService {
 	public MoodHouseResponseDto getHousesByMoodAndLocation(String moodTag, Long userId){
 		String location = userRepository.findLocationById(userId)
 				.orElseThrow(()-> new EntityNotFoundException("User location not found."));
-		int label = locationLabeler.findLabelByLocation(location);
+		String gu = location.split(" ")[0];
+		int label = locationLabeler.findLabelByLocation(gu);
 		List<House> houses = houseRepository.findByLabelAndMoodTag(label, moodTag);
 		//결과가 없을 경우 빈 리스트 반환
 		if (houses.isEmpty()) {
