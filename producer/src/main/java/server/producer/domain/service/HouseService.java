@@ -5,6 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import server.producer.common.LocationLabeler;
 import server.producer.domain.dto.response.*;
 import server.producer.domain.repository.PinRepository;
 import server.producer.domain.dto.response.PinnedListResponseDto;
@@ -28,6 +29,7 @@ public class HouseService {
 	private final UserRepository userRepository;
 	private final PinRepository pinRepository;
 	private final RecentlyViewedHouseRepository recentlyViewedHouseRepository;
+	private final LocationLabeler locationLabeler;
 
 	public PinnedListResponseDto getPinnedHouses(Long userId) {
 		if (userId == null || userId <= 0) {
@@ -57,7 +59,8 @@ public class HouseService {
 	public MoodHouseResponseDto getHousesByMoodAndLocation(String moodTag, Long userId){
 		String location = userRepository.findLocationById(userId)
 				.orElseThrow(()-> new EntityNotFoundException("User location not found."));
-		List<House> houses = houseRepository.findByLocationAndMoodTag(location, moodTag);
+		int label = locationLabeler.findLabelByLocation(location);
+		List<House> houses = houseRepository.findByLabelAndMoodTag(label, moodTag);
 		//결과가 없을 경우 빈 리스트 반환
 		if (houses.isEmpty()) {
 			return MoodHouseResponseDto.builder()
