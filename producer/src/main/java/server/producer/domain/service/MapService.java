@@ -47,8 +47,8 @@ public class MapService {
 						.anyMatch(pin -> pin.getUser().getId().equals(userId));
 				FilterResponseDto.HouseMapDto dto = FilterResponseDto.HouseMapDto.builder()
 						.houseId(house.getId())
-						.x(house.getLongitude())
-						.y(house.getLatitude())
+						.x(house.getLatitude())
+						.y(house.getLongitude())
 						.monthlyRent(house.calculateMonthlyRent())
 						.deposit(house.calculateDeposit())
 						.occupancyTypes(house.calculateOccupancyType())
