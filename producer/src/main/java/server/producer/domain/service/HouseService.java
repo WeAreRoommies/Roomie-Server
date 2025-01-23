@@ -181,18 +181,22 @@ public class HouseService {
                 .build();
     }
 
-	public boolean togglePin(Long userId, Long houseId) {
+	public PinnedResponseDto togglePin(Long userId, Long houseId) {
 		try {
 			Optional<Pin> existingPin = pinRepository.findByUserIdAndHouseId(userId, houseId);
 			if (existingPin.isPresent()) {
 				pinRepository.deleteById(existingPin.get().getId());
-				return false;
+				return PinnedResponseDto.builder()
+						.isPinned(false)
+						.build();
 			} else {
 				Pin pin = new Pin();
 				pin.setUser(userRepository.getReferenceById(userId));
 				pin.setHouse(houseRepository.getReferenceById(houseId));
 				pinRepository.save(pin);
-				return true;
+				return PinnedResponseDto.builder()
+						.isPinned(true)
+						.build();
 			}
 		} catch (EntityNotFoundException e) {
 			// 유저나 매물이 없는 경우
