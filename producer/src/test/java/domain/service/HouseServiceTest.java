@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import server.producer.common.LocationLabeler;
 import server.producer.domain.dto.response.*;
 import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.PinRepository;
@@ -25,6 +27,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class HouseServiceTest {
+
+	@Mock
+	private LocationLabeler locationLabeler;
 
 	@Mock
 	private HouseRepository houseRepository;
@@ -103,11 +108,14 @@ public class HouseServiceTest {
 		// UserRepository 동작 설정
 		when(userRepository.findLocationById(anyLong())).thenReturn(Optional.of(location));
 
+		// location labeler
+		when(locationLabeler.findLabelByLocation(anyString())).thenReturn(1);
+
 		// HouseRepository 동작 설정
 		House house1 = createHouse(1L, moodTag, location, "자이아파트", true, 6, "https://example.com/images/house1.jpg");
 		House house2 = createHouse(2L, moodTag, location, "자이아파트", true, 6, "https://example.com/images/house2.jpg");
 
-		when(houseRepository.findByLocationAndMoodTag(eq(location), eq(moodTag)))
+		when(houseRepository.findByLabelAndMoodTag(eq(1), eq(moodTag)))
 				.thenReturn(List.of(house1, house2));
 
 		// given
@@ -330,12 +338,12 @@ public class HouseServiceTest {
 		House mockHouse = new House();
 		mockHouse.setId(houseId);
 
-		when(pinRepository.findByUserIdAndHouseId(userId, houseId)).thenReturn(Optional.empty());
+		when(pinRepository.findByUserIdAndHouseId(userId, houseId)).thenReturn(List.of());
 		when(userRepository.getReferenceById(userId)).thenReturn(mockUser);
 		when(houseRepository.getReferenceById(houseId)).thenReturn(mockHouse);
 
 		// When
-		boolean result = houseService.togglePin(userId, houseId);
+		boolean result = houseService.togglePin(userId, houseId).isPinned();
 
 		// Then
 		assertTrue(result); // 핀이 추가되므로 true 반환
@@ -355,14 +363,14 @@ public class HouseServiceTest {
 		Pin existingPin = new Pin();
 		existingPin.setId(1L);
 
-		when(pinRepository.findByUserIdAndHouseId(userId, houseId)).thenReturn(Optional.of(existingPin));
+		when(pinRepository.findByUserIdAndHouseId(userId, houseId)).thenReturn(List.of(existingPin));
 
 		// When
-		boolean result = houseService.togglePin(userId, houseId);
+		boolean result = houseService.togglePin(userId, houseId).isPinned();
 
 		// Then
 		assertFalse(result); // 핀이 삭제되므로 false 반환
-		verify(pinRepository, times(1)).deleteById(existingPin.getId()); // 삭제 메서드 호출 확인
+		verify(pinRepository, times(1)).deleteAllInBatch(List.of(existingPin)); // 삭제 메서드 호출 확인
 		verify(pinRepository, never()).save(any(Pin.class)); // 저장은 호출되지 않아야 함
 	}
 

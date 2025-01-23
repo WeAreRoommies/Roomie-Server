@@ -187,9 +187,9 @@ public class HouseService {
 
 	public PinnedResponseDto togglePin(Long userId, Long houseId) {
 		try {
-			Optional<Pin> existingPin = pinRepository.findByUserIdAndHouseId(userId, houseId);
-			if (existingPin.isPresent()) {
-				pinRepository.deleteById(existingPin.get().getId());
+			List<Pin> existingPins = pinRepository.findByUserIdAndHouseId(userId, houseId);
+			if (!existingPins.isEmpty()) {
+				pinRepository.deleteAllInBatch(existingPins); // 모든 엔티티 삭제
 				return PinnedResponseDto.builder()
 						.isPinned(false)
 						.build();
