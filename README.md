@@ -4,12 +4,14 @@
 룸메이트 때문에 고통스러운 쉐어하우스 생활, ROOMIE에서 해결해요! 🏡
 35기 AND SOPT 앱잼 ROOMIE 프로젝트입니다.
 ```
+![Frame 2085666010](https://github.com/user-attachments/assets/9fb14a56-c9fa-4362-99f3-c4db63a9fa79)
+
 
 # ⚒️ SERVER Developer
 |조동현</br>[@mr8356](https://github.com/mr8356)|김나연</br>[@Yeonnies](https://github.com/Yeonnies)|
 |:---:|:---:|
 |<img src = "https://github.com/user-attachments/assets/1d6b599d-c0e3-436e-a0d6-ed331c8503e4" width ="300">|<img src = "https://avatars.githubusercontent.com/u/126739852?v=4" width ="300">|
-|`SERVER LEAD`</br>`Architecture Design`|`SERVER FOLLOWER`</br>`Database Design`|
+|`SERVER LEAD`</br>`아키텍처 설계`|`SERVER FOLLOW`</br>`DB 설계`|
 </br>
 
 # 🏛️ Project Structure (Multi-server)
