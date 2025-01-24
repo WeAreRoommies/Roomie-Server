@@ -4,7 +4,7 @@
 룸메이트 때문에 고통스러운 쉐어하우스 생활, ROOMIE에서 해결해요! 🏡
 35기 AND SOPT 앱잼 ROOMIE 프로젝트입니다.
 ```
-![Frame 2085666010](https://github.com/user-attachments/assets/9fb14a56-c9fa-4362-99f3-c4db63a9fa79)
+![Frame 2085666010](https://github.com/user-attachments/assets/8f6c3ed2-c885-4995-8fde-ab9f92c14265)
 
 
 # ⚒️ SERVER Developer
