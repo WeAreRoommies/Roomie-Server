@@ -1,8 +1,11 @@
 package server.producer.domain.dto.request;
 
-public record SocialSignupRequestDto(
-		String provider,
-		String accessToken,
-		String nickname
-) {
+import lombok.Getter;
+
+@Getter
+public class SocialSignupRequestDto {
+		private String provider;
+		private String accessToken;
+		private String nickname;
 }
+

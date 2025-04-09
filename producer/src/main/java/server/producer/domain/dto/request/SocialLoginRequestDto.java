@@ -1,6 +1,9 @@
 package server.producer.domain.dto.request;
 
-public record SocialLoginRequestDto (
-		String provider,
-		String accessToken
-) {}
+import lombok.Getter;
+
+@Getter
+public class SocialLoginRequestDto {
+		private String provider;
+		private String accessToken;
+}

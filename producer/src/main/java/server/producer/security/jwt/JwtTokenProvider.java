@@ -1,5 +1,6 @@
 package server.producer.security.jwt;
 
+import entity.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -24,12 +25,14 @@ public class JwtTokenProvider {
         this.accessTokenValidity = accessTokenValidity;
     }
 
-    // 토큰 생성 (이메일, 역할, 유효기간 전달)
-    public String createToken(String email, String role) {
+    // 사용자 정보 기반 JWT 토큰 생성
+    public String createToken(User user) {
         Instant now = Instant.now();
+
         return Jwts.builder()
-                .setSubject(email)
-                .claim("role", role)
+                .setSubject(user.getEmail()) // 이메일을 subject로 설정
+                .claim("userId", user.getId()) // 사용자 ID 포함 (선택)
+                .claim("socialType", user.getSocialType().name()) // 소셜 타입 포함 (선택)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plusMillis(accessTokenValidity)))
                 .signWith(key, SignatureAlgorithm.HS256)
