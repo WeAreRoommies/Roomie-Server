@@ -14,6 +14,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String email;
+
+    private String socialId;
+
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
     @Column(nullable = false)
     private String name;
 
