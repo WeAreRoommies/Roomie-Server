@@ -4,5 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record SocialLoginResponseDto(
-		String accessToken
+		String accessToken,
+		String refreshToken
 ) {}

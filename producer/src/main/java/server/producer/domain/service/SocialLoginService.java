@@ -3,10 +3,13 @@ package server.producer.domain.service;
 import entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import server.producer.domain.dto.response.SocialLoginResponseDto;
+import server.producer.domain.dto.response.SocialSignupResponseDto;
 import server.producer.domain.repository.UserRepository;
 import server.producer.domain.service.strategy.SocialLoginStrategy;
 import server.producer.domain.service.strategy.SocialUserInfo;
 import server.producer.security.jwt.JwtTokenProvider;
+import server.producer.security.jwt.RefreshTokenRepository;
 
 import java.util.List;
 
@@ -16,18 +19,26 @@ public class SocialLoginService {
 	private final List<SocialLoginStrategy> strategies;
 	private final UserRepository userRepository;
 	private final JwtTokenProvider jwtProvider;
+	private final RefreshTokenRepository refreshTokenRepository;
 
-	public String login(String provider, String accessToken) {
+	public SocialLoginResponseDto login(String provider, String accessToken) {
 		SocialLoginStrategy strategy = getStrategy(provider);
 		SocialUserInfo userInfo = strategy.getUserInfo(accessToken);
 
 		User user = userRepository.findBySocialTypeAndSocialId(userInfo.getProvider(), userInfo.getId())
 				.orElseThrow(() -> new RuntimeException("회원가입 필요"));
 
-		return jwtProvider.createToken(user);
+		String access = jwtProvider.createToken(user);
+		String refresh = jwtProvider.createRefreshToken(user);
+		refreshTokenRepository.save(refresh, user.getId());
+
+		return SocialLoginResponseDto.builder()
+				.accessToken(access)
+				.refreshToken(refresh)
+				.build();
 	}
 
-	public String signup(String provider, String accessToken, String nickname) {
+	public SocialSignupResponseDto signup(String provider, String accessToken, String nickname) {
 		SocialLoginStrategy strategy = getStrategy(provider);
 		SocialUserInfo userInfo = strategy.getUserInfo(accessToken);
 
@@ -36,14 +47,22 @@ public class SocialLoginService {
 		}
 
 		User newUser = User.builder()
-				.name(userInfo.getNickname())
-				.location("마포구 노고산동")
+				.email(userInfo.getEmail())
+				.name(nickname)
 				.socialType(userInfo.getProvider())
 				.socialId(userInfo.getId())
 				.build();
 
 		userRepository.save(newUser);
-		return jwtProvider.createToken(newUser);
+
+		String access = jwtProvider.createToken(newUser);
+		String refresh = jwtProvider.createRefreshToken(newUser);
+		refreshTokenRepository.save(refresh, newUser.getId());
+
+		return SocialSignupResponseDto.builder()
+				.accessToken(access)
+				.refreshToken(refresh)
+				.build();
 	}
 
 	private SocialLoginStrategy getStrategy(String provider) {
@@ -52,5 +71,4 @@ public class SocialLoginService {
 				.findFirst()
 				.orElseThrow(() -> new IllegalArgumentException("지원하지 않는 provider"));
 	}
-
 }

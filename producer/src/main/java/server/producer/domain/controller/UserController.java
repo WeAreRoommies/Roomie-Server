@@ -1,6 +1,7 @@
 package server.producer.domain.controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import server.producer.common.dto.enums.SuccessCode;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
 import server.producer.domain.dto.response.MyPageResponseDto;
 import server.producer.domain.service.UserService;
+import server.producer.security.jwt.JwtTokenProvider;
 
 import java.security.InvalidParameterException;
 
@@ -19,12 +21,13 @@ import java.security.InvalidParameterException;
 @RequestMapping("/v1/users")
 @RequiredArgsConstructor
 public class UserController {
-	private final Long userId = 1L;
 	private final UserService userService;
+	private final JwtTokenProvider jwtTokenProvider;
 
 	@GetMapping("/home")
-	public ApiResponseDto<HomeInfoResponseDto> getUserHomeInfo() {
+	public ApiResponseDto<HomeInfoResponseDto> getUserHomeInfo(HttpServletRequest request) {
 		try {
+			Long userId = extractUserIdFromRequest(request);
 			HomeInfoResponseDto userHomeInfo = userService.getUserInfoAndRecentlyViewedHouse(userId);
 			return ApiResponseDto.success(SuccessCode.MAIN_PAGE_GET_SUCCESS, userHomeInfo);
 		} catch (InvalidParameterException e) {
@@ -35,8 +38,9 @@ public class UserController {
 	}
 
     @GetMapping("/mypage")
-    public ApiResponseDto<MyPageResponseDto> getMyPage() {
+    public ApiResponseDto<MyPageResponseDto> getMyPage(HttpServletRequest request) {
         try{
+			Long userId = extractUserIdFromRequest(request);
             MyPageResponseDto userMyPage = userService.getMyPage(userId);
             return ApiResponseDto.success(SuccessCode.MY_PAGE_GET_SUCCESS, userMyPage);
         } catch (EntityNotFoundException e) {
@@ -45,4 +49,15 @@ public class UserController {
             return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
+
+	private Long extractUserIdFromRequest(HttpServletRequest request) {
+		String bearerToken = request.getHeader("Authorization");
+
+		if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+			throw new RuntimeException("유효하지 않은 토큰입니다.");
+		}
+
+		String token = bearerToken.substring(7);
+		return jwtTokenProvider.getUserId(token);
+	}
 }

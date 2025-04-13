@@ -1,10 +1,10 @@
 package server.producer.security.jwt;
 
 import entity.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -17,25 +17,43 @@ public class JwtTokenProvider {
 
     private final Key key;
     private final long accessTokenValidity;
+    private final long refreshTokenValidity;
 
-    public JwtTokenProvider(@Value("${jwt.secret-key}") String secretKey,
-                            @Value("${jwt.expiration.access}") long accessTokenValidity) {
-        String base64Encoded = Base64.getEncoder().encodeToString(secretKey.getBytes());
+    public JwtTokenProvider(JwtProperties jwtProperties) {
+        String base64Encoded = Base64.getEncoder().encodeToString(jwtProperties.getSecretKey().getBytes());
         this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(base64Encoded));
-        this.accessTokenValidity = accessTokenValidity;
+        this.accessTokenValidity = jwtProperties.getExpiration().getAccess();
+        this.refreshTokenValidity = jwtProperties.getExpiration().getRefresh();
     }
 
-    // 사용자 정보 기반 JWT 토큰 생성
     public String createToken(User user) {
-        Instant now = Instant.now();
+        return createToken(user, accessTokenValidity);
+    }
 
+    public String createRefreshToken(User user) {
+        return createToken(user, refreshTokenValidity);
+    }
+
+    public Long getUserId(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("userId", Long.class);
+    }
+
+    private String createToken(User user, long validity) {
+        Instant now = Instant.now();
         return Jwts.builder()
-                .setSubject(user.getEmail()) // 이메일을 subject로 설정
-                .claim("userId", user.getId()) // 사용자 ID 포함 (선택)
-                .claim("socialType", user.getSocialType().name()) // 소셜 타입 포함 (선택)
+                .setSubject(user.getEmail())
+                .claim("userId", user.getId())
+                .claim("socialType", user.getSocialType().name())
                 .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(now.plusMillis(accessTokenValidity)))
+                .setExpiration(Date.from(now.plusMillis(validity)))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 }
+
