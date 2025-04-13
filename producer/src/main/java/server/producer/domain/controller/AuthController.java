@@ -23,8 +23,7 @@ public class AuthController {
 	@PostMapping("/oauth/login")
 	public ApiResponseDto<SocialLoginResponseDto> socialLogin(@RequestBody SocialLoginRequestDto request) {
 		try {
-			String token = socialLoginService.login(request.getProvider(), request.getAccessToken());
-			SocialLoginResponseDto responseDto = SocialLoginResponseDto.builder().accessToken(token).build();
+			SocialLoginResponseDto responseDto = socialLoginService.login(request.getProvider(), request.getAccessToken());
 			return ApiResponseDto.success(SuccessCode.SOCIAL_LOGIN_SUCCESS, responseDto);
 		} catch (Exception e) {
 			return ApiResponseDto.fail(ErrorCode.NEED_SOCIAL_SIGNUP);
@@ -34,9 +33,12 @@ public class AuthController {
 	@PostMapping("/oauth/signup")
 	public ApiResponseDto<SocialSignupResponseDto> signup(@RequestBody SocialSignupRequestDto request) {
 		try {
-		String token = socialLoginService.signup(request.getProvider(), request.getAccessToken(), request.getNickname());
-		SocialSignupResponseDto responseDto = SocialSignupResponseDto.builder().accessToken(token).build();
-		return ApiResponseDto.success(SuccessCode.SOCIAL_SIGNUP_SUCCESS, responseDto);
+			SocialSignupResponseDto response = socialLoginService.signup(
+					request.getProvider(),
+					request.getAccessToken(),
+					request.getNickname()
+			);
+			return ApiResponseDto.success(SuccessCode.SOCIAL_SIGNUP_SUCCESS, response);
 		} catch (Exception e) {
 			return ApiResponseDto.fail(ErrorCode.UNAUTHORIZED_SOCIAL_TOKEN);
 		}
