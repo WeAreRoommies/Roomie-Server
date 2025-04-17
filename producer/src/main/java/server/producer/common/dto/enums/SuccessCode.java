@@ -2,7 +2,6 @@ package server.producer.common.dto.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -16,9 +15,12 @@ public enum SuccessCode {
 	PINNED_HOUSES_GET_SUCCESS(20005, "찜 리스트 조회 성공"),
 	PIN_TOGGLE_SUCCESS(20006, "찜하기/찜취소 성공"),
 	LOCATION_SUCCESS(20007, "지도 검색 성공"),
+	SOCIAL_LOGIN_SUCCESS(20008, "소셜 로그인 성공"),
+	TOKEN_REISSUE_SUCCESS(20009, "토큰 재발급 성공"),
 
 	//201 CREATED
-	ROOM_REQUEST_POST_SUCCESS(20101, "입주 신청 성공");
+	ROOM_REQUEST_POST_SUCCESS(20101, "입주 신청 성공"),
+	SOCIAL_SIGNUP_SUCCESS(20102, "소셜 회원가입 성공");
 
 	private final int code;
 	private final String message;
