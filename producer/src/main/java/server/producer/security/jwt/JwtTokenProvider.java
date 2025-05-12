@@ -55,5 +55,17 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token); // 여기서 파싱 자체가 유효성 검사를 포함함
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
 
