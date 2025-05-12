@@ -6,6 +6,7 @@ import server.producer.common.dto.ApiResponseDto;
 import server.producer.common.dto.enums.ErrorCode;
 import server.producer.common.dto.enums.SuccessCode;
 import server.producer.common.exception.InvalidRequestException;
+import server.producer.common.util.SecurityUtil;
 import server.producer.domain.dto.request.FilterRequestDto;
 import server.producer.domain.dto.response.FilterResponseDto;
 import server.producer.domain.service.MapService;
@@ -15,11 +16,11 @@ import server.producer.domain.service.MapService;
 @RequiredArgsConstructor
 public class MapController {
 	private final MapService mapService;
-	private final Long userId = 1L;
 
 	@PostMapping("/search")
 	public ApiResponseDto<FilterResponseDto> searchPropertiesOnMap(@RequestBody FilterRequestDto requestDto){
 		try {
+			Long userId = SecurityUtil.getCurrentUserId();
 			FilterResponseDto responseDto = mapService.searchProperties(requestDto, userId);
 			return ApiResponseDto.success(SuccessCode.HOUSE_GET_SUCCESS, responseDto);
 		} catch (InvalidRequestException invalidRequestException) {
