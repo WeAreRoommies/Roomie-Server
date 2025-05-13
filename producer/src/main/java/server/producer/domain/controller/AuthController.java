@@ -2,6 +2,8 @@ package server.producer.domain.controller;
 
 import entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.producer.common.dto.ApiResponseDto;
 import server.producer.common.dto.enums.ErrorCode;
@@ -49,24 +51,27 @@ public class AuthController {
 	}
 
 	@PostMapping("/oauth/reissue")
-	public ApiResponseDto<SocialLoginResponseDto> reissue(@RequestHeader("Refresh-Token") String refreshToken) {
+	public ResponseEntity<?> reissue(@RequestHeader("Authorization") String refreshTokenHeader) {
+		if (refreshTokenHeader == null || !refreshTokenHeader.startsWith("Bearer ")) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("RefreshToken 누락");
+		}
+
+		String refreshToken = refreshTokenHeader.substring(7);
+
 		try {
 			Long userId = refreshTokenRepository.findUserIdByToken(refreshToken)
-					.orElseThrow(() -> new RuntimeException("유효하지 않은 리프레시 토큰입니다."));
+					.orElseThrow(() -> new RuntimeException("유효하지 않은 RefreshToken"));
 
 			User user = userRepository.findById(userId)
-					.orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+					.orElseThrow(() -> new RuntimeException("유저 없음"));
 
 			String newAccess = jwtTokenProvider.createToken(user);
 
-			return ApiResponseDto.success(SuccessCode.TOKEN_REISSUE_SUCCESS,
-					SocialLoginResponseDto.builder()
-							.accessToken(newAccess)
-							.refreshToken(refreshToken) // 기존 refresh 유지
-							.build());
+			return ResponseEntity.ok()
+					.header("New-Access-Token", newAccess)
+					.build(); // 바디 없이 헤더로 응답
 		} catch (Exception e) {
-			return ApiResponseDto.fail(ErrorCode.UNAUTHORIZED_SOCIAL_TOKEN);
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("RefreshToken 만료 또는 유효하지 않음");
 		}
 	}
-
 }

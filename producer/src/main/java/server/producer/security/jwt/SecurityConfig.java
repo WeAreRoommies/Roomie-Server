@@ -25,13 +25,10 @@ public class SecurityConfig {
                         .requestMatchers("/v1/auth/oauth/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new ExceptionHandlerFilter(jwtTokenProvider, refreshTokenRepository, userRepository),
-                        JwtAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
-                        UsernamePasswordAuthenticationFilter.class);
-
-        http.csrf(csrf -> csrf.disable());
-        http.httpBasic(httpBasic -> httpBasic.disable());
+                        UsernamePasswordAuthenticationFilter.class)
+                .csrf(csrf -> csrf.disable())
+                .httpBasic(httpBasic -> httpBasic.disable());
 
         return http.build();
     }
