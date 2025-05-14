@@ -41,29 +41,20 @@ public class UserService {
 
 		for (RecentlyViewedHouse rvh : houses) {
 			House house = rvh.getHouse();
-			List<Room> rooms = house.getRooms();
 			final boolean isPinned = house.getPins().stream()
 					.anyMatch(pin -> pin.getUser().getId().equals(userId));
 			HomeInfoResponseDto.RecentlyViewedHouseDto dto = HomeInfoResponseDto.RecentlyViewedHouseDto.builder()
 					.houseId(house.getId())
-					.monthlyRent(house.calculateMonthlyRent())
+					.monthlyRent(house.calculateMonthlyRent()) 
 					.deposit(house.calculateDeposit())
 					.occupancyTypes(house.calculateOccupancyType())
-					.genderPolicy(house.getGenderPolicy().toString())
 					.location(house.getLocation())
+					.genderPolicy(house.getGenderPolicy().toString())
 					.locationDescription(house.getLocationDescription())
 					.isPinned(isPinned)
 					.moodTag(house.getMoodTag())
 					.contractTerm(house.getContractTerm())
 					.mainImgUrl(house.getMainImgUrl())
-					.roomOccupancies(rooms.stream()
-							.map(room -> room.getRoomOccupancies().stream()
-									.map(occupancy -> HomeInfoResponseDto.RoomOccupancyDto.builder()
-											.name(occupancy.getName())
-											.isOccupied(occupancy.isOccupied())
-											.build())
-									.collect(Collectors.toList()))
-							.collect(Collectors.toList()))
 					.build();
 			recentlyViewedHouseDtos.add(dto);
 		}

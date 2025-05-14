@@ -157,21 +157,17 @@ public class HouseService {
                         .occupancyType(room.getOccupancyType())
                         .gender(room.getGender().toString())
                         .deposit(room.getDeposit())
-                        .prepaidUtilities(0)  // 더 이상 사용하지 않음
                         .monthlyRent(room.getMonthlyRent())
                         .contractPeriod(room.getContractPeriod())
                         .managementFee(room.getManagementFee())
                         .build())
                 .collect(Collectors.toList());
 
-        List<HouseDetailsResponseDto.RoommateDto> roommateDtos = new ArrayList<>();  // 빈 리스트로 설정
-
 		upsertRecentlyViewedHouse(houseId, userId);
 
         return HouseDetailsResponseDto.builder()
                 .houseInfo(houseInfoDto)
                 .rooms(roomDtos)
-                .roommates(roommateDtos)
                 .build();
     }
 
