@@ -113,7 +113,7 @@ public class HouseService {
 		House selectedHouse = houseRepository.findHouseWithRoomsById(houseId)
 				.orElseThrow(() -> new EntityNotFoundException("해당 House를 찾을 수 없습니다."));
 
-		List<Room> rooms = houseRepository.findRoomsAndRoommatesByHouseId(houseId);
+		List<Room> rooms = houseRepository.findRoomsAndRoomOccupanciesByHouseId(houseId);
 
 		if (rooms.isEmpty()) {
 			throw new EntityNotFoundException("해당 매물에 방 정보가 없습니다.");
@@ -152,28 +152,21 @@ public class HouseService {
                 .map(room -> HouseDetailsResponseDto.RoomDto.builder()
                         .roomId(room.getId())
                         .name(room.getName())
-                        .status(room.getStatus() != room.getOccupancyType())
-						.isTourAvailable(room.isTourAvailable())
+                        .status(room.getCurrentOccupancyCount())
+                        .isTourAvailable(room.isTourAvailable())
                         .occupancyType(room.getOccupancyType())
                         .gender(room.getGender().toString())
                         .deposit(room.getDeposit())
-                        .prepaidUtilities(room.getPrepaidUtilities())
                         .monthlyRent(room.getMonthlyRent())
                         .contractPeriod(room.getContractPeriod())
                         .managementFee(room.getManagementFee())
+                        .roomOccupancies(room.getRoomOccupancies().stream()
+                                .map(occupancy -> HouseDetailsResponseDto.RoomOccupancyDto.builder()
+                                        .name(occupancy.getName())
+                                        .isOccupied(occupancy.isOccupied())
+                                        .build())
+                                .collect(Collectors.toList()))
                         .build())
-                .collect(Collectors.toList());
-
-        List<HouseDetailsResponseDto.RoommateDto> roommateDtos = rooms.stream()
-                .flatMap(room -> room.getRoommates().stream()
-                        .map(roommate -> HouseDetailsResponseDto.RoommateDto.builder()
-                                .name(room.getName())
-                                .age(roommate.getAge())
-                                .job(roommate.getJob())
-                                .mbti(roommate.getMbti())
-                                .sleepTime(roommate.getSleepTime())
-                                .activityTime(roommate.getActivityTime())
-                                .build()))
                 .collect(Collectors.toList());
 
 		upsertRecentlyViewedHouse(houseId, userId);
@@ -181,7 +174,6 @@ public class HouseService {
         return HouseDetailsResponseDto.builder()
                 .houseInfo(houseInfoDto)
                 .rooms(roomDtos)
-                .roommates(roommateDtos)
                 .build();
     }
 

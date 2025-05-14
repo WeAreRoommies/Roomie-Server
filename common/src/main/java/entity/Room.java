@@ -44,9 +44,6 @@ public class Room {
     private String mainImgUrl="";
 
     @Column(nullable = false)
-    private int prepaidUtilities;
-
-    @Column(nullable = false)
     private String managementFee="";
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,10 +51,10 @@ public class Room {
     private House house;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-    private List<Roommate> roommates = new ArrayList<>();
+    private List<HousingRequest> housingRequests = new ArrayList<>();
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-    private List<HousingRequest> housingRequests = new ArrayList<>();
+    private List<RoomOccupancy> roomOccupancies = new ArrayList<>();
 
     public boolean isTourAvailable(){
         if (this.contractPeriod == null) return true;
@@ -65,4 +62,9 @@ public class Room {
         return true;
     }
 
+    public int getCurrentOccupancyCount() {
+        return (int) roomOccupancies.stream()
+                .filter(RoomOccupancy::isOccupied)
+                .count();
+    }
 }

@@ -16,6 +16,7 @@ import entity.User;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +56,14 @@ public class UserService {
 					.moodTag(house.getMoodTag())
 					.contractTerm(house.getContractTerm())
 					.mainImgUrl(house.getMainImgUrl())
+					.roomOccupancies(rooms.stream()
+							.map(room -> room.getRoomOccupancies().stream()
+									.map(occupancy -> HomeInfoResponseDto.RoomOccupancyDto.builder()
+											.name(occupancy.getName())
+											.isOccupied(occupancy.isOccupied())
+											.build())
+									.collect(Collectors.toList()))
+							.collect(Collectors.toList()))
 					.build();
 			recentlyViewedHouseDtos.add(dto);
 		}
