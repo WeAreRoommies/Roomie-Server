@@ -2,14 +2,14 @@ package server.producer.domain.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
-import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public record HouseDetailsResponseDto (
     HouseInfoDto houseInfo,
-    List<RoomDto> rooms
+    List<RoomDto> rooms,
+    List<RoommateDto> roommates
 ) {
     @Builder
     public HouseDetailsResponseDto{
@@ -37,26 +37,35 @@ public record HouseDetailsResponseDto (
         public HouseInfoDto{
         }
     }
-    @Data
-    @Builder
-    public static class RoomDto {
-        private Long roomId;
-        private String name;
-        private int status;  // 현재 입주자 수
-        private boolean isTourAvailable;
-        private int occupancyType;
-        private String gender;
-        private int deposit;
-        private int monthlyRent;
-        private LocalDate contractPeriod;
-        private String managementFee;
-        private List<RoomOccupancyDto> roomOccupancies;
+    public record RoomDto (
+        Long roomId,
+        String name,
+        boolean status,
+        boolean isTourAvailable,
+        int occupancyType,
+        String gender,
+        int deposit,
+        int prepaidUtilities,
+        int monthlyRent,
+        @JsonFormat(pattern = "yy-MM-dd")
+        LocalDate contractPeriod,
+        String managementFee
+    ) {
+        @Builder
+        public RoomDto {
+        }
     }
 
-    @Data
-    @Builder
-    public static class RoomOccupancyDto {
-        private String name;
-        private boolean isOccupied;
+    public record RoommateDto (
+        String name,
+        String age,
+        String job,
+        String mbti,
+        String sleepTime,
+        String activityTime
+    ) {
+        @Builder
+        public RoommateDto {
+        }
     }
 }
