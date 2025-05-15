@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import server.producer.common.dto.ApiResponseDto;
 import server.producer.common.dto.enums.ErrorCode;
 import server.producer.common.dto.enums.SuccessCode;
+import server.producer.common.util.SecurityUtil;
 import server.producer.domain.dto.response.*;
 import server.producer.domain.service.HouseService;
 
@@ -18,11 +19,11 @@ import java.security.InvalidParameterException;
 public class HouseController {
 
     private final HouseService houseService;
-    private final Long userId = 1L;
 
     @GetMapping("/{houseId}/details")
     public ApiResponseDto<HouseDetailsResponseDto> getHouseDetails(@PathVariable Long houseId) {
         try{
+            Long userId = SecurityUtil.getCurrentUserId();
             HouseDetailsResponseDto responseDto = houseService.getHouseDetails(houseId, userId);
             return ApiResponseDto.success(SuccessCode.HOUSE_DETAIL_GET_SUCCESS, responseDto);
         } catch (EntityNotFoundException e) {
@@ -40,6 +41,7 @@ public class HouseController {
             if (moodTag == null || moodTag.isEmpty()) {
                 return ApiResponseDto.fail(ErrorCode.MISSING_REQUIRED_PARAMETER);
             }
+            Long userId = SecurityUtil.getCurrentUserId();
 			MoodHouseResponseDto moodHousesDto = houseService.getHousesByMoodAndLocation(moodTag, userId);
 			return ApiResponseDto.success(SuccessCode.HOUSE_GET_SUCCESS, moodHousesDto);
 		} catch (EntityNotFoundException e) {
@@ -52,6 +54,7 @@ public class HouseController {
     @PatchMapping("/{houseId}/pins")
     public ApiResponseDto<PinnedResponseDto> pinHouse(@PathVariable Long houseId) {
         try {
+            Long userId = SecurityUtil.getCurrentUserId();
             PinnedResponseDto isPinned = houseService.togglePin(userId, houseId);
             return ApiResponseDto.success(SuccessCode.PIN_TOGGLE_SUCCESS, isPinned);
         } catch (EntityNotFoundException e) {
@@ -68,6 +71,7 @@ public class HouseController {
     @GetMapping("/pins")
     public ApiResponseDto<PinnedListResponseDto> getPinnedHouses() {
         try {
+            Long userId = SecurityUtil.getCurrentUserId();
             PinnedListResponseDto pinnedListResponseDto = houseService.getPinnedHouses(userId);
             return ApiResponseDto.success(SuccessCode.PINNED_HOUSES_GET_SUCCESS, pinnedListResponseDto);
         } catch (InvalidParameterException e) {

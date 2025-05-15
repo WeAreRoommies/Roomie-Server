@@ -14,9 +14,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-logging' // 기본 로깅 설정
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'org.json:json:20231013'
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.37'
 
     // JPA & DataBase
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -36,6 +41,11 @@ dependencies {
     testImplementation 'com.h2database:h2'
 
     implementation project(':common') // 공통 모듈 추가
+
+    // JJWT 의존성 추가 (토큰 생성/파싱/검증용)
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 }
 
 application {

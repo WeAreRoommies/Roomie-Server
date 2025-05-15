@@ -1,5 +1,6 @@
 package server.producer.domain.repository;
 
+import entity.SocialType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import entity.User;
@@ -26,4 +27,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	@Query("SELECT u.location FROM User u WHERE u.id = :userId")
 	Optional<String> findLocationById(@Param("userId") Long userId);
+
+	Optional<User> findBySocialTypeAndSocialId(SocialType provider, String id);
 }

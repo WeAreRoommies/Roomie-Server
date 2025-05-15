@@ -10,6 +10,12 @@ redis:
       min-idle: 1
 server:
   port: 8080
+jwt:
+  # 반드시 Base64로 인코딩된 256비트 이상의 키를 사용
+  secret-key: my-secret-keymy-secret-keymy-secret-keymy-secret-keymy-secret-key
+  expiration:
+    access: 3600000 # Access Token 만료 시간 (1시간: 밀리초 단위)
+    refresh: 604800000 # Refresh Token 만료 시간 (7일: 밀리초 단위)
 spring.devtools.restart.enabled: false
 spring:
   jpa:
