@@ -11,11 +11,14 @@ import server.producer.common.dto.enums.SuccessCode;
 import server.producer.domain.dto.request.SocialLoginRequestDto;
 import server.producer.domain.dto.request.SocialSignupRequestDto;
 import server.producer.domain.dto.response.SocialLoginResponseDto;
+import server.producer.domain.dto.response.SocialReissueResponseDto;
 import server.producer.domain.dto.response.SocialSignupResponseDto;
 import server.producer.domain.repository.UserRepository;
 import server.producer.domain.service.SocialLoginService;
 import server.producer.security.jwt.JwtTokenProvider;
 import server.producer.security.jwt.RefreshTokenRepository;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("v1/auth")
@@ -51,27 +54,36 @@ public class AuthController {
 	}
 
 	@PostMapping("/oauth/reissue")
-	public ResponseEntity<?> reissue(@RequestHeader("Authorization") String refreshTokenHeader) {
+	public ApiResponseDto<SocialReissueResponseDto> reissue(@RequestHeader("Authorization") String refreshTokenHeader) {
+		// 1. 헤더 유효성 검사
 		if (refreshTokenHeader == null || !refreshTokenHeader.startsWith("Bearer ")) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("RefreshToken 누락");
+			return ApiResponseDto.fail(ErrorCode.MISSING_REQUIRED_PARAMETER);
 		}
 
 		String refreshToken = refreshTokenHeader.substring(7);
 
-		try {
-			Long userId = refreshTokenRepository.findUserIdByToken(refreshToken)
-					.orElseThrow(() -> new RuntimeException("유효하지 않은 RefreshToken"));
-
-			User user = userRepository.findById(userId)
-					.orElseThrow(() -> new RuntimeException("유저 없음"));
-
-			String newAccess = jwtTokenProvider.createToken(user);
-
-			return ResponseEntity.ok()
-					.header("New-Access-Token", newAccess)
-					.build(); // 바디 없이 헤더로 응답
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("RefreshToken 만료 또는 유효하지 않음");
+		// 2. Redis에서 userId 조회
+		Optional<Long> optionalUserId = refreshTokenRepository.findUserIdByToken(refreshToken);
+		if (optionalUserId.isEmpty()) {
+			return ApiResponseDto.fail(ErrorCode.UNAUTHORIZED_SOCIAL_TOKEN); // 유효하지 않은 RefreshToken
 		}
+		Long userId = optionalUserId.get();
+
+		// 3. DB에서 User 조회
+		Optional<User> optionalUser = userRepository.findById(userId);
+		if (optionalUser.isEmpty()) {
+			return ApiResponseDto.fail(ErrorCode.USER_NOT_FOUND); // 유저 없음
+		}
+		User user = optionalUser.get();
+
+		// 4. AccessToken 재발급
+		String newAccess = jwtTokenProvider.createToken(user);
+
+		SocialReissueResponseDto responseDto = SocialReissueResponseDto.builder()
+				.accessToken(newAccess)
+				.refreshToken(refreshToken)
+				.build();
+
+		return ApiResponseDto.success(SuccessCode.TOKEN_REISSUE_SUCCESS, responseDto);
 	}
 }
