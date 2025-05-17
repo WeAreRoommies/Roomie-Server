@@ -16,6 +16,7 @@ import entity.User;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,16 +41,15 @@ public class UserService {
 
 		for (RecentlyViewedHouse rvh : houses) {
 			House house = rvh.getHouse();
-			List<Room> rooms = house.getRooms();
 			final boolean isPinned = house.getPins().stream()
 					.anyMatch(pin -> pin.getUser().getId().equals(userId));
 			HomeInfoResponseDto.RecentlyViewedHouseDto dto = HomeInfoResponseDto.RecentlyViewedHouseDto.builder()
 					.houseId(house.getId())
-					.monthlyRent(house.calculateMonthlyRent())
+					.monthlyRent(house.calculateMonthlyRent()) 
 					.deposit(house.calculateDeposit())
 					.occupancyTypes(house.calculateOccupancyType())
-					.genderPolicy(house.getGenderPolicy().toString())
 					.location(house.getLocation())
+					.genderPolicy(house.getGenderPolicy().toString())
 					.locationDescription(house.getLocationDescription())
 					.isPinned(isPinned)
 					.moodTag(house.getMoodTag())
