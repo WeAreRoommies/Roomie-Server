@@ -82,28 +82,28 @@ jobs:
 
               echo "Running Producer container"
               sudo docker run -d --name producer -p 8080:8080 \
-                -e SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }} \
-                -e SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
-                -e SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
-                -e SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} \
-                -e NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }} \
-                -e NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }} \
-                -e NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }} \
-                -e AWS_EC2_REDIS_HOST=${{ secrets.AWS_EC2_REDIS_HOST }} \
-                -e REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
+                -e "SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" \
+                -e "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
+                -e "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
+                -e "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" \
+                -e "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" \
+                -e "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" \
+                -e "NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }}" \
+                -e "AWS_EC2_REDIS_HOST=${{ secrets.AWS_EC2_REDIS_HOST }}" \
+                -e "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" \
                 ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
 
               echo "Running Consumer container"
               sudo docker run -d --name consumer -p 8081:8081 \
-                -e SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }} \
-                -e SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
-                -e SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
-                -e SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} \
-                -e NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }} \
-                -e NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }} \
-                -e NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }} \
-                -e AWS_EC2_REDIS_HOST=${{ secrets.AWS_EC2_REDIS_HOST }} \
-                -e REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
+                -e "SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" \
+                -e "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
+                -e "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
+                -e "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" \
+                -e "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" \
+                -e "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" \
+                -e "NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }}" \
+                -e "AWS_EC2_REDIS_HOST=${{ secrets.AWS_EC2_REDIS_HOST }}" \
+                -e "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" \
                 ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
 
               echo "Cleaning up unused Docker images"
