@@ -1,23 +1,15 @@
-redis:
-  host: ${AWS_EC2_REDIS_HOST}        # Redis 서버 호스트 (AWS EC2 호스트 이름 또는 IP)
-  port: 6379                        # Redis 포트 (기본값: 6379)
-  password: ${REDIS_PASSWORD}       # Redis 인증 비밀번호 (없다면 생략 가능)
-  timeout: 2000                     # 연결 타임아웃 (ms 단위)
-  lettuce:
-    pool:
-      max-active: 10              # 최대 연결 수
-      max-idle: 5                 # 유휴 상태 연결의 최대 수
-      min-idle: 1
-server:
-  port: 8080
-jwt:
-  # 반드시 Base64로 인코딩된 256비트 이상의 키를 사용
-  secret-key: my-secret-keymy-secret-keymy-secret-keymy-secret-keymy-secret-key
-  expiration:
-    access: 3600000 # Access Token 만료 시간 (1시간: 밀리초 단위)
-    refresh: 604800000 # Refresh Token 만료 시간 (7일: 밀리초 단위)
-spring.devtools.restart.enabled: false
 spring:
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST}
+      port: 6379
+      password: ${SPRING_REDIS_PASSWORD}
+      timeout: 2000
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 1
   jpa:
     properties:
       hibernate:
@@ -37,6 +29,20 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:testdb}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
+  devtools:
+    restart:
+      enabled: false
+
+server:
+  port: 8080
+
+jwt:
+  # 반드시 Base64로 인코딩된 256비트 이상의 키를 사용
+  secret-key: my-secret-keymy-secret-keymy-secret-keymy-secret-keymy-secret-key
+  expiration:
+    access: 3600000 # Access Token 만료 시간 (1시간: 밀리초 단위)
+    refresh: 604800000 # Refresh Token 만료 시간 (7일: 밀리초 단위)
+
 naver:
   client-id: ${NAVER_CLIENT_ID}
   client-secret: ${NAVER_CLIENT_SECRET}
