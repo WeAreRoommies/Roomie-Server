@@ -67,8 +67,6 @@ jobs:
               echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
               echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> .env
               echo "NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }}" >> .env
-              echo "AWS_EC2_REDIS_HOST=${{ secrets.AWS_EC2_REDIS_HOST }}" >> .env
-              echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
   
               echo "Stopping and removing existing containers"
               sudo docker stop producer || true
@@ -76,20 +74,36 @@ jobs:
               sudo docker stop consumer || true
               sudo docker rm consumer || true
             
-            echo "Pulling the latest Producer image"
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
+              echo "Pulling the latest Producer image"
+              sudo docker pull ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
   
-            echo "Pulling the latest Consumer image"
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
+              echo "Pulling the latest Consumer image"
+              sudo docker pull ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
 
               echo "Running Producer container"
               sudo docker run -d --name producer -p 8080:8080 \
-                --env-file .env \
+                -e SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }} \
+                -e SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
+                -e SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
+                -e SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} \
+                -e NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }} \
+                -e NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }} \
+                -e NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }} \
+                -e AWS_EC2_REDIS_HOST=${{ secrets.AWS_EC2_REDIS_HOST }} \
+                -e REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
                 ${{ secrets.DOCKER_USERNAME }}/roomie-producer:latest
 
               echo "Running Consumer container"
               sudo docker run -d --name consumer -p 8081:8081 \
-                --env-file .env \
+                -e SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }} \
+                -e SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
+                -e SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
+                -e SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} \
+                -e NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }} \
+                -e NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }} \
+                -e NAVER_LOCATION_SEARCH_URL=${{ secrets.NAVER_LOCATION_SEARCH_URL }} \
+                -e AWS_EC2_REDIS_HOST=${{ secrets.AWS_EC2_REDIS_HOST }} \
+                -e REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
                 ${{ secrets.DOCKER_USERNAME }}/roomie-consumer:latest
 
               echo "Cleaning up unused Docker images"
