@@ -18,7 +18,6 @@ import server.producer.domain.service.SocialLoginService;
 import server.producer.security.jwt.JwtTokenProvider;
 import server.producer.security.jwt.RefreshTokenRepository;
 
-@Slf4j
 @RestController
 @RequestMapping("v1/auth")
 @RequiredArgsConstructor
@@ -47,7 +46,6 @@ public class AuthController {
 			);
 			return ApiResponseDto.success(SuccessCode.SOCIAL_LOGIN_SUCCESS, responseDto);
 		} catch (Exception e) {
-			log.error("[소셜 로그인 실패] 요청 provider: {}, accessToken: {}", request.getProvider(), request.getAccessToken(), e);
 			return ApiResponseDto.fail(ErrorCode.UNAUTHORIZED_SOCIAL_TOKEN);
 		}
 	}
