@@ -44,7 +44,7 @@ public class MapService {
 			List<FilterResponseDto.HouseMapDto> houseMapDtos = new ArrayList<>();
 			List<House> houses = filterRepository.findFilteredHouses(updated);
 			// excludeFull이 true일 경우에만 필터링 적용
-			if (Boolean.TRUE.equals(requestDto.excludeFull())) {
+			if (Boolean.TRUE.equals(updated.excludeFull())) {
 				houses = houses.stream()
 						.filter(house -> {
 							String[] occ = house.calculateOccupancyStatus().split("/");
