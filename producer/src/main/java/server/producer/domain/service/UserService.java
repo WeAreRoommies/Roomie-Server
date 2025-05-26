@@ -1,5 +1,6 @@
 package server.producer.domain.service;
 
+import entity.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,12 +9,9 @@ import server.producer.domain.dto.response.MyPageResponseDto;
 import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.RecentlyViewedHouseRepository;
 import server.producer.domain.repository.UserRepository;
-import entity.House;
-import entity.RecentlyViewedHouse;
-import entity.Room;
-import entity.User;
 
 import java.security.InvalidParameterException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,5 +70,35 @@ public class UserService {
 		return MyPageResponseDto.builder()
 				.name(name)
 				.build();
+	}
+
+	public void updateNickname(Long userId, String newNickname) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("사용자 없음"));
+		user.setName(newNickname);
+	}
+
+	public void updateName(Long userId, String newName) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new EntityNotFoundException("사용자 없음"));
+		user.setName(newName);
+	}
+
+	public void updateBirthDay(Long userId, LocalDate birthDay) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new EntityNotFoundException("사용자 없음"));
+		user.setBirthDate(birthDay);
+	}
+
+	public void updatePhoneNumber(Long userId, String phoneNumber) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new EntityNotFoundException("사용자 없음"));
+		user.setPhoneNumber(phoneNumber);
+	}
+
+	public void updateGender(Long userId, Gender gender) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new EntityNotFoundException("사용자 없음"));
+		user.setGender(gender);
 	}
 }

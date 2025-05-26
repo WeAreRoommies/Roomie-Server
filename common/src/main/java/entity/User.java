@@ -24,19 +24,19 @@ public class User {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String name;
 
-    @Column(nullable = false)
-    private String location;
+    @Column(nullable = true)
+    private String location = "창천동";
 
-    @Column(nullable = false)
-    private String gender;
+    @Column(nullable = true)
+    private Gender gender;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDate birthDate;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -48,12 +48,12 @@ public class User {
     // ✅ Builder를 위한 생성자 (필요한 필드만)
     @Builder
     public User(String email, String socialId, SocialType socialType, String name, String location, 
-                String gender, String phoneNumber, LocalDate birthDate) {
+                Gender gender, String phoneNumber, LocalDate birthDate) {
         this.email = email;
         this.socialId = socialId;
         this.socialType = socialType;
         this.name = name;
-        this.location = location;
+        this.location = location != null ? location : "창천동";
         this.gender = gender;
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
