@@ -18,6 +18,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = true)
     private String email;
     private String socialId;
 
@@ -27,11 +28,14 @@ public class User {
     @Column(nullable = true)
     private String name;
 
+    @Column(nullable = false)
+    private String nickname;
+
     @Column(nullable = true)
     private String location = "창천동";
 
     @Column(nullable = true)
-    private Gender gender;
+    private String gender;
 
     @Column(nullable = true)
     private String phoneNumber;
@@ -47,12 +51,13 @@ public class User {
 
     // ✅ Builder를 위한 생성자 (필요한 필드만)
     @Builder
-    public User(String email, String socialId, SocialType socialType, String name, String location, 
-                Gender gender, String phoneNumber, LocalDate birthDate) {
+    public User(String email, String socialId, SocialType socialType, String name, String nickname, String location,
+                String gender, String phoneNumber, LocalDate birthDate) {
         this.email = email;
         this.socialId = socialId;
         this.socialType = socialType;
         this.name = name;
+        this.nickname = nickname;
         this.location = location != null ? location : "창천동";
         this.gender = gender;
         this.phoneNumber = phoneNumber;

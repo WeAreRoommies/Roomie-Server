@@ -48,7 +48,7 @@ public class SocialLoginService {
 
 		User newUser = User.builder()
 				.email(userInfo.getEmail())
-				.name(nickname)
+				.nickname(nickname)
 				.socialType(userInfo.getProvider())
 				.socialId(userInfo.getId())
 				.build();
@@ -60,6 +60,31 @@ public class SocialLoginService {
 		refreshTokenRepository.save(refresh, newUser.getId());
 
 		return SocialSignupResponseDto.builder()
+				.accessToken(access)
+				.refreshToken(refresh)
+				.build();
+	}
+
+	public SocialLoginResponseDto loginOrSignup(String provider, String accessToken) {
+		SocialLoginStrategy strategy = getStrategy(provider);
+		SocialUserInfo userInfo = strategy.getUserInfo(accessToken);
+
+		User user = userRepository.findBySocialTypeAndSocialId(userInfo.getProvider(), userInfo.getId())
+				.orElseGet(() -> {
+					User created = User.builder()
+							.socialId(userInfo.getId())
+							.socialType(userInfo.getProvider())
+							.email(userInfo.getEmail())
+							.nickname(userInfo.getNickname())
+							.build();
+					return userRepository.save(created);
+				});
+
+		String access = jwtProvider.createToken(user);
+		String refresh = jwtProvider.createRefreshToken(user);
+		refreshTokenRepository.save(refresh, user.getId());
+
+		return SocialLoginResponseDto.builder()
 				.accessToken(access)
 				.refreshToken(refresh)
 				.build();

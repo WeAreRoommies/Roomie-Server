@@ -2,6 +2,7 @@ package server.producer.domain.controller;
 
 import entity.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import server.producer.domain.service.SocialLoginService;
 import server.producer.security.jwt.JwtTokenProvider;
 import server.producer.security.jwt.RefreshTokenRepository;
 
+@Slf4j
 @RestController
 @RequestMapping("v1/auth")
 @RequiredArgsConstructor
@@ -26,13 +28,27 @@ public class AuthController {
 	private final UserRepository userRepository;
 	private final JwtTokenProvider jwtTokenProvider;
 
+//	@PostMapping("/oauth/login")
+//	public ApiResponseDto<SocialLoginResponseDto> socialLogin(@RequestBody SocialLoginRequestDto request) {
+//		try {
+//			SocialLoginResponseDto responseDto = socialLoginService.login(request.getProvider(), request.getAccessToken());
+//			return ApiResponseDto.success(SuccessCode.SOCIAL_LOGIN_SUCCESS, responseDto);
+//		} catch (Exception e) {
+//			return ApiResponseDto.fail(ErrorCode.NEED_SOCIAL_SIGNUP);
+//		}
+//	}
+
 	@PostMapping("/oauth/login")
 	public ApiResponseDto<SocialLoginResponseDto> socialLogin(@RequestBody SocialLoginRequestDto request) {
 		try {
-			SocialLoginResponseDto responseDto = socialLoginService.login(request.getProvider(), request.getAccessToken());
+			SocialLoginResponseDto responseDto = socialLoginService.loginOrSignup(
+					request.getProvider(),
+					request.getAccessToken()
+			);
 			return ApiResponseDto.success(SuccessCode.SOCIAL_LOGIN_SUCCESS, responseDto);
 		} catch (Exception e) {
-			return ApiResponseDto.fail(ErrorCode.NEED_SOCIAL_SIGNUP);
+			log.error("[카카오 사용자 정보 조회 실패] accessToken: {}", request.getAccessToken(), e);
+			return ApiResponseDto.fail(ErrorCode.UNAUTHORIZED_SOCIAL_TOKEN);
 		}
 	}
 

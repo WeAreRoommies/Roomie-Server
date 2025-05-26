@@ -31,7 +31,7 @@ public class UserService {
 		// 사용자 정보 조회
 		User user = userRepository.findUserWithRecentlyViewedHouses(userId)
 				.orElseThrow(EntityNotFoundException::new);
-		final String name = user.getName();
+		final String nickname = user.getNickname();
 		final String location = user.getLocation().split(" ")[user.getLocation().split(" ").length-1];
 		final List<HomeInfoResponseDto.RecentlyViewedHouseDto> recentlyViewedHouseDtos = new ArrayList<>();
 
@@ -57,7 +57,7 @@ public class UserService {
 			recentlyViewedHouseDtos.add(dto);
 		}
 		return HomeInfoResponseDto.builder()
-				.name(name)
+				.nickname(nickname)
 				.location(location)
 				.recentlyViewedHouses(recentlyViewedHouseDtos)
 				.build();
@@ -66,9 +66,9 @@ public class UserService {
 	public MyPageResponseDto getMyPage(Long userId) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new EntityNotFoundException("User not found"));
-		final String name = user.getName();
+		final String nickname = user.getNickname();
 		return MyPageResponseDto.builder()
-				.name(name)
+				.nickname(nickname)
 				.build();
 	}
 
