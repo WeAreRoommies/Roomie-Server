@@ -35,7 +35,7 @@ public class User {
     private String location = "창천동";
 
     @Column(nullable = true)
-    private String gender;
+    private Gender gender;
 
     @Column(nullable = true)
     private String phoneNumber;
@@ -52,7 +52,7 @@ public class User {
     // ✅ Builder를 위한 생성자 (필요한 필드만)
     @Builder
     public User(String email, String socialId, SocialType socialType, String name, String nickname, String location,
-                String gender, String phoneNumber, LocalDate birthDate) {
+                Gender gender, String phoneNumber, LocalDate birthDate) {
         this.email = email;
         this.socialId = socialId;
         this.socialType = socialType;
