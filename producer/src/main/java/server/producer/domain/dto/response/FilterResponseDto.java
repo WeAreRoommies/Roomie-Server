@@ -13,8 +13,8 @@ public record FilterResponseDto(
 
 	public record HouseMapDto(
 			Long houseId,                 // 매물 ID
-			Double x,                     // 위도
-			Double y,                     // 경도
+			Double latitude,              // 위도
+			Double longitude,             // 경도
 			String monthlyRent,           // 월세 범위
 			String deposit,               // 보증금 범위
 			String occupancyTypes,        // 인실 유형

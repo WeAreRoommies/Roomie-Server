@@ -37,18 +37,31 @@ public class MapService {
 					requestDto.genderPolicy(),
 					requestDto.preferredDate(),
 					requestDto.occupancyTypes(),
-					requestDto.contractPeriod()
+					requestDto.contractPeriod(),
+					requestDto.excludeFull()
 			);
 
 			List<FilterResponseDto.HouseMapDto> houseMapDtos = new ArrayList<>();
 			List<House> houses = filterRepository.findFilteredHouses(updated);
+			// excludeFull이 true일 경우에만 필터링 적용
+			if (Boolean.TRUE.equals(requestDto.excludeFull())) {
+				houses = houses.stream()
+						.filter(house -> {
+							String[] occ = house.calculateOccupancyStatus().split("/");
+							int current = Integer.parseInt(occ[0]);
+							int max = Integer.parseInt(occ[1]);
+							return current < max;
+						})
+						.toList();
+			}
+
 			for (House house : houses) {
 				final boolean isPinned = house.getPins().stream()
 						.anyMatch(pin -> pin.getUser().getId().equals(userId));
 				FilterResponseDto.HouseMapDto dto = FilterResponseDto.HouseMapDto.builder()
 						.houseId(house.getId())
-						.x(house.getLatitude())
-						.y(house.getLongitude())
+						.latitude(house.getLatitude())
+						.longitude(house.getLongitude())
 						.monthlyRent(house.calculateMonthlyRent())
 						.deposit(house.calculateDeposit())
 						.occupancyTypes(house.calculateOccupancyType())
@@ -66,6 +79,5 @@ public class MapService {
 		} else {
 			throw new IllegalArgumentException();
 		}
-
 	}
 }
