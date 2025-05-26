@@ -5,7 +5,7 @@ import lombok.Builder;
 import java.util.List;
 
 public record HomeInfoResponseDto(
-		String nickname,
+		String name,
 		String location,
 		List<RecentlyViewedHouseDto> recentlyViewedHouses
 ) {

@@ -17,14 +17,13 @@ public interface HouseRepository extends JpaRepository<House, Long> {
 
     @Query("SELECT h FROM House h " +
             "LEFT JOIN FETCH h.rooms r " +
-            "LEFT JOIN FETCH r.roomOccupancies " +
             "WHERE h.id = :houseId")
     Optional<House> findHouseWithRoomsById(@Param("houseId") Long houseId);
 
     @Query("SELECT r FROM Room r " +
-            "LEFT JOIN FETCH r.roomOccupancies " +
+            "LEFT JOIN FETCH r.roommates " +
             "WHERE r.house.id = :houseId")
-    List<Room> findRoomsAndRoomOccupanciesByHouseId(@Param("houseId") Long houseId);
+    List<Room> findRoomsAndRoommatesByHouseId(@Param("houseId") Long houseId);
 
     @Query("SELECT h FROM House h " +
             "LEFT JOIN FETCH h.pins p " +
