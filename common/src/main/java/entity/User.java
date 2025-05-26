@@ -3,7 +3,6 @@ package entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,19 +27,7 @@ public class User {
     private String name;
 
     @Column(nullable = false)
-    private String nickname;
-
-    @Column(nullable = false)
     private String location;
-
-    @Column(nullable = false)
-    private String gender;
-
-    @Column(nullable = false)
-    private String phoneNumber;
-
-    @Column(nullable = false)
-    private LocalDate birthDate;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Pin> pins = new ArrayList<>();
@@ -50,17 +37,12 @@ public class User {
 
     // ✅ Builder를 위한 생성자 (필요한 필드만)
     @Builder
-    public User(String email, String socialId, SocialType socialType, String name, String nickname, String location,
-                String gender, String phoneNumber, LocalDate birthDate) {
+    public User(String email, String socialId, SocialType socialType, String name, String location) {
         this.email = email;
         this.socialId = socialId;
         this.socialType = socialType;
         this.name = name;
-        this.nickname = nickname;
         this.location = location;
-        this.gender = gender;
-        this.phoneNumber = phoneNumber;
-        this.birthDate = birthDate;
         this.pins = new ArrayList<>();
         this.recentlyViewedHouses = new ArrayList<>();
     }

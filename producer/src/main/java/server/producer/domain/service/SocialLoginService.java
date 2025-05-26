@@ -48,7 +48,7 @@ public class SocialLoginService {
 
 		User newUser = User.builder()
 				.email(userInfo.getEmail())
-				.nickname(nickname)
+				.name(nickname)
 				.socialType(userInfo.getProvider())
 				.socialId(userInfo.getId())
 				.build();

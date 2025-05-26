@@ -110,19 +110,19 @@ public class HouseService {
 	}
 
     public HouseDetailsResponseDto getHouseDetails(final Long houseId, final Long userId) {
-        House selectedHouse = houseRepository.findHouseWithRoomsById(houseId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 House를 찾을 수 없습니다."));
+		House selectedHouse = houseRepository.findHouseWithRoomsById(houseId)
+				.orElseThrow(() -> new EntityNotFoundException("해당 House를 찾을 수 없습니다."));
 
-        List<Room> rooms = houseRepository.findRoomsAndRoomOccupanciesByHouseId(houseId);
+		List<Room> rooms = houseRepository.findRoomsAndRoommatesByHouseId(houseId);
 
-        if (rooms.isEmpty()) {
-            throw new EntityNotFoundException("해당 매물에 방 정보가 없습니다.");
-        }
+		if (rooms.isEmpty()) {
+			throw new EntityNotFoundException("해당 매물에 방 정보가 없습니다.");
+		}
 
-        boolean isPinned = houseRepository.findHouseWithPinsById(houseId)
-                .map(h -> h.getPins().stream()
-                        .anyMatch(pin -> pin.getUser().getId().equals(userId)))
-                .orElse(false);
+		boolean isPinned = houseRepository.findHouseWithPinsById(houseId)
+				.map(h -> h.getPins().stream()
+						.anyMatch(pin -> pin.getUser().getId().equals(userId)))
+				.orElse(false);
 
         final List<String> groundRules = Arrays.stream(selectedHouse.getGroundRule().split("#")).toList();
         final List<String> safetyLivingFacilities = Arrays.stream(selectedHouse.getSafetyLivingFacility().split("#")).toList();
@@ -148,27 +148,40 @@ public class HouseService {
                 .build();
 
         List<HouseDetailsResponseDto.RoomDto> roomDtos = rooms.stream()
-                .flatMap(room -> room.getRoomOccupancies().stream()
-                        .map(occupancy -> HouseDetailsResponseDto.RoomDto.builder()
-                                .roomId(room.getId())
-                                .name(occupancy.getName())
-                                .status(occupancy.isOccupied())
-                                .isTourAvailable(room.isTourAvailable())
-                                .occupancyType(room.getOccupancyType())
-                                .gender(room.getGender().toString())
-                                .deposit(room.getDeposit())
-                                .monthlyRent(room.getMonthlyRent())
-                                .contractPeriod(room.getContractPeriod())
-                                .managementFee(room.getManagementFee())
-                                .build()))
-                .sorted(Comparator.comparing(HouseDetailsResponseDto.RoomDto::name))
+                .sorted(Comparator.comparing(Room::getId))
+                .map(room -> HouseDetailsResponseDto.RoomDto.builder()
+                        .roomId(room.getId())
+                        .name(room.getName())
+                        .status(room.getStatus() != room.getOccupancyType())
+						.isTourAvailable(room.isTourAvailable())
+                        .occupancyType(room.getOccupancyType())
+                        .gender(room.getGender().toString())
+                        .deposit(room.getDeposit())
+                        .prepaidUtilities(room.getPrepaidUtilities())
+                        .monthlyRent(room.getMonthlyRent())
+                        .contractPeriod(room.getContractPeriod())
+                        .managementFee(room.getManagementFee())
+                        .build())
                 .collect(Collectors.toList());
 
-        upsertRecentlyViewedHouse(houseId, userId);
+        List<HouseDetailsResponseDto.RoommateDto> roommateDtos = rooms.stream()
+                .flatMap(room -> room.getRoommates().stream()
+                        .map(roommate -> HouseDetailsResponseDto.RoommateDto.builder()
+                                .name(room.getName())
+                                .age(roommate.getAge())
+                                .job(roommate.getJob())
+                                .mbti(roommate.getMbti())
+                                .sleepTime(roommate.getSleepTime())
+                                .activityTime(roommate.getActivityTime())
+                                .build()))
+                .collect(Collectors.toList());
+
+		upsertRecentlyViewedHouse(houseId, userId);
 
         return HouseDetailsResponseDto.builder()
                 .houseInfo(houseInfoDto)
                 .rooms(roomDtos)
+                .roommates(roommateDtos)
                 .build();
     }
 

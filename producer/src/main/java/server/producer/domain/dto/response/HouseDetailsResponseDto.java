@@ -8,7 +8,8 @@ import java.util.List;
 
 public record HouseDetailsResponseDto (
     HouseInfoDto houseInfo,
-    List<RoomDto> rooms
+    List<RoomDto> rooms,
+    List<RoommateDto> roommates
 ) {
     @Builder
     public HouseDetailsResponseDto{
@@ -37,20 +38,33 @@ public record HouseDetailsResponseDto (
         }
     }
     public record RoomDto (
-        Long roomId,
-        String name,
-        boolean status,
-        boolean isTourAvailable,
-        int occupancyType,
-        String gender,
-        int deposit,
-        int monthlyRent,
-        @JsonFormat(pattern = "yy-MM-dd")
-        LocalDate contractPeriod,
-        String managementFee
+            Long roomId,
+            String name,
+            boolean status,
+            boolean isTourAvailable,
+            int occupancyType,
+            String gender,
+            int deposit,
+            int prepaidUtilities,
+            int monthlyRent,
+            @JsonFormat(pattern = "yy-MM-dd")
+            LocalDate contractPeriod,
+            String managementFee
     ) {
         @Builder
         public RoomDto {
+        }
+    }
+    public record RoommateDto (
+            String name,
+            String age,
+            String job,
+            String mbti,
+            String sleepTime,
+            String activityTime
+    ) {
+        @Builder
+        public RoommateDto {
         }
     }
 }
