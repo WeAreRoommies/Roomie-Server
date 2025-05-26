@@ -24,22 +24,22 @@ public class User {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String name;
 
     @Column(nullable = false)
     private String nickname;
 
-    @Column(nullable = false)
-    private String location;
+    @Column(nullable = true)
+    private String location = "창천동";
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String gender;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDate birthDate;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -57,7 +57,7 @@ public class User {
         this.socialType = socialType;
         this.name = name;
         this.nickname = nickname;
-        this.location = location;
+        this.location = location != null ? location : "창천동";
         this.gender = gender;
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
