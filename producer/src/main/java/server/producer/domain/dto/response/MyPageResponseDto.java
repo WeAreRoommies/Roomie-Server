@@ -1,11 +1,8 @@
 package server.producer.domain.dto.response;
 
-import lombok.Builder;
+import entity.SocialType;
 
 public record MyPageResponseDto(
-        String nickname
-) {
-    @Builder
-    public MyPageResponseDto {
-    }
-}
+        String nickname,
+        SocialType socialType
+) {}
