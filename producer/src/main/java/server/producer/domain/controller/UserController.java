@@ -47,6 +47,19 @@ public class UserController {
         }
     }
 
+	@GetMapping("/mypage/accountinfo")
+	public ApiResponseDto<AccountInfoResponseDto> getAccountInfo() {
+		try {
+			Long userId = SecurityUtil.getCurrentUserId();
+			AccountInfoResponseDto dto = userService.getAccountInfo(userId);
+			return ApiResponseDto.success(SuccessCode.ACCOUNT_INFO_GET_SUCCESS, dto);
+		} catch (EntityNotFoundException e) {
+			return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
+		} catch (Exception e) {
+			return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	@PatchMapping("/nickname")
 	public ApiResponseDto<NicknameUpdateResponseDto> updateNickname(@RequestBody NicknameUpdateRequestDto request) {
 		try {

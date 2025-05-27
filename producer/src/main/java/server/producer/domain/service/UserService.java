@@ -4,6 +4,7 @@ import entity.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import server.producer.domain.dto.response.AccountInfoResponseDto;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
 import server.producer.domain.dto.response.MyPageResponseDto;
 import server.producer.domain.repository.HouseRepository;
@@ -67,8 +68,10 @@ public class UserService {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new EntityNotFoundException("User not found"));
 		final String nickname = user.getNickname();
+		final SocialType socialType = user.getSocialType();
 		return MyPageResponseDto.builder()
 				.nickname(nickname)
+				.socialType(socialType)
 				.build();
 	}
 
@@ -100,5 +103,19 @@ public class UserService {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new EntityNotFoundException("사용자 없음"));
 		user.setGender(gender);
+	}
+
+	public AccountInfoResponseDto getAccountInfo(Long userId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+		return AccountInfoResponseDto.builder()
+				.nickname(user.getNickname())
+				.socialType(user.getSocialType())
+				.name(user.getName())
+				.birthDate(user.getBirthDate())
+				.phoneNumber(user.getPhoneNumber())
+				.gender(user.getGender())
+				.build();
 	}
 }
