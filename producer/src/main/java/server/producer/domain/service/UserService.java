@@ -67,10 +67,12 @@ public class UserService {
 	public MyPageResponseDto getMyPage(Long userId) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new EntityNotFoundException("User not found"));
-		return new MyPageResponseDto(
-				user.getNickname(),
-				user.getSocialType()
-		);
+		final String nickname = user.getNickname();
+		final SocialType socialType = user.getSocialType();
+		return MyPageResponseDto.builder()
+				.nickname(nickname)
+				.socialType(socialType)
+				.build();
 	}
 
 	public void updateNickname(Long userId, String newNickname) {
