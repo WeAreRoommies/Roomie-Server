@@ -37,8 +37,7 @@ public class MapService {
 					requestDto.genderPolicy(),
 					requestDto.preferredDate(),
 					requestDto.occupancyTypes(),
-					requestDto.contractPeriod(),
-					requestDto.excludeFull()
+					requestDto.contractPeriod()
 			);
 
 			List<FilterResponseDto.HouseMapDto> houseMapDtos = new ArrayList<>();
