@@ -136,4 +136,14 @@ public class House {
         List<String> tags = Arrays.stream((moodTag+" "+ subTag).split(" ")).toList();
         return tags;
     }
+
+    public boolean isFull() {
+        int max = 0;
+        int current = 0;
+        for (Room room : this.rooms) {
+            current += room.getStatus();
+            max += room.getOccupancyType();
+        }
+        return current >= max; // 만실이면 true
+    }
 }

@@ -24,7 +24,8 @@ public record FilterResponseDto(
 			Boolean isPinned,             // 즐겨찾기 여부
 			String moodTag,               // 분위기 태그
 			Integer contractTerm,         // 계약 기간
-			String mainImgUrl             // 이미지 URL
+			String mainImgUrl,            // 이미지 URL
+			Boolean excludeFull           // 만실 여부
 	) {
 		@Builder
 		public HouseMapDto {
