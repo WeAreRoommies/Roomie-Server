@@ -13,6 +13,7 @@ import server.producer.domain.dto.request.SocialLoginRequestDto;
 import server.producer.domain.dto.request.SocialSignupRequestDto;
 import server.producer.domain.dto.response.SocialLoginResponseDto;
 import server.producer.domain.dto.response.SocialSignupResponseDto;
+import server.producer.domain.dto.response.TokenReissueResponseDto;
 import server.producer.domain.repository.UserRepository;
 import server.producer.domain.service.SocialLoginService;
 import server.producer.security.jwt.JwtTokenProvider;
@@ -43,9 +44,9 @@ public class AuthController {
 	}
 
 	@PostMapping("/oauth/reissue")
-	public ResponseEntity<?> reissue(@RequestHeader("Authorization") String refreshTokenHeader) {
+	public ApiResponseDto<TokenReissueResponseDto> reissue(@RequestHeader("Authorization") String refreshTokenHeader) {
 		if (refreshTokenHeader == null || !refreshTokenHeader.startsWith("Bearer ")) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("RefreshToken 누락");
+			return ApiResponseDto.fail(ErrorCode.MISSING_REQUIRED_HEADER);
 		}
 
 		String refreshToken = refreshTokenHeader.substring(7);
@@ -58,12 +59,11 @@ public class AuthController {
 					.orElseThrow(() -> new RuntimeException("유저 없음"));
 
 			String newAccess = jwtTokenProvider.createToken(user);
+			TokenReissueResponseDto responseDto = new TokenReissueResponseDto(newAccess);
 
-			return ResponseEntity.ok()
-					.header("New-Access-Token", newAccess)
-					.build(); // 바디 없이 헤더로 응답
+			return ApiResponseDto.success(SuccessCode.TOKEN_REISSUE_SUCCESS, responseDto);
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("RefreshToken 만료 또는 유효하지 않음");
+			return ApiResponseDto.fail(ErrorCode.UNAUTHORIZED_SOCIAL_TOKEN);
 		}
 	}
 }
