@@ -28,16 +28,6 @@ public class AuthController {
 	private final UserRepository userRepository;
 	private final JwtTokenProvider jwtTokenProvider;
 
-//	@PostMapping("/oauth/login")
-//	public ApiResponseDto<SocialLoginResponseDto> socialLogin(@RequestBody SocialLoginRequestDto request) {
-//		try {
-//			SocialLoginResponseDto responseDto = socialLoginService.login(request.getProvider(), request.getAccessToken());
-//			return ApiResponseDto.success(SuccessCode.SOCIAL_LOGIN_SUCCESS, responseDto);
-//		} catch (Exception e) {
-//			return ApiResponseDto.fail(ErrorCode.NEED_SOCIAL_SIGNUP);
-//		}
-//	}
-
 	@PostMapping("/oauth/login")
 	public ApiResponseDto<SocialLoginResponseDto> socialLogin(@RequestBody SocialLoginRequestDto request) {
 		try {
@@ -48,20 +38,6 @@ public class AuthController {
 			return ApiResponseDto.success(SuccessCode.SOCIAL_LOGIN_SUCCESS, responseDto);
 		} catch (Exception e) {
 			log.error("[카카오 사용자 정보 조회 실패] accessToken: {}", request.getAccessToken(), e);
-			return ApiResponseDto.fail(ErrorCode.UNAUTHORIZED_SOCIAL_TOKEN);
-		}
-	}
-
-	@PostMapping("/oauth/signup")
-	public ApiResponseDto<SocialSignupResponseDto> signup(@RequestBody SocialSignupRequestDto request) {
-		try {
-			SocialSignupResponseDto response = socialLoginService.signup(
-					request.getProvider(),
-					request.getAccessToken(),
-					request.getNickname()
-			);
-			return ApiResponseDto.success(SuccessCode.SOCIAL_SIGNUP_SUCCESS, response);
-		} catch (Exception e) {
 			return ApiResponseDto.fail(ErrorCode.UNAUTHORIZED_SOCIAL_TOKEN);
 		}
 	}
