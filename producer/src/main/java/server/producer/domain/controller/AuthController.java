@@ -51,19 +51,34 @@ public class AuthController {
 
 		String refreshToken = refreshTokenHeader.substring(7);
 
-		try {
-			Long userId = refreshTokenRepository.findUserIdByToken(refreshToken)
-					.orElseThrow(() -> new RuntimeException("유효하지 않은 RefreshToken"));
-
-			User user = userRepository.findById(userId)
-					.orElseThrow(() -> new RuntimeException("유저 없음"));
-
-			String newAccess = jwtTokenProvider.createToken(user);
-			TokenReissueResponseDto responseDto = new TokenReissueResponseDto(newAccess);
-
-			return ApiResponseDto.success(SuccessCode.TOKEN_REISSUE_SUCCESS, responseDto);
-		} catch (Exception e) {
-			return ApiResponseDto.fail(ErrorCode.UNAUTHORIZED_SOCIAL_TOKEN);
+		// 1. 형식 및 만료 검증
+		if (!jwtTokenProvider.validateToken(refreshToken)) {
+			log.warn("[리프레시 토큰 오류] 토큰 만료 또는 포맷 문제 발생. 토큰: {}", refreshToken);
+			return ApiResponseDto.fail(ErrorCode.INVALID_REFRESH_TOKEN);
 		}
+
+		// 2. 저장소에서 userId 매핑 조회
+		Long userId = refreshTokenRepository.findUserIdByToken(refreshToken)
+				.orElse(null);
+
+		if (userId == null) {
+			log.warn("[리프레시 토큰 오류] 저장소에서 userId 찾기 실패. 토큰: {}", refreshToken);
+			return ApiResponseDto.fail(ErrorCode.INVALID_REFRESH_TOKEN);
+		}
+
+		// 3. 유저 조회
+		User user = userRepository.findById(userId)
+				.orElse(null);
+
+		if (user == null) {
+			log.warn("[리프레시 토큰 오류] userId는 존재하나 사용자 정보 없음. userId: {}", userId);
+			return ApiResponseDto.fail(ErrorCode.USER_NOT_FOUND_FOR_REFRESH);
+		}
+
+		// 4. accessToken 재발급
+		String newAccess = jwtTokenProvider.createToken(user);
+		TokenReissueResponseDto responseDto = new TokenReissueResponseDto(newAccess);
+
+		return ApiResponseDto.success(SuccessCode.TOKEN_REISSUE_SUCCESS, responseDto);
 	}
 }
