@@ -16,6 +16,8 @@ public enum ErrorCode {
 	//401 Unauthorized
 	UNAUTHORIZED_SOCIAL_TOKEN(40100, "유효하지 않은 소셜 토큰입니다."),
 	NEED_SOCIAL_SIGNUP(40101, "회원가입이 필요한 사용자입니다."),
+	INVALID_REFRESH_TOKEN(40102, "유효하지 않은 RefreshToken입니다."),
+	USER_NOT_FOUND_FOR_REFRESH(40103, "유저 정보가 존재하지 않습니다. RefreshToken이 무효합니다."),
 
 	//403 Forbidden
 	ACCESS_DENIED(40300, "권한이 없습니다."),
