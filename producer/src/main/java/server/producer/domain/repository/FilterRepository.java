@@ -48,6 +48,28 @@ public class FilterRepository {
 			predicates.add(cb.equal(house.get("moodTag"), filter.moodTag()));
 		}
 
+		// Optional 조건: moodTags (리스트, OR 조건)
+		if (filter.getMoodTags() != null && !filter.getMoodTags().isEmpty()) {
+			List<Predicate> moodTagPredicates = new ArrayList<>();
+			for (String moodTag : filter.getMoodTags()) {
+				moodTagPredicates.add(cb.equal(house.get("moodTag"), moodTag));
+			}
+			predicates.add(cb.or(moodTagPredicates.toArray(new Predicate[0])));
+		}
+
+		// Optional 조건: roomCapacities (정확히 일치)
+		if (filter.getRoomCapacities() != null && !filter.getRoomCapacities().isEmpty()) {
+			List<Integer> exactCapacities = filter.getRoomCapacities().stream()
+					.map(capacity -> Integer.parseInt(capacity.replace("인실", "")))
+					.toList();
+			predicates.add(room.get("occupancyType").in(exactCapacities));
+		}
+
+		// Optional 조건: minRoomCapacity (4인실 이상)
+		if (filter.getMinRoomCapacity() != null) {
+			predicates.add(cb.greaterThanOrEqualTo(room.get("occupancyType"), filter.getMinRoomCapacity()));
+		}
+
 		// Optional 조건: genderPolicy
 		if (filter.genderPolicy() != null && !filter.genderPolicy().isEmpty()) {
 			predicates.add(house.get("genderPolicy").in(filter.genderPolicy()));
