@@ -118,4 +118,25 @@ public class UserService {
 				.gender(user.getGender())
 				.build();
 	}
+
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        userRepository.delete(user);
+    }
+
+    public void updateLocation(Long userId, String location) {
+        try {
+            String[] locationParts = location.split(" ");
+            if (locationParts.length >= 2) {
+                location = locationParts[0] + " " + locationParts[1];
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid location format");
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        user.setLocation(location);
+        userRepository.save(user);
+    }
 }
