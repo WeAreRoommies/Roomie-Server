@@ -19,6 +19,7 @@ public enum SuccessCode {
 	TOKEN_REISSUE_SUCCESS(20009, "토큰 재발급 성공"),
 	USER_UPDATE_SUCCESS(20010, "회원 정보 수정 성공"),
 	ACCOUNT_INFO_GET_SUCCESS(20011, "계정 정보 조회 성공"),
+	LOGOUT_SUCCESS(20012, "로그아웃 성공"),
 
 	//201 CREATED
 	ROOM_REQUEST_POST_SUCCESS(20101, "입주 신청 성공"),

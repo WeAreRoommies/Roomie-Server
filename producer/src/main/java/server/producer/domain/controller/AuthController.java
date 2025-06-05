@@ -81,4 +81,38 @@ public class AuthController {
 
 		return ApiResponseDto.success(SuccessCode.TOKEN_REISSUE_SUCCESS, responseDto);
 	}
+
+	@DeleteMapping("/logout")
+	public ApiResponseDto<Void> logout(@RequestHeader("Authorization") String refreshTokenHeader) {
+		if (refreshTokenHeader == null || !refreshTokenHeader.startsWith("Bearer ")) {
+			return ApiResponseDto.fail(ErrorCode.MISSING_REQUIRED_HEADER);
+		}
+
+		String refreshToken = refreshTokenHeader.substring(7);
+
+		// 1. 리프레시 토큰 형식 및 만료 검증
+		if (!jwtTokenProvider.validateToken(refreshToken)) {
+			log.warn("[로그아웃 실패] 유효하지 않은 리프레시 토큰. 토큰: {}", refreshToken);
+			return ApiResponseDto.fail(ErrorCode.INVALID_REFRESH_TOKEN);
+		}
+
+		// 2. 저장소에서 userId 매핑 조회
+		Long userId = refreshTokenRepository.findUserIdByToken(refreshToken)
+				.orElse(null);
+
+		if (userId == null) {
+			log.warn("[로그아웃 실패] 저장소에서 userId 찾기 실패. 토큰: {}", refreshToken);
+			return ApiResponseDto.fail(ErrorCode.INVALID_REFRESH_TOKEN);
+		}
+
+		// 3. 리프레시 토큰 삭제
+		try {
+			refreshTokenRepository.deleteByToken(refreshToken);
+			log.info("[로그아웃 성공] userId: {}", userId);
+			return ApiResponseDto.success(SuccessCode.LOGOUT_SUCCESS, null);
+		} catch (Exception e) {
+			log.error("[로그아웃 실패] 리프레시 토큰 삭제 중 오류 발생. userId: {}, 토큰: {}", userId, refreshToken, e);
+			return ApiResponseDto.fail(ErrorCode.LOGOUT_FAILED);
+		}
+	}
 }

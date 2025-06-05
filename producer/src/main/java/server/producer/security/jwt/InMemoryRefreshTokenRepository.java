@@ -25,5 +25,10 @@ public class InMemoryRefreshTokenRepository implements RefreshTokenRepository {
     public void delete(String token) {
         tokenToUserId.remove(token);
     }
+
+    @Override
+    public void deleteByToken(String token) {
+        tokenToUserId.remove(token);
+    }
 }
 
