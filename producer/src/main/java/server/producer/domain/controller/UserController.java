@@ -144,7 +144,7 @@ public class UserController {
 	}
 
 	@PatchMapping("/location")
-	public ApiResponseDto<LocationUpdateRequestDto> updateLocation(@RequestBody LocationUpdateRequestDto request) {
+	public ApiResponseDto<Void> updateLocation(@RequestBody LocationUpdateRequestDto request) {
 		try {
 			Long userId = SecurityUtil.getCurrentUserId();
 			userService.updateLocation(userId, request.location());
