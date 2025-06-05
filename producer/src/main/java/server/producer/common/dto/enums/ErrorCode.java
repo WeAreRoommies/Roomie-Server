@@ -40,6 +40,7 @@ public enum ErrorCode {
 	//500 Internal Server Error
 	INTERNAL_SERVER_ERROR(50000, "서버 내부 오류입니다."),
 	DATABASE_CONNECTION_ERROR(50001, "데이터베이스 연결 오류입니다."),
+	LOGOUT_FAILED(50002, "로그아웃 처리 중 오류가 발생했습니다."),
 
 	//503 Service Unavailable
 	SERVICE_UNAVAILABLE(50300, "서비스를 이용할 수 없습니다.");

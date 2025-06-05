@@ -18,7 +18,7 @@ public class MapService {
 	private final FilterRepository filterRepository;
 
 	public FilterResponseDto searchProperties(FilterRequestDto requestDto, Long userId){
-		String location = requestDto.location();
+		String location = requestDto.getLocation();
 		if (location == null || location.isBlank()) {
 			throw new IllegalArgumentException();
 		}
@@ -26,22 +26,23 @@ public class MapService {
 		String gu = parts[1];
 		String dong = parts[2];
 
-		FilterRequestDto updated;
+		// 분위기 태그 필터링 분기
+		List<String> moodTags = requestDto.getMoodTags();
+		if (moodTags == null || moodTags.isEmpty()) {
+			// 분위기 태그가 없으면 조건 무시
+			requestDto.setMoodTags(null);
+		} else {
+			// 분위기 태그가 있으면 OR 조건으로 검색
+			requestDto.setMoodTags(moodTags);
+		}
+
+		// 위치 설정
 		if (gu != null && dong != null) {
 			location =  gu + " " + dong;
-			updated = new FilterRequestDto(
-					location, // 변경된 location
-					requestDto.moodTag(),
-					requestDto.depositRange(),
-					requestDto.monthlyRentRange(),
-					requestDto.genderPolicy(),
-					requestDto.preferredDate(),
-					requestDto.occupancyTypes(),
-					requestDto.contractPeriod()
-			);
+			requestDto.setLocation(location);
 
 			List<FilterResponseDto.HouseMapDto> houseMapDtos = new ArrayList<>();
-			List<House> houses = filterRepository.findFilteredHouses(updated);
+			List<House> houses = filterRepository.findFilteredHouses(requestDto);
 			for (House house : houses) {
 				final boolean isPinned = house.getPins().stream()
 						.anyMatch(pin -> pin.getUser().getId().equals(userId));

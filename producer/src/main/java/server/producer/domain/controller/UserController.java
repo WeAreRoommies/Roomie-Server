@@ -129,4 +129,30 @@ public class UserController {
 			return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	@DeleteMapping("/delete")
+	public ApiResponseDto<Void> deleteUser() {
+		try {
+			Long userId = SecurityUtil.getCurrentUserId();
+			userService.deleteUser(userId);
+			return ApiResponseDto.success(SuccessCode.USER_DELETE_SUCCESS, null);
+		} catch (EntityNotFoundException e) {
+			return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
+		} catch (Exception e) {
+			return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PatchMapping("/location")
+	public ApiResponseDto<Void> updateLocation(@RequestBody LocationUpdateRequestDto request) {
+		try {
+			Long userId = SecurityUtil.getCurrentUserId();
+			userService.updateLocation(userId, request.location());
+			return ApiResponseDto.success(SuccessCode.USER_UPDATE_SUCCESS, null);
+		} catch (EntityNotFoundException e) {
+			return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
+		} catch (Exception e) {
+			return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
