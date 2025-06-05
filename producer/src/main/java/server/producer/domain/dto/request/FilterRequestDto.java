@@ -22,6 +22,10 @@ public class FilterRequestDto {
     private List<String> occupancyTypes;    // 숙소 유형
     private List<Integer> contractPeriod;   // 계약 기간
 
+	@Getter
+	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
     public static class Range {
         private int min;                    // 최소 값
         private int max;                    // 최대 값
