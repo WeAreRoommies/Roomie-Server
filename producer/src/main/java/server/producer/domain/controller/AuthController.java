@@ -82,7 +82,7 @@ public class AuthController {
 		return ApiResponseDto.success(SuccessCode.TOKEN_REISSUE_SUCCESS, responseDto);
 	}
 
-	@DeleteMapping("/logout")
+	@DeleteMapping("/oauth/logout")
 	public ApiResponseDto<Void> logout(@RequestHeader("Authorization") String refreshTokenHeader) {
 		if (refreshTokenHeader == null || !refreshTokenHeader.startsWith("Bearer ")) {
 			return ApiResponseDto.fail(ErrorCode.MISSING_REQUIRED_HEADER);
