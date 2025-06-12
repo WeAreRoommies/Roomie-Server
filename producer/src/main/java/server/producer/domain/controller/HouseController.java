@@ -1,6 +1,7 @@
 package server.producer.domain.controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import server.producer.domain.service.HouseService;
 
 import java.security.InvalidParameterException;
 
+@Slf4j
 @RestController
 @RequestMapping("/v1/houses")
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class HouseController {
         } catch (InvalidParameterException e) {
             return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
         } catch (Exception e){
+            log.error("HouseDetailsResponseDto 생성 중 에러 발생", e);
             return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
