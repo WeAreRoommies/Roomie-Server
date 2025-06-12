@@ -27,7 +27,6 @@ public record HouseDetailsResponseDto (
         List<String> moodTags,
         String roomMood,
         List<String> groundRule,
-        int maintenanceCost,
         boolean isPinned,
         List<String> safetyLivingFacility,
         List<String> kitchenFacility
