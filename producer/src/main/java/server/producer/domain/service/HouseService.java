@@ -151,7 +151,7 @@ public class HouseService {
                         .map(occupancy -> HouseDetailsResponseDto.RoomDto.builder()
                                 .roomId(room.getId())
                                 .name(occupancy.getName())
-                                .status(occupancy.isOccupied())
+                                .status(!occupancy.isOccupied())
                                 .isTourAvailable(room.isTourAvailable())
                                 .occupancyType(room.getOccupancyType())
                                 .gender(room.getGender().toString())
@@ -231,7 +231,7 @@ public class HouseService {
 						.roomId(room.getId())
 						.name(room.getName())
 						.facility(Arrays.asList(room.getFacility().split("#")))
-						.status(room.getStatus() != room.getOccupancyType())
+						.status(room.getStatus() < room.getOccupancyType())
 						.mainImageUrl(Arrays.asList(room.getMainImgUrl().split(" ")))
 						.build())
 				.toList();
