@@ -15,11 +15,14 @@ public interface HouseRepository extends JpaRepository<House, Long> {
 //	List<House> findByLocationAndMoodTag(String location, String moodTag);
     List<House> findByLabelAndMoodTag(int label, String moodTag);
 
-    @Query("SELECT h FROM House h " +
-            "LEFT JOIN FETCH h.rooms r " +
-            "LEFT JOIN FETCH r.roomOccupancies " +
-            "WHERE h.id = :houseId")
+//    @Query("SELECT h FROM House h " +
+//            "LEFT JOIN FETCH h.rooms r " +
+//            "LEFT JOIN FETCH r.roomOccupancies " +
+//            "WHERE h.id = :houseId")
+//    Optional<House> findHouseWithRoomsById(@Param("houseId") Long houseId);
+    @Query("SELECT h FROM House h LEFT JOIN FETCH h.rooms WHERE h.id = :houseId")
     Optional<House> findHouseWithRoomsById(@Param("houseId") Long houseId);
+
 
     @Query("SELECT r FROM Room r " +
             "LEFT JOIN FETCH r.roomOccupancies " +

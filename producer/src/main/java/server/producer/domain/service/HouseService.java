@@ -7,7 +7,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import server.producer.common.LocationLabeler;
 import server.producer.domain.dto.response.*;
-import server.producer.domain.repository.PinRepository;
+import server.producer.domain.repository.*;
 import server.producer.domain.dto.response.PinnedListResponseDto;
 import entity.House;
 import entity.Pin;
@@ -18,9 +18,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import server.producer.domain.repository.HouseRepository;
-import server.producer.domain.repository.RecentlyViewedHouseRepository;
-import server.producer.domain.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +25,7 @@ public class HouseService {
 	private final HouseRepository houseRepository;
 	private final UserRepository userRepository;
 	private final PinRepository pinRepository;
+	private final RoomRepository roomRepository;
 	private final RecentlyViewedHouseRepository recentlyViewedHouseRepository;
 	private final LocationLabeler locationLabeler;
 
@@ -113,9 +111,10 @@ public class HouseService {
         House selectedHouse = houseRepository.findHouseWithRoomsById(houseId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 House를 찾을 수 없습니다."));
 
-        List<Room> rooms = houseRepository.findRoomsAndRoomOccupanciesByHouseId(houseId);
+//		List<Room> rooms = houseRepository.findRoomsAndRoomOccupanciesByHouseId(houseId);
+		List<Room> rooms = roomRepository.findRoomsAndOccupanciesByHouseId(houseId);
 
-        if (rooms.isEmpty()) {
+		if (rooms.isEmpty()) {
             throw new EntityNotFoundException("해당 매물에 방 정보가 없습니다.");
         }
 
@@ -158,7 +157,7 @@ public class HouseService {
                                 .gender(room.getGender().toString())
                                 .deposit(room.getDeposit())
                                 .monthlyRent(room.getMonthlyRent())
-								.contractPeriod(room.getContractPeriod() == null ? null : room.getContractPeriod())
+								.contractPeriod(room.getContractPeriod())
 								.managementFee(room.getManagementFee())
                                 .build()))
                 .sorted(Comparator.comparing(HouseDetailsResponseDto.RoomDto::name))
