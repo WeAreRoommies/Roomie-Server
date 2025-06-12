@@ -158,8 +158,8 @@ public class HouseService {
                                 .gender(room.getGender().toString())
                                 .deposit(room.getDeposit())
                                 .monthlyRent(room.getMonthlyRent())
-                                .contractPeriod(room.getContractPeriod())
-                                .managementFee(room.getManagementFee())
+								.contractPeriod(room.getContractPeriod() == null ? null : room.getContractPeriod())
+								.managementFee(room.getManagementFee())
                                 .build()))
                 .sorted(Comparator.comparing(HouseDetailsResponseDto.RoomDto::name))
                 .collect(Collectors.toList());
