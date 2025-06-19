@@ -151,6 +151,8 @@ public class UserController {
 			return ApiResponseDto.success(SuccessCode.USER_UPDATE_SUCCESS, responseDto);
 		} catch (EntityNotFoundException e) {
 			return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
+		} catch (IllegalArgumentException e) {
+			return ApiResponseDto.success(SuccessCode.USER_UPDATE_REJECT, null);
 		} catch (Exception e) {
 			return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
