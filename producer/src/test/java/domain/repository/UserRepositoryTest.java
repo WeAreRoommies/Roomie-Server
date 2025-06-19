@@ -149,7 +149,6 @@ public class UserRepositoryTest {
 		room.setStatus(0);
 		room.setOccupancyType(1);
 		room.setMainImgUrl("https://example.com/room.jpg");
-		room.setPrepaidUtilities(50000);
 		room.setManagementFee("5000");
 		room.setHouse(house);
 		house.getRooms().add(room);

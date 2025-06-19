@@ -6,25 +6,30 @@ import server.producer.common.LocationLabeler;
 import server.producer.domain.dto.request.FilterRequestDto;
 import server.producer.domain.dto.response.FilterResponseDto;
 import server.producer.domain.repository.FilterRepository;
+import server.producer.domain.repository.UserRepository;
 import entity.House;
+import entity.User;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+
 @Service
 @RequiredArgsConstructor
 public class MapService {
 	private final FilterRepository filterRepository;
-
+	private final UserRepository userRepository;
 	public FilterResponseDto searchProperties(FilterRequestDto requestDto, Long userId){
-		String location = requestDto.getLocation();
-		if (location == null || location.isBlank()) {
-			throw new IllegalArgumentException();
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new EntityNotFoundException("User not found"));
+		if (requestDto.getLatitude() == null || requestDto.getLongitude() == null) {	
+			requestDto.setLatitude(user.getLatitude());
+			requestDto.setLongitude(user.getLongitude());
 		}
-		String[] parts = location.split(" ");
-		String gu = parts[1];
-		String dong = parts[2];
+		double latitude = requestDto.getLatitude();
+		double longitude = requestDto.getLongitude();
 
 		// 분위기 태그 필터링 분기
 		List<String> moodTags = requestDto.getMoodTags();
@@ -36,38 +41,34 @@ public class MapService {
 			requestDto.setMoodTags(moodTags);
 		}
 
-		// 위치 설정
-		if (gu != null && dong != null) {
-			location =  gu + " " + dong;
-			requestDto.setLocation(location);
-
-			List<FilterResponseDto.HouseMapDto> houseMapDtos = new ArrayList<>();
-			List<House> houses = filterRepository.findFilteredHouses(requestDto);
-			for (House house : houses) {
-				final boolean isPinned = house.getPins().stream()
-						.anyMatch(pin -> pin.getUser().getId().equals(userId));
-				final boolean isFull = house.isFull();
-				FilterResponseDto.HouseMapDto dto = FilterResponseDto.HouseMapDto.builder()
-						.houseId(house.getId())
-						.latitude(house.getLatitude())
-						.longitude(house.getLongitude())
-						.monthlyRent(house.calculateMonthlyRent())
-						.deposit(house.calculateDeposit())
-						.occupancyTypes(house.calculateOccupancyType())
-						.location(house.getLocation())
-						.genderPolicy(house.getGenderPolicy().toString())
-						.locationDescription(house.getLocationDescription())
-						.isPinned(isPinned)
-						.moodTag(house.getMoodTag())
-						.contractTerm(house.getContractTerm())
-						.mainImgUrl(house.getMainImgUrl())
-						.excludeFull(isFull)
-						.build();
-				houseMapDtos.add(dto);
-			}
-			return FilterResponseDto.builder().houses(houseMapDtos).build();
-		} else {
-			throw new IllegalArgumentException();
+		List<FilterResponseDto.HouseMapDto> houseMapDtos = new ArrayList<>();
+		List<House> houses = filterRepository.findFilteredHouses(requestDto);
+		for (House house : houses) {
+			final boolean isPinned = house.getPins().stream()
+					.anyMatch(pin -> pin.getUser().getId().equals(userId));
+			final boolean isFull = house.isFull();
+			FilterResponseDto.HouseMapDto dto = FilterResponseDto.HouseMapDto.builder()
+					.houseId(house.getId())
+					.latitude(house.getLatitude())
+					.longitude(house.getLongitude())
+					.monthlyRent(house.calculateMonthlyRent())
+					.deposit(house.calculateDeposit())
+					.occupancyTypes(house.calculateOccupancyType())
+					.location(house.getLocation())
+					.genderPolicy(house.getGenderPolicy().toString())
+					.locationDescription(house.getLocationDescription())
+					.isPinned(isPinned)
+					.moodTag(house.getMoodTag())
+					.contractTerm(house.getContractTerm())
+					.mainImgUrl(house.getMainImgUrl())
+					.excludeFull(isFull)
+					.build();
+			houseMapDtos.add(dto);
 		}
+		return FilterResponseDto.builder()
+			.houses(houseMapDtos)
+			.latitude(latitude)
+			.longitude(longitude)
+			.build();
 	}
 }

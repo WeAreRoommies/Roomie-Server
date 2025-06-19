@@ -35,6 +35,12 @@ public class User {
     private String location = "창천동";
 
     @Column(nullable = true)
+    private double latitude = 37.55348;
+
+    @Column(nullable = true)
+    private double longitude = 126.9381;
+
+    @Column(nullable = true)
     private Gender gender;
 
     @Column(nullable = true)

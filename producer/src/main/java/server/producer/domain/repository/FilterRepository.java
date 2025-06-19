@@ -33,10 +33,6 @@ public class FilterRepository {
                 .map(li -> Integer.parseInt(li.replaceAll("[^0-9]", "")))
                 .toList();
 
-        // 적합한 구 그룹 찾기
-        int label = locationLabeler.findLabelByLocation(filter.getLocation().split(" ")[0]);
-        predicates.add(cb.equal(house.get("label"), label));
-
         // 필수 조건
         predicates.add(cb.between(room.get("deposit"), 
             filter.getDepositRange().getMin() * TENTHOUSAND, 

@@ -45,7 +45,7 @@ public class MapServiceTest {
 		Long userId = 1L;
 		FilterRequestDto requestDto = new FilterRequestDto(
 				"서울특별시 서대문구 대현동 11-1",
-				"#차분한",
+				List.of("#차분한"),
 				new FilterRequestDto.Range(0, 1000),
 				new FilterRequestDto.Range(0,1000),
 				genderPolicy,
@@ -104,7 +104,6 @@ public class MapServiceTest {
 			room.setOccupancyType(i + 1);
 			room.setStatus(0); // 활성 상태
 			room.setMainImgUrl("https://example.com/images/room" + ((id * 10) + i) + ".jpg");
-			room.setPrepaidUtilities(50000);
 			room.setManagementFee("100000");
 			rooms.add(room);
 		}

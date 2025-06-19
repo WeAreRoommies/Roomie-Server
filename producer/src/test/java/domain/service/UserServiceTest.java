@@ -45,21 +45,18 @@ public class UserServiceTest {
 
     @Test
     void testGetMyPage() {
-        // Given: Mock 데이터 설정
+        // Given
         Long userId = 1L;
-        User mockUser = new User();
-        mockUser.setId(userId);
-        mockUser.setName("홍길동");
+        User mockUser = createUserWithHousesAndRooms(userId);
 
-        // userRepository의 동작 Mock 설정
-        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
+        when(userRepository.findUserWithRecentlyViewedHouses(userId)).thenReturn(Optional.of(mockUser));
 
-        // When: 서비스 호출
+        // When
         MyPageResponseDto response = userService.getMyPage(userId);
 
-        // Then: 변환 결과 검증
-        assertNotNull(response); // 응답이 null이 아님
-        assertEquals("홍길동", response.name()); // 이름 필드가 기대값과 일치
+        // Then
+        assertNotNull(response);
+        assertEquals("Test User 1", response.nickname()); // nickname 필드가 기대값과 일치
     }
 
 	@Test
@@ -132,7 +129,6 @@ public class UserServiceTest {
 				room.setOccupancyType(i % 2 == 0 ? 2 : 1); // 1인실 또는 2인실
 				room.setStatus(1); // 활성 상태
 				room.setMainImgUrl("https://example.com/images/room" + (houseId * 10 + i) + ".jpg");
-				room.setPrepaidUtilities(50000);
 				room.setManagementFee("100000");
 				rooms.add(room);
 			}

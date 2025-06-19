@@ -182,7 +182,6 @@ public class HouseServiceTest {
 			room.setOccupancyType(i + 1);
 			room.setStatus(1); // 활성 상태
 			room.setMainImgUrl("https://example.com/images/room" + ((id * 10) + i) + ".jpg");
-			room.setPrepaidUtilities(50000);
 			room.setManagementFee("100000");
 			rooms.add(room);
 		}
@@ -209,15 +208,11 @@ public class HouseServiceTest {
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd");
 
-		// House, Room, Roommate, and Pin Mock 데이터 생성
+		// House, Room, and Pin Mock 데이터 생성
 		House mockHouse = createMockHouse(houseId, "루미 100호점(이대역)", "서울 강남구", "전반적으로 조용하고 깔끔한 환경을 선호하는 아침형 룸메이트들이에요.");
 		Room mockRoom1 = createMockRoom(101L, "1A", 2, "남성", 300000, 5000000, LocalDate.of(2024, 12, 31), "100000");
 		Room mockRoom2 = createMockRoom(102L, "2A", 1, "여성", 200000, 3000000, LocalDate.of(2025, 1, 17), "50000");
-		Roommate roommate1 = createMockRoommate("20대", "학생", "INTJ", "23:00-24:00", "09:00-23:00");
-		Roommate roommate2 = createMockRoommate("30대", "디자이너", "ENFP", "22:00-23:00", "08:00-22:00");
 
-		mockRoom1.setRoommates(List.of(roommate1));
-		mockRoom2.setRoommates(List.of(roommate2));
 		mockHouse.setRooms(List.of(mockRoom1, mockRoom2));
 
 		House mockHouseWithPins = createMockHouseWithPins(mockHouse, userId);
@@ -238,7 +233,7 @@ public class HouseServiceTest {
 
 		// Mock 동작 설정
 		when(houseRepository.findHouseWithRoomsById(houseId)).thenReturn(Optional.of(mockHouse));
-		when(houseRepository.findRoomsAndRoommatesByHouseId(houseId)).thenReturn(List.of(mockRoom1, mockRoom2));
+		when(houseRepository.findRoomsAndRoomOccupanciesByHouseId(houseId)).thenReturn(List.of(mockRoom1, mockRoom2));
 		when(userRepository.getReferenceById(userId)).thenReturn(mockUser);
 		when(houseRepository.getReferenceById(houseId)).thenReturn(mockHouse);
 		when(recentlyViewedHouseRepository.findByUserIdAndHouseId(userId, houseId))
@@ -304,15 +299,6 @@ public class HouseServiceTest {
 		room.setManagementFee(managementFee);
 		room.setStatus(occupancyType);
 		return room;
-	}
-	private Roommate createMockRoommate(String age, String job, String mbti, String sleepTime, String activityTime) {
-		Roommate roommate = new Roommate();
-		roommate.setAge(age);
-		roommate.setJob(job);
-		roommate.setMbti(mbti);
-		roommate.setSleepTime(sleepTime);
-		roommate.setActivityTime(activityTime);
-		return roommate;
 	}
 	private House createMockHouseWithPins(House house, Long userId) {
 		Pin pin = new Pin();

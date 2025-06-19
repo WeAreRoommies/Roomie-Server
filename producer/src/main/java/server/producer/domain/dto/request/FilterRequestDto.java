@@ -21,6 +21,8 @@ public class FilterRequestDto {
     private LocalDate preferredDate;        // 선호 입주 날짜
     private List<String> occupancyTypes;    // 숙소 유형
     private List<Integer> contractPeriod;   // 계약 기간
+    private Double latitude;
+    private Double longitude;
 
 	@Getter
 	@Setter
