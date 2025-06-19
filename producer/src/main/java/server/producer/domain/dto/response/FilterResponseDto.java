@@ -5,7 +5,9 @@ import lombok.Builder;
 import java.util.List;
 
 public record FilterResponseDto(
-		List<HouseMapDto> houses // 매물 정보 리스트
+		List<HouseMapDto> houses, // 매물 정보 리스트
+		Double latitude,
+		Double longitude
 ) {
 	@Builder
 	public FilterResponseDto {

@@ -80,9 +80,6 @@ public class House {
     @OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
     private List<RecentlyViewedHouse> recentlyViewedHouses = new ArrayList<>();
 
-    @Column
-    private int label = 0;
-
     public String calculateMonthlyRent() {
         int minMonthlyRent = rooms.stream()
                 .mapToInt(Room::getMonthlyRent)

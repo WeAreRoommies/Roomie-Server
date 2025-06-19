@@ -144,11 +144,11 @@ public class UserController {
 	}
 
 	@PatchMapping("/location")
-	public ApiResponseDto<Void> updateLocation(@RequestBody LocationUpdateRequestDto request) {
+	public ApiResponseDto<LocationUpdateResponseDto> updateLocation(@RequestBody LocationUpdateRequestDto request) {
 		try {
 			Long userId = SecurityUtil.getCurrentUserId();
-			userService.updateLocation(userId, request.location());
-			return ApiResponseDto.success(SuccessCode.USER_UPDATE_SUCCESS, null);
+			LocationUpdateResponseDto responseDto = userService.updateLocation(userId, request);
+			return ApiResponseDto.success(SuccessCode.USER_UPDATE_SUCCESS, responseDto);
 		} catch (EntityNotFoundException e) {
 			return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
 		} catch (Exception e) {

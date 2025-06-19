@@ -4,8 +4,11 @@ import entity.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import server.producer.domain.dto.request.LocationUpdateRequestDto;
 import server.producer.domain.dto.response.AccountInfoResponseDto;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
+import server.producer.domain.dto.response.LocationUpdateResponseDto;
 import server.producer.domain.dto.response.MyPageResponseDto;
 import server.producer.domain.repository.HouseRepository;
 import server.producer.domain.repository.RecentlyViewedHouseRepository;
@@ -42,26 +45,22 @@ public class UserService {
 			House house = rvh.getHouse();
 			final boolean isPinned = house.getPins().stream()
 					.anyMatch(pin -> pin.getUser().getId().equals(userId));
-			HomeInfoResponseDto.RecentlyViewedHouseDto dto = HomeInfoResponseDto.RecentlyViewedHouseDto.builder()
-					.houseId(house.getId())
-					.monthlyRent(house.calculateMonthlyRent()) 
-					.deposit(house.calculateDeposit())
-					.occupancyTypes(house.calculateOccupancyType())
-					.location(house.getLocation())
-					.genderPolicy(house.getGenderPolicy().toString())
-					.locationDescription(house.getLocationDescription())
-					.isPinned(isPinned)
-					.moodTag(house.getMoodTag())
-					.contractTerm(house.getContractTerm())
-					.mainImgUrl(house.getMainImgUrl())
-					.build();
+			HomeInfoResponseDto.RecentlyViewedHouseDto dto = new HomeInfoResponseDto.RecentlyViewedHouseDto(
+					house.getId(),
+					house.calculateMonthlyRent(),
+					house.calculateDeposit(),
+					house.calculateOccupancyType(),
+					house.getLocation(),
+					house.getGenderPolicy().toString(),
+					house.getLocationDescription(),
+					isPinned,
+					house.getMoodTag(),
+					house.getContractTerm(),
+					house.getMainImgUrl()
+			);
 			recentlyViewedHouseDtos.add(dto);
 		}
-		return HomeInfoResponseDto.builder()
-				.nickname(nickname)
-				.location(location)
-				.recentlyViewedHouses(recentlyViewedHouseDtos)
-				.build();
+		return new HomeInfoResponseDto(nickname, location, recentlyViewedHouseDtos);
 	}
 
 	public MyPageResponseDto getMyPage(Long userId) {
@@ -69,10 +68,7 @@ public class UserService {
 				.orElseThrow(() -> new EntityNotFoundException("User not found"));
 		final String nickname = user.getNickname();
 		final SocialType socialType = user.getSocialType();
-		return MyPageResponseDto.builder()
-				.nickname(nickname)
-				.socialType(socialType)
-				.build();
+		return new MyPageResponseDto(nickname, socialType);
 	}
 
 	public void updateNickname(Long userId, String newNickname) {
@@ -109,14 +105,14 @@ public class UserService {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-		return AccountInfoResponseDto.builder()
-				.nickname(user.getNickname())
-				.socialType(user.getSocialType())
-				.name(user.getName())
-				.birthDate(user.getBirthDate())
-				.phoneNumber(user.getPhoneNumber())
-				.gender(user.getGender())
-				.build();
+		return new AccountInfoResponseDto(
+				user.getNickname(),
+				user.getSocialType(),
+				user.getName(),
+				user.getBirthDate(),
+				user.getPhoneNumber(),
+				user.getGender()
+		);
 	}
 
     public void deleteUser(Long userId) {
@@ -125,18 +121,30 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public void updateLocation(Long userId, String location) {
+    public LocationUpdateResponseDto updateLocation(Long userId, LocationUpdateRequestDto requestDto) {
         try {
-            String[] locationParts = location.split(" ");
-            if (locationParts.length >= 2) {
-                location = locationParts[0] + " " + locationParts[1];
+            String[] locationParts = requestDto.getLocation().split(" ");
+            if (locationParts.length >= 3) {
+				if (locationParts[0].equals("서울특별시")) {
+					User user = userRepository.findById(userId)
+                	.orElseThrow(() -> new EntityNotFoundException("User not found"));
+					user.setLatitude(requestDto.getLatitude());
+					user.setLongitude(requestDto.getLongitude());
+					user.setLocation(requestDto.getLocation());
+					userRepository.save(user);
+					return new LocationUpdateResponseDto(
+						user.getLatitude(),
+						user.getLongitude(),
+						user.getLocation()
+					);
+				} else {
+					throw new IllegalArgumentException("Invalid location format");
+				}
             }
+            throw new IllegalArgumentException("Invalid location format");
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid location format");
         }
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        user.setLocation(location);
-        userRepository.save(user);
     }
+	
 }

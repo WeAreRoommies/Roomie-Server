@@ -60,7 +60,7 @@ public class FilterRepositoryTest {
 	void testFindFilteredHouses() {
 		FilterRequestDto filter = new FilterRequestDto(
 		"서대문구 무슨동", // House의 location
-				"#차분한", // House의 moodTag
+				List.of("#차분한"), // House의 moodTags
 				new FilterRequestDto.Range(10, 1500), // deposit 범위
 				new FilterRequestDto.Range(30, 1000), // monthlyRent 범위
 				List.of(GenderPolicyType.남성전용.toString()), // House의 genderPolicyType

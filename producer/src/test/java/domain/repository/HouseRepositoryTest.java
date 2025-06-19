@@ -59,23 +59,13 @@ public class HouseRepositoryTest {
         room.setStatus(1);
         room.setOccupancyType(2);
         room.setMainImgUrl("room_main.jpg");
-        room.setPrepaidUtilities(100000);
         room.setManagementFee("1/n");
         room.setHouse(house);
-
-        Roommate roommate = new Roommate();
-        roommate.setAge("20대 중반");
-        roommate.setJob("개발자");
-        roommate.setMbti("INTJ");
-        roommate.setSleepTime("23:00-24:00");
-        roommate.setActivityTime("09:00-10:00");
-        roommate.setRoom(room);
 
         Pin pin = new Pin();
         pin.setHouse(house);
 
         house.getRooms().add(room);
-        room.getRoommates().add(roommate);
         house.getPins().add(pin);
 
         // 저장
@@ -84,20 +74,18 @@ public class HouseRepositoryTest {
 
         // When
         Optional<House> houseWithRooms = houseRepository.findHouseWithRoomsById(house.getId());
-        List<Room> roomsWithRoommates = houseRepository.findRoomsAndRoommatesByHouseId(house.getId());
+        List<Room> roomsWithOccupancies = houseRepository.findRoomsAndRoomOccupanciesByHouseId(house.getId());
         Optional<House> houseWithPins = houseRepository.findHouseWithPinsById(house.getId());
 
         // Then
         assertTrue(houseWithRooms.isPresent());
         assertTrue(houseWithPins.isPresent());
-        assertEquals(1, roomsWithRoommates.size());
+        assertEquals(1, roomsWithOccupancies.size());
 
         House foundHouse = houseWithRooms.get();
         assertEquals("루미 100호점", foundHouse.getName());
         assertEquals(1, foundHouse.getRooms().size());
         assertEquals("Room 1", foundHouse.getRooms().get(0).getName());
-        assertEquals(1, foundHouse.getRooms().get(0).getRoommates().size());
-        assertEquals("개발자", foundHouse.getRooms().get(0).getRoommates().get(0).getJob());
         assertEquals(1, houseWithPins.get().getPins().size());
     }
 
@@ -108,12 +96,12 @@ public class HouseRepositoryTest {
 
         // When
         Optional<House> houseWithRooms = houseRepository.findHouseWithRoomsById(invalidHouseId);
-        List<Room> roomsWithRoommates = houseRepository.findRoomsAndRoommatesByHouseId(invalidHouseId);
+        List<Room> roomsWithOccupancies = houseRepository.findRoomsAndRoomOccupanciesByHouseId(invalidHouseId);
         Optional<House> houseWithPins = houseRepository.findHouseWithPinsById(invalidHouseId);
 
         // Then
         assertTrue(houseWithRooms.isEmpty());
-        assertTrue(roomsWithRoommates.isEmpty());
+        assertTrue(roomsWithOccupancies.isEmpty());
         assertTrue(houseWithPins.isEmpty());
     }
 
@@ -241,7 +229,6 @@ public class HouseRepositoryTest {
         room1.setStatus(1);
         room1.setOccupancyType(2);
         room1.setMainImgUrl("room1_main.jpg");
-        room1.setPrepaidUtilities(100000);
         room1.setManagementFee("1/n");
         room1.setHouse(house);
 
@@ -255,7 +242,6 @@ public class HouseRepositoryTest {
         room2.setStatus(1);
         room2.setOccupancyType(1);
         room2.setMainImgUrl("room2_main.jpg");
-        room2.setPrepaidUtilities(150000);
         room2.setManagementFee("2/n");
         room2.setHouse(house);
 
