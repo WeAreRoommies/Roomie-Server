@@ -24,9 +24,12 @@ public class MapService {
 	public FilterResponseDto searchProperties(FilterRequestDto requestDto, Long userId){
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-		double latitude = user.getLatitude();
-		double longitude = user.getLongitude();
+		if (requestDto.getLatitude() == null || requestDto.getLongitude() == null) {	
+			requestDto.setLatitude(user.getLatitude());
+			requestDto.setLongitude(user.getLongitude());
+		}
+		double latitude = requestDto.getLatitude();
+		double longitude = requestDto.getLongitude();
 
 		// 분위기 태그 필터링 분기
 		List<String> moodTags = requestDto.getMoodTags();
