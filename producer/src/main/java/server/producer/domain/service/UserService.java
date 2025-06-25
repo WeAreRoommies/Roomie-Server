@@ -119,7 +119,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         userRepository.delete(user);
-    }
+	}
 
     public LocationUpdateResponseDto updateLocation(Long userId, LocationUpdateRequestDto requestDto) {
         try {

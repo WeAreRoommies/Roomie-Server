@@ -1,4 +1,4 @@
-package server.producer.common.config;
+package config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,13 +10,13 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @Configuration
 public class RedisConfig {
 
-	@Value("${redis.host}")
+	@Value("${spring.data.redis.host}")
 	private String redisHost;
 
-	@Value("${redis.port:6379}")
+	@Value("${spring.data.redis.port:6379}")
 	private int redisPort;
 
-	@Value("${redis.password}")
+	@Value("${spring.data.redis.password}")
 	private String redisPassword;
 
 	@Bean
