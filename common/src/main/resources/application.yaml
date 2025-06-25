@@ -1,10 +1,12 @@
-redis:
-  host: ${AWS_EC2_REDIS_HOST}        # Redis 서버 호스트 (AWS EC2 호스트 이름 또는 IP)
-  port: 6379                        # Redis 포트 (기본값: 6379)
-  password: ${REDIS_PASSWORD}       # Redis 인증 비밀번호 (없다면 생략 가능)
-  timeout: 2000                     # 연결 타임아웃 (ms 단위)
-  lettuce:
-    pool:
-      max-active: 10              # 최대 연결 수
-      max-idle: 5                 # 유휴 상태 연결의 최대 수
-      min-idle: 1
+spring:
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST}
+      port: 6379
+      password: ${SPRING_REDIS_PASSWORD}
+      timeout: 2000
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 1
