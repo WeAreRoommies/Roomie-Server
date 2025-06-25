@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface HouseRepository extends JpaRepository<House, Long> {
 //	List<House> findByLocationAndMoodTag(String location, String moodTag);
-    List<House> findByLabelAndMoodTag(int label, String moodTag);
+    List<House> findByMoodTag(String moodTag);
 
 //    @Query("SELECT h FROM House h " +
 //            "LEFT JOIN FETCH h.rooms r " +

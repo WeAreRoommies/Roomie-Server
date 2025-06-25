@@ -59,7 +59,7 @@ public class HouseService {
 				.orElseThrow(()-> new EntityNotFoundException("User location not found."));
 		String gu = location.split(" ")[0];
 		int label = locationLabeler.findLabelByLocation(gu);
-		List<House> houses = houseRepository.findByLabelAndMoodTag(label, moodTag);
+		List<House> houses = houseRepository.findByMoodTag(moodTag);
 		//결과가 없을 경우 빈 리스트 반환
 		if (houses.isEmpty()) {
 			return MoodHouseResponseDto.builder()
