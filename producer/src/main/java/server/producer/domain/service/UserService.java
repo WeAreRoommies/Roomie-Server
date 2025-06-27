@@ -5,6 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
 import server.producer.domain.dto.request.LocationUpdateRequestDto;
 import server.producer.domain.dto.response.AccountInfoResponseDto;
 import server.producer.domain.dto.response.HomeInfoResponseDto;
@@ -71,30 +72,35 @@ public class UserService {
 		return new MyPageResponseDto(nickname, socialType);
 	}
 
+	@Transactional
 	public void updateNickname(Long userId, String newNickname) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("사용자 없음"));
 		user.setName(newNickname);
 	}
 
+	@Transactional
 	public void updateName(Long userId, String newName) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new EntityNotFoundException("사용자 없음"));
 		user.setName(newName);
 	}
 
+	@Transactional
 	public void updateBirthDay(Long userId, LocalDate birthDay) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new EntityNotFoundException("사용자 없음"));
 		user.setBirthDate(birthDay);
 	}
 
+	@Transactional
 	public void updatePhoneNumber(Long userId, String phoneNumber) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new EntityNotFoundException("사용자 없음"));
 		user.setPhoneNumber(phoneNumber);
 	}
 
+	@Transactional
 	public void updateGender(Long userId, Gender gender) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new EntityNotFoundException("사용자 없음"));
