@@ -12,7 +12,7 @@ public class History {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "history_id", nullable = false)
+	@Column(name = "id", nullable = false)
 	private Long historyId;
 
 	@Column(name = "body", nullable = false, length = 500)
