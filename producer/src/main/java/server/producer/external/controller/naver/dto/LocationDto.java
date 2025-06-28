@@ -1,9 +1,8 @@
 package server.producer.external.controller.naver.dto;
 
 public record LocationDto(
-
-        double x,
-        double y,
+        double longitude,
+        double latitude,
         String location,
         String address,
         String roadAddress
