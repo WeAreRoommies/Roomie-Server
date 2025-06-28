@@ -76,7 +76,7 @@ public class UserService {
 	public void updateNickname(Long userId, String newNickname) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("사용자 없음"));
-		user.setName(newNickname);
+		user.setNickname(newNickname);
 	}
 
 	@Transactional
