@@ -37,7 +37,7 @@ public class UserService {
 		User user = userRepository.findUserWithRecentlyViewedHouses(userId)
 				.orElseThrow(EntityNotFoundException::new);
 		final String nickname = user.getNickname();
-		final String location = user.getLocation().split(" ")[user.getLocation().split(" ").length-1];
+		final String location = user.getLocation().split(" ")[2];
 		final List<HomeInfoResponseDto.RecentlyViewedHouseDto> recentlyViewedHouseDtos = new ArrayList<>();
 
 		List<RecentlyViewedHouse> houses = recentlyViewedHouseRepository.findByUserIdOrderByViewedAtDesc(user.getId());
@@ -131,21 +131,22 @@ public class UserService {
         try {
             String[] locationParts = requestDto.getLocation().split(" ");
             if (locationParts.length >= 3) {
-				if (locationParts[0].equals("서울특별시")) {
-					User user = userRepository.findById(userId)
-                	.orElseThrow(() -> new EntityNotFoundException("User not found"));
-					user.setLatitude(requestDto.getLatitude());
-					user.setLongitude(requestDto.getLongitude());
-					user.setLocation(requestDto.getLocation());
-					userRepository.save(user);
-					return new LocationUpdateResponseDto(
-						user.getLatitude(),
-						user.getLongitude(),
-						user.getLocation()
-					);
-				} else {
-					throw new IllegalArgumentException("Invalid location format");
-				}
+                if (locationParts[0].equals("서울특별시")) {
+                    User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                    user.setLatitude(requestDto.getLatitude());
+                    user.setLongitude(requestDto.getLongitude());
+                    String location = locationParts[0] + " " + locationParts[1] + " " + locationParts[2];
+                    user.setLocation(location);
+                    userRepository.save(user);
+                    return new LocationUpdateResponseDto(
+                        user.getLatitude(),
+                        user.getLongitude(),
+                        user.getLocation()
+                    );
+                } else {
+                    throw new IllegalArgumentException("Invalid location format");
+                }
             }
             throw new IllegalArgumentException("Invalid location format");
         } catch (Exception e) {
