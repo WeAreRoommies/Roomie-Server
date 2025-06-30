@@ -29,7 +29,7 @@ public class MapService {
 			String[] locationsStrings = requestDto.getLocation().split(" ");
 			if (locationsStrings.length >= 3) {
 				requestDto.setLocation(locationsStrings[0] + " " + locationsStrings[1] + " " + locationsStrings[2]);
-				if (!locationsStrings[0].equals("서울")) {
+				if (!locationsStrings[0].contains("서울")) {
 					throw new IllegalArgumentException("Invalid location");
 				}
 			}
