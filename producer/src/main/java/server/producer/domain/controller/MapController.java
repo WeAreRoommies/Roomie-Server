@@ -10,6 +10,7 @@ import server.producer.common.util.SecurityUtil;
 import server.producer.domain.dto.request.FilterRequestDto;
 import server.producer.domain.dto.response.FilterResponseDto;
 import server.producer.domain.service.MapService;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/v1/maps")
