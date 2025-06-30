@@ -41,7 +41,7 @@ public class FilterRepository {
             filter.getMonthlyRentRange().getMin() * TENTHOUSAND, 
             filter.getMonthlyRentRange().getMax() * TENTHOUSAND));
 
-        predicates.add(cb.notEqual(room.get("status"), room.get("occupancyType")));
+        // predicates.add(cb.notEqual(room.get("status"), room.get("occupancyType")));
 
         // Optional 조건: moodTags (리스트, OR 조건)
         if (filter.getMoodTags() != null && !filter.getMoodTags().isEmpty()) {
