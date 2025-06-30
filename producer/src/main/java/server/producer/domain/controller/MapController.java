@@ -22,7 +22,9 @@ public class MapController {
 		try {
 			Long userId = SecurityUtil.getCurrentUserId();
 			FilterResponseDto responseDto = mapService.searchProperties(requestDto, userId);
-			return ApiResponseDto.success(SuccessCode.HOUSE_GET_SUCCESS, responseDto);
+			return ApiResponseDto.success(SuccessCode.MAP_SEARCH_SUCCESS, responseDto);
+		} catch (IllegalArgumentException e) {
+			return ApiResponseDto.success(SuccessCode.MAP_SEARCH_REJECT, null);
 		} catch (InvalidRequestException invalidRequestException) {
 			return ApiResponseDto.fail(ErrorCode.MISSING_REQUIRED_PARAMETER);
 		} catch (Exception e) {

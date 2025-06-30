@@ -24,7 +24,18 @@ public class MapService {
 	public FilterResponseDto searchProperties(FilterRequestDto requestDto, Long userId){
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new EntityNotFoundException("User not found"));
-		if (requestDto.getLatitude() == null || requestDto.getLongitude() == null) {	
+
+		if (requestDto.getLocation() != null) {
+			String[] locationsStrings = requestDto.getLocation().split(" ");
+			if (locationsStrings.length >= 3) {
+				requestDto.setLocation(locationsStrings[0] + " " + locationsStrings[1] + " " + locationsStrings[2]);
+				if (!locationsStrings[0].equals("서울")) {
+					throw new IllegalArgumentException("Invalid location");
+				}
+			}
+		}
+		if (requestDto.getLatitude() == null || requestDto.getLongitude() == null || requestDto.getLocation() == null) {	
+			requestDto.setLocation(user.getLocation());
 			requestDto.setLatitude(user.getLatitude());
 			requestDto.setLongitude(user.getLongitude());
 		}
