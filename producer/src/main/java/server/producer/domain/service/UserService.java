@@ -131,7 +131,7 @@ public class UserService {
         try {
             String[] locationParts = requestDto.getLocation().split(" ");
             if (locationParts.length >= 3) {
-                if (locationParts[0].equals("서울특별시")) {
+                if (locationParts[0].contains("서울")) {
                     User user = userRepository.findById(userId)
                         .orElseThrow(() -> new EntityNotFoundException("User not found"));
                     user.setLatitude(requestDto.getLatitude());
