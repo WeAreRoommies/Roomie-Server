@@ -22,6 +22,8 @@ public enum SuccessCode {
 	LOGOUT_SUCCESS(20012, "로그아웃 성공"),
 	USER_DELETE_SUCCESS(20013, "회원 탈퇴 성공"),
 	USER_UPDATE_REJECT(20014, "회원 정보 수정 거절(서울지역이 아닙니다)"),
+	MAP_SEARCH_SUCCESS(20015, "지도 검색 성공"),
+	MAP_SEARCH_REJECT(20016, "지도 검색 거절(서울지역이 아닙니다)"),
 	//201 CREATED
 	ROOM_REQUEST_POST_SUCCESS(20101, "입주 신청 성공"),
 	SOCIAL_SIGNUP_SUCCESS(20102, "소셜 회원가입 성공");
