@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserService {
 
@@ -44,22 +45,31 @@ public class UserService {
 
 		for (RecentlyViewedHouse rvh : houses) {
 			House house = rvh.getHouse();
-			final boolean isPinned = house.getPins().stream()
-					.anyMatch(pin -> pin.getUser().getId().equals(userId));
-			HomeInfoResponseDto.RecentlyViewedHouseDto dto = new HomeInfoResponseDto.RecentlyViewedHouseDto(
-					house.getId(),
-					house.calculateMonthlyRent(),
-					house.calculateDeposit(),
-					house.calculateOccupancyType(),
-					house.getLocation(),
-					house.getGenderPolicy().toString(),
-					house.getLocationDescription(),
-					isPinned,
-					house.getMoodTag(),
-					house.getContractTerm(),
-					house.getMainImgUrl()
-			);
-			recentlyViewedHouseDtos.add(dto);
+			if (house == null) {
+				log.warn("RecentlyViewedHouse 변환 중 예외 발생: {}", "house is null");
+				continue;
+			}
+			try {
+				final boolean isPinned = house.getPins() != null && house.getPins().stream()
+						.anyMatch(pin -> pin.getUser() != null && pin.getUser().getId().equals(userId));
+				HomeInfoResponseDto.RecentlyViewedHouseDto dto = new HomeInfoResponseDto.RecentlyViewedHouseDto(
+						house.getId(),
+						house.calculateMonthlyRent(),
+						house.calculateDeposit(),
+						house.calculateOccupancyType(),
+						house.getLocation(),
+						house.getGenderPolicy() != null ? house.getGenderPolicy().toString() : null,
+						house.getLocationDescription(),
+						isPinned,
+						house.getMoodTag(),
+						house.getContractTerm(),
+						house.getMainImgUrl()
+				);
+				recentlyViewedHouseDtos.add(dto);
+			} catch (Exception e) {
+				log.warn("RecentlyViewedHouse 변환 중 예외 발생: {}", e.getMessage());
+				continue;
+			}
 		}
 		return new HomeInfoResponseDto(nickname, location, recentlyViewedHouseDtos);
 	}
