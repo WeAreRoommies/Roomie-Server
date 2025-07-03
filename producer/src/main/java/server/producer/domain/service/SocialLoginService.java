@@ -32,6 +32,7 @@ public class SocialLoginService {
 							.socialType(userInfo.getProvider())
 							.email(userInfo.getEmail())
 							.nickname(userInfo.getNickname())
+							.location("서울특별시 서대문구 창천동")
 							.build();
 					return userRepository.save(created);
 				});
