@@ -41,7 +41,17 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
 
-        return claims.get("userId", Long.class);
+        Object userId = claims.get("userId");
+        if (userId instanceof Integer) {
+            return ((Integer) userId).longValue();
+        }
+        if (userId instanceof Long) {
+            return (Long) userId;
+        }
+        if (userId instanceof String) {
+            return Long.parseLong((String) userId);
+        }
+        throw new RuntimeException("userId 타입이 올바르지 않습니다: " + userId.getClass());
     }
 
     private String createToken(User user, long validity) {

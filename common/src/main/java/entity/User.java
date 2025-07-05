@@ -32,7 +32,7 @@ public class User {
     private String nickname;
 
     @Column(nullable = true)
-    private String location = "창천동";
+    private String location = "서울특별시 서대문구 창천동";
 
     @Column(nullable = true)
     private double latitude = 37.55348;
