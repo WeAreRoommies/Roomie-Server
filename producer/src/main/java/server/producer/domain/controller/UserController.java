@@ -177,7 +177,12 @@ public class UserController {
 		} catch (EntityNotFoundException e) {
 			return ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER);
 		} catch (IllegalArgumentException e) {
-			return ApiResponseDto.success(SuccessCode.USER_UPDATE_REJECT, null);
+			LocationUpdateResponseDto rejectdto = LocationUpdateResponseDto.builder()
+				.latitude(37.55348)
+				.longitude(126.9381)
+				.location("")
+				.build();
+			return ApiResponseDto.success(SuccessCode.USER_UPDATE_REJECT, rejectdto);
 		} catch (Exception e) {
 			return ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
